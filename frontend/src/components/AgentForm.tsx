@@ -1686,9 +1686,9 @@ function StepPermissions({
             key={p.id}
             type="button"
             onClick={() => applyPreset(p.id)}
-            className={`text-left rounded border p-2.5 transition flex items-start gap-2 ${
+            className={`text-left rounded border p-2.5 transition-all duration-200 active:scale-[0.98] flex items-start gap-2 ${
               selectedPresetId === p.id
-                ? 'border-brand-accent bg-brand-panelAlt ring-1 ring-brand-accent/30'
+                ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/30 font-semibold'
                 : 'border-brand-border bg-brand-bg/30 hover:border-brand-borderStrong'
             }`}
             title={p.desc}
@@ -1703,9 +1703,9 @@ function StepPermissions({
         <button
           type="button"
           onClick={() => applyPreset('custom')}
-          className={`text-left rounded border p-2.5 transition flex items-start gap-2 ${
+          className={`text-left rounded border p-2.5 transition-all duration-200 active:scale-[0.98] flex items-start gap-2 ${
             selectedPresetId === 'custom'
-              ? 'border-brand-accent bg-brand-panelAlt ring-1 ring-brand-accent/30'
+              ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/30 font-semibold'
               : 'border-brand-border bg-brand-bg/30 hover:border-brand-borderStrong'
           }`}
         >
@@ -1787,11 +1787,11 @@ function PermissionBlock({
 
   return (
     <div
-      className={`rounded border p-3 transition ${
+      className={`rounded border p-3 transition-all duration-300 ${
         enabled
-          ? 'border-brand-accent/40 bg-brand-panelAlt'
+          ? 'border-brand-accent/40 bg-brand-panelAlt shadow-md shadow-brand-accent/5'
           : 'border-brand-border bg-brand-bg/30'
-      }`}
+      } hover:border-brand-borderStrong`}
     >
       <label className="flex items-start justify-between gap-2 cursor-pointer text-brand-text">
         <div className="flex gap-3 min-w-0">
@@ -1803,12 +1803,26 @@ function PermissionBlock({
             <div className="text-[11px] text-brand-muted mt-0.5">{desc}</div>
           </div>
         </div>
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(e) => onChange(e.target.checked)}
-          className="accent-white mt-1 flex-shrink-0"
-        />
+        <div className="relative flex items-center mt-1 flex-shrink-0">
+          <input
+            type="checkbox"
+            checked={enabled}
+            onChange={(e) => onChange(e.target.checked)}
+            className="sr-only"
+            id={`toggle-perm-${title}`}
+          />
+          <div
+            className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-300 ${
+              enabled ? 'bg-brand-accent' : 'bg-brand-borderStrong'
+            }`}
+          >
+            <div
+              className={`w-4 h-4 rounded-full bg-brand-bg shadow-md transform transition-transform duration-300 ${
+                enabled ? 'translate-x-4' : 'translate-x-0'
+              }`}
+            />
+          </div>
+        </div>
       </label>
 
       {/* Tool listesi (chip + tooltip) */}
