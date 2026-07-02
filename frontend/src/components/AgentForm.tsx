@@ -74,6 +74,9 @@ export interface AgentTemplate {
   model: string;
   temperature: number;
   permissions: AgentPermissions;
+  image?: Partial<MediaCapabilityInput>;
+  video?: Partial<MediaCapabilityInput>;
+  audio?: Partial<MediaCapabilityInput>;
 }
 
 export const AGENT_TEMPLATES: AgentTemplate[] = [
@@ -87,7 +90,10 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     provider: 'openai',
     model: 'gpt-4o-mini',
     temperature: 0.5,
-    permissions: { file_system: true, terminal_cmd: true, web_search: true, system_admin: true }
+    permissions: { file_system: true, terminal_cmd: true, web_search: true, system_admin: true },
+    image: { enabled: false, provider: 'openai', model: 'dall-e-3' },
+    video: { enabled: false, provider: 'openai', model: 'sora-1' },
+    audio: { enabled: true, provider: 'openai', model: 'whisper-1' }
   },
   {
     id: 'researcher',
@@ -99,7 +105,10 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     provider: 'openai',
     model: 'gpt-4o-mini',
     temperature: 0.7,
-    permissions: { file_system: true, terminal_cmd: false, web_search: true, system_admin: false }
+    permissions: { file_system: true, terminal_cmd: false, web_search: true, system_admin: false },
+    image: { enabled: false, provider: 'openai', model: 'dall-e-3' },
+    video: { enabled: false, provider: 'openai', model: 'sora-1' },
+    audio: { enabled: false, provider: 'openai', model: 'whisper-1' }
   },
   {
     id: 'writer',
@@ -111,7 +120,10 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     provider: 'openai',
     model: 'gpt-4o-mini',
     temperature: 0.8,
-    permissions: { file_system: true, terminal_cmd: false, web_search: true, system_admin: false }
+    permissions: { file_system: true, terminal_cmd: false, web_search: true, system_admin: false },
+    image: { enabled: true, provider: 'openai', model: 'dall-e-3' },
+    video: { enabled: false, provider: 'openai', model: 'sora-1' },
+    audio: { enabled: false, provider: 'openai', model: 'whisper-1' }
   },
   {
     id: 'devops',
@@ -123,7 +135,10 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
     provider: 'openai',
     model: 'gpt-4o-mini',
     temperature: 0.3,
-    permissions: { file_system: true, terminal_cmd: true, web_search: true, system_admin: true }
+    permissions: { file_system: true, terminal_cmd: true, web_search: true, system_admin: true },
+    image: { enabled: false, provider: 'openai', model: 'dall-e-3' },
+    video: { enabled: false, provider: 'openai', model: 'sora-1' },
+    audio: { enabled: false, provider: 'openai', model: 'whisper-1' }
   }
 ];
 
@@ -217,6 +232,34 @@ export function AgentForm({
     setTemperature(tpl.temperature);
     setPermissions(tpl.permissions);
     setTemplateSelected(true);
+
+    if (tpl.image) {
+      setImage({
+        enabled: !!tpl.image.enabled,
+        provider: tpl.image.provider ?? '',
+        model: tpl.image.model ?? '',
+        base_url: tpl.image.base_url ?? '',
+        api_key: ''
+      });
+    }
+    if (tpl.video) {
+      setVideo({
+        enabled: !!tpl.video.enabled,
+        provider: tpl.video.provider ?? '',
+        model: tpl.video.model ?? '',
+        base_url: tpl.video.base_url ?? '',
+        api_key: ''
+      });
+    }
+    if (tpl.audio) {
+      setAudio({
+        enabled: !!tpl.audio.enabled,
+        provider: tpl.audio.provider ?? '',
+        model: tpl.audio.model ?? '',
+        base_url: tpl.audio.base_url ?? '',
+        api_key: ''
+      });
+    }
   };
 
   const [error, setError] = useState<string | null>(null);
@@ -1012,12 +1055,26 @@ function MediaCapabilityBlock({
           <Icon name={iconName} size={18} />
           <span className="text-sm font-semibold text-brand-text">{title}</span>
         </span>
-        <input
-          type="checkbox"
-          checked={!!value.enabled}
-          onChange={(e) => update({ enabled: e.target.checked })}
-          className="accent-white"
-        />
+        <div className="relative flex items-center">
+          <input
+            type="checkbox"
+            checked={!!value.enabled}
+            onChange={(e) => update({ enabled: e.target.checked })}
+            className="sr-only"
+            id={`toggle-${title}`}
+          />
+          <div
+            className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-300 ${
+              value.enabled ? 'bg-brand-accent' : 'bg-brand-borderStrong'
+            }`}
+          >
+            <div
+              className={`w-4 h-4 rounded-full bg-brand-bg shadow-md transform transition-transform duration-300 ${
+                value.enabled ? 'translate-x-4' : 'translate-x-0'
+              }`}
+            />
+          </div>
+        </div>
       </label>
       {value.enabled && (
         <div className="mt-3 space-y-2">
