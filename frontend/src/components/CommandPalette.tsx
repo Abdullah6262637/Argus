@@ -161,12 +161,12 @@ export function CommandPalette({
 
   return (
     <div
-      className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
+      className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm flex items-start justify-center pt-24 px-4 animate-backdrop-in"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl bg-brand-panel border border-brand-borderStrong rounded-lg shadow-2xl overflow-hidden"
+        className="w-full max-w-xl bg-brand-panel border border-brand-borderStrong rounded-lg shadow-2xl overflow-hidden animate-command-palette-in"
       >
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-brand-border">
           <Icon name="search" size={18} className="text-brand-accent" />

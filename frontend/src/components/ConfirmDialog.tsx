@@ -49,8 +49,8 @@ export function ConfirmDialog({
     !!requireTypeText && typedText.trim() !== requireTypeText.trim();
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-backdrop-in">
+      <div className="w-full max-w-md rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden animate-modal-in">
         {/* Baslik */}
         <div
           className={`px-5 py-3 border-b border-brand-border flex items-center gap-3 ${

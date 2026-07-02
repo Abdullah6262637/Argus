@@ -176,8 +176,8 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in-up">
-      <div className="bg-brand-bg border border-brand-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex overflow-hidden">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-backdrop-in">
+      <div className="bg-brand-bg border border-brand-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex overflow-hidden animate-modal-in">
         {/* ============ Sol Sidebar: Workflow Listesi ============ */}
         <aside className="w-64 flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col">
           {/* Sidebar Header */}

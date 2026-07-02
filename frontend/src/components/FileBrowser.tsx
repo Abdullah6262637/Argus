@@ -31,11 +31,11 @@ export function FileBrowser({ open, onClose, title = 'Dosyalar', entries }: File
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 z-40 flex items-center justify-center p-4 animate-backdrop-in"
       onClick={onClose}
     >
       <div
-        className="bg-brand-bg border border-brand-border rounded-lg w-full max-w-3xl max-h-[80vh] flex flex-col"
+        className="bg-brand-bg border border-brand-border rounded-lg w-full max-w-3xl max-h-[80vh] flex flex-col animate-modal-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-4 py-3 border-b border-brand-border flex items-center justify-between">

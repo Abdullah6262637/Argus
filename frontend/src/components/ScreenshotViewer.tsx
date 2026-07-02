@@ -36,13 +36,13 @@ export function ScreenshotViewer({ imageB64, imagePath, alt = 'screenshot' }: Sc
 
       {open && (
         <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 cursor-zoom-out"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 cursor-zoom-out animate-backdrop-in"
           onClick={() => setOpen(false)}
         >
           <img
             src={src}
             alt={alt}
-            className="max-w-full max-h-full object-contain rounded shadow-2xl"
+            className="max-w-full max-h-full object-contain rounded shadow-2xl animate-modal-in"
             onClick={(e) => e.stopPropagation()}
           />
           <button

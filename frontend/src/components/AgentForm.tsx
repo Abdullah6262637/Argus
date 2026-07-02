@@ -323,8 +323,8 @@ export function AgentForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-backdrop-in">
+      <div className="w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl animate-modal-in">
         {/* Baslik + Adim gostergesi */}
         <div className="px-6 py-4 border-b border-brand-border bg-brand-panelAlt">
           <div className="flex items-center justify-between">
