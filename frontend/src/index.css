@@ -657,3 +657,55 @@ select option {
 .animate-stagger-3 {
   animation-delay: 300ms;
 }
+
+/* Range slider custom styling */
+.brand-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--brand-border-strong);
+  border-radius: 9999px;
+  outline: none;
+}
+
+.brand-slider::-webkit-slider-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--brand-accent);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px; /* (track height / 2) - (thumb height / 2) = (6 / 2) - (16 / 2) = -5px */
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.brand-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px var(--brand-accent);
+}
+
+.brand-slider::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: var(--brand-border-strong);
+  border-radius: 9999px;
+}
+
+.brand-slider::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--brand-accent);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.brand-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px var(--brand-accent);
+}

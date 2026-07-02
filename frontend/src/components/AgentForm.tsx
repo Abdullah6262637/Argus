@@ -1346,7 +1346,7 @@ Ornek:
             step={0.05}
             value={temperature}
             onChange={(e) => setTemperature(parseFloat(e.target.value))}
-            className="w-full accent-white"
+            className="brand-slider my-2.5"
           />
           <div className="flex justify-between text-[10px] text-brand-mutedSoft mt-0.5">
             <span>0 (tutarli)</span>
@@ -1376,14 +1376,31 @@ Ornek:
         />
       </Field>
 
-      <label className="flex items-center gap-2 text-sm text-brand-text cursor-pointer">
-        <input
-          type="checkbox"
-          checked={isActive}
-          onChange={(e) => setIsActive(e.target.checked)}
-          className="accent-white"
-        />
-        Aktif (ajan listede gorunsun)
+      <label className="flex items-center justify-between gap-3 text-sm text-brand-text cursor-pointer p-3 border border-brand-border bg-brand-bg/30 rounded hover:border-brand-borderStrong transition">
+        <span className="flex flex-col">
+          <span className="font-semibold text-brand-text">Ajan Durumu</span>
+          <span className="text-xs text-brand-mutedSoft">Aktif (ajan listede görünür ve kullanılabilir olur)</span>
+        </span>
+        <div className="relative flex items-center">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            className="sr-only"
+            id="toggle-active"
+          />
+          <div
+            className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-300 ${
+              isActive ? 'bg-brand-accent' : 'bg-brand-borderStrong'
+            }`}
+          >
+            <div
+              className={`w-4 h-4 rounded-full bg-brand-bg shadow-md transform transition-transform duration-300 ${
+                isActive ? 'translate-x-4' : 'translate-x-0'
+              }`}
+            />
+          </div>
+        </div>
       </label>
     </div>
   );
