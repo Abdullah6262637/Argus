@@ -417,7 +417,7 @@ export function ChatWindow({
 
   if (!agent) {
     return (
-      <main className="flex-1 flex items-center justify-center text-brand-muted bg-brand-bg">
+      <main className="flex-1 flex items-center justify-center text-brand-muted bg-brand-bg animate-fade-in-up animate-stagger-2">
         <div className="text-center">
           <Icon
             name="forum"
@@ -444,7 +444,7 @@ export function ChatWindow({
   const planActive = plan && plan.steps.length > 0;
 
   return (
-    <main className="flex-1 flex flex-col min-w-0 bg-brand-bg">
+    <main className="flex-1 flex flex-col min-w-0 bg-brand-bg animate-fade-in-up animate-stagger-2">
       {/* Üst başlık — kurumsal sade conversation header */}
       <header className="h-14 px-4 border-b border-brand-border flex items-center justify-between bg-brand-panel">
         {/* Sol: Ajan kimliği */}

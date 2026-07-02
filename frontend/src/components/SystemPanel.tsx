@@ -143,7 +143,7 @@ export function SystemPanel({
   );
 
   return (
-    <aside className="w-80 flex-shrink-0 border-l border-brand-border bg-brand-panel flex flex-col">
+    <aside className="w-80 flex-shrink-0 border-l border-brand-border bg-brand-panel flex flex-col animate-fade-in-right animate-stagger-3">
       {/* ---------- Tab Bar ---------- */}
       <div className="border-b border-brand-border bg-brand-panel">
         <div className="flex items-stretch px-2 pt-2 gap-1">

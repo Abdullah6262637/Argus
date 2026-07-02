@@ -175,6 +175,7 @@ export function AgentForm({
   const [role, setRole] = useState(initial?.role ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [templateSelected, setTemplateSelected] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
 
   const [provider, setProvider] = useState<ProviderName>(
     (initial?.provider as ProviderName) ?? 'openai',
@@ -232,6 +233,7 @@ export function AgentForm({
     setTemperature(tpl.temperature);
     setPermissions(tpl.permissions);
     setTemplateSelected(true);
+    setSelectedTemplateId(tpl.id);
 
     if (tpl.image) {
       setImage({
@@ -260,6 +262,45 @@ export function AgentForm({
         api_key: ''
       });
     }
+  };
+
+  const handleClearTemplate = () => {
+    setName('');
+    setRole('');
+    setDescription('');
+    setSystemPrompt('');
+    setProvider('openai');
+    setModel('gpt-4o-mini');
+    setTemperature(0.7);
+    setPermissions({
+      file_system: true,
+      terminal_cmd: true,
+      web_search: true,
+      system_admin: true
+    });
+    setImage({
+      enabled: false,
+      provider: '',
+      model: '',
+      base_url: '',
+      api_key: ''
+    });
+    setVideo({
+      enabled: false,
+      provider: '',
+      model: '',
+      base_url: '',
+      api_key: ''
+    });
+    setAudio({
+      enabled: false,
+      provider: '',
+      model: '',
+      base_url: '',
+      api_key: ''
+    });
+    setTemplateSelected(false);
+    setSelectedTemplateId(null);
   };
 
   const [error, setError] = useState<string | null>(null);
@@ -410,6 +451,8 @@ export function AgentForm({
                 description={description}
                 setDescription={setDescription}
                 onApplyTemplate={applyTemplate}
+                selectedTemplateId={selectedTemplateId}
+                onClearTemplate={handleClearTemplate}
               />
             )}
 
@@ -598,7 +641,9 @@ function StepBasic({
   setRole,
   description,
   setDescription,
-  onApplyTemplate}: {
+  onApplyTemplate,
+  selectedTemplateId,
+  onClearTemplate}: {
   name: string;
   setName: (v: string) => void;
   role: string;
@@ -606,6 +651,8 @@ function StepBasic({
   description: string;
   setDescription: (v: string) => void;
   onApplyTemplate: (tpl: AgentTemplate) => void;
+  selectedTemplateId: string | null;
+  onClearTemplate: () => void;
 }) {
   return (
     <div className="space-y-4 max-w-xl mx-auto">
@@ -615,21 +662,47 @@ function StepBasic({
       />
 
       <div className="mb-4">
-        <label className="block text-[10px] font-semibold text-brand-textSoft uppercase tracking-wider mb-2">
-          Sablon Galerisi (Hizli Baslangic)
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {AGENT_TEMPLATES.map((tpl) => (
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-[10px] font-semibold text-brand-textSoft uppercase tracking-wider">
+            Sablon Galerisi (Hizli Baslangic)
+          </label>
+          {selectedTemplateId && (
             <button
-              key={tpl.id}
               type="button"
-              onClick={() => onApplyTemplate(tpl)}
-              className="p-2.5 text-left text-xs rounded border border-brand-border bg-brand-panelAlt hover:border-brand-accent hover:bg-brand-panel transition flex flex-col gap-1 active:scale-[0.98]"
+              onClick={onClearTemplate}
+              className="text-[10px] text-brand-danger hover:underline inline-flex items-center gap-0.5"
             >
-              <span className="font-semibold text-brand-text">{tpl.label}</span>
-              <span className="text-[10px] text-brand-muted line-clamp-1">{tpl.description}</span>
+              <Icon name="cancel" size={12} />
+              Şablonu İptal Et
             </button>
-          ))}
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {AGENT_TEMPLATES.map((tpl) => {
+            const isSelected = selectedTemplateId === tpl.id;
+            return (
+              <button
+                key={tpl.id}
+                type="button"
+                onClick={() => onApplyTemplate(tpl)}
+                className={`p-2.5 text-left text-xs rounded border transition flex flex-col gap-1 active:scale-[0.98] ${
+                  isSelected
+                    ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/30 font-semibold'
+                    : 'border-brand-border bg-brand-panelAlt hover:border-brand-accent hover:bg-brand-panel'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="font-semibold text-brand-text">{tpl.label}</span>
+                  {isSelected && (
+                    <span className="text-brand-accent flex items-center">
+                      <Icon name="check_circle" size={13} filled />
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-brand-muted line-clamp-1">{tpl.description}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

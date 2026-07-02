@@ -88,7 +88,7 @@ export function AgentList({
       onClick: () => onDelete(agentId)}];
 
   return (
-    <aside className="w-72 flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col">
+    <aside className="w-72 flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col animate-fade-in-left animate-stagger-1">
       {/* ============ Üst Başlık ============ */}
       <header className="px-3 py-3 border-b border-brand-border space-y-2.5">
         <div className="flex items-center justify-between">

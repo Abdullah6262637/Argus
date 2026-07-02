@@ -54,7 +54,7 @@ export function Header({
   onOpenWorkflows,
   onOpenCommandPalette}: HeaderProps) {
   return (
-    <header className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel">
+    <header className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down">
       {/* Sol: Logo + isim */}
       <div className="flex items-center gap-2.5 min-w-0">
         <img
