@@ -159,6 +159,7 @@ export function AgentForm({
   const [name, setName] = useState(initial?.name ?? '');
   const [role, setRole] = useState(initial?.role ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
+  const [templateSelected, setTemplateSelected] = useState(false);
 
   const [provider, setProvider] = useState<ProviderName>(
     (initial?.provider as ProviderName) ?? 'openai',
@@ -215,6 +216,7 @@ export function AgentForm({
     setModel(tpl.model);
     setTemperature(tpl.temperature);
     setPermissions(tpl.permissions);
+    setTemplateSelected(true);
   };
 
   const [error, setError] = useState<string | null>(null);
@@ -259,6 +261,12 @@ export function AgentForm({
     } finally {
       setTesting(false);
     }
+  };
+
+  const canJumpTo = (targetStep: number) => {
+    if (targetStep <= step) return true;
+    if (templateSelected || isEditing) return true;
+    return targetStep === step + 1 && canGoNext();
   };
 
   // Kayit
@@ -344,7 +352,7 @@ export function AgentForm({
               ×
             </button>
           </div>
-          <Stepper current={step} onJump={(i) => setStep(i as StepIdx)} />
+          <Stepper current={step} onJump={(i) => canJumpTo(i) && setStep(i as StepIdx)} canJumpTo={canJumpTo} />
         </div>
 
         {/* Icerik */}
@@ -484,21 +492,25 @@ export function AgentForm({
 
 function Stepper({
   current,
-  onJump}: {
+  onJump,
+  canJumpTo}: {
   current: number;
   onJump: (i: number) => void;
+  canJumpTo: (i: number) => boolean;
 }) {
   return (
     <div className="flex items-center gap-1 mt-3">
       {STEPS.map((label, i) => {
         const active = i === current;
         const done = i < current;
+        const allowed = canJumpTo(i);
         return (
           <button
             key={label}
             type="button"
-            onClick={() => onJump(i)}
-            className="flex-1 group"
+            onClick={() => allowed && onJump(i)}
+            disabled={!allowed}
+            className={`flex-1 group transition-all duration-200 ${!allowed ? 'opacity-40 cursor-not-allowed' : ''}`}
           >
             <div className="flex items-center gap-2">
               <div
