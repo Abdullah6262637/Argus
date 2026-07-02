@@ -1,0 +1,23 @@
+[run]
+source = app
+branch = True
+omit =
+    app/main.py
+    app/__init__.py
+    app/database.py
+    */tests/*
+    */__init__.py
+
+[report]
+precision = 1
+show_missing = True
+skip_covered = False
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    \.\.\.
+
+[html]
+directory = htmlcov

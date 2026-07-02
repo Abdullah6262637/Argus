@@ -1,0 +1,362 @@
+
+> openclaw-frontend@0.1.0 electron:dev
+> concurrently -k -n VITE,ELECTRON -c cyan,magenta "npm run dev" "wait-on http://localhost:5173 && node electron/launcher.cjs"
+
+[VITE] 
+[VITE] > openclaw-frontend@0.1.0 dev
+[VITE] > vite
+[VITE] 
+[VITE] [33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[VITE] 
+[VITE]   [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m736[22m[2m[0m ms[22m
+[VITE] 
+[VITE]   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+[VITE] [2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[VITE] (node:6044) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///c:/Users/HP/Desktop/Yeni%20klas%C3%B6r%20(3)/frontend/postcss.config.js is not specified and it doesn't parse as CommonJS.
+[VITE] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[VITE] To eliminate this warning, add "type": "module" to c:\Users\HP\Desktop\Yeni klasör (3)\frontend\package.json.
+[VITE] (Use `node --trace-warnings ...` to show where the warning was created)
+[ELECTRON] 
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/tasks[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/logs?limit=50[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/agents[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/tasks[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/logs?limit=50[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:12[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/agents[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:15[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:15[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:18[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:18[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:21[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:21[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:24[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:24[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:27[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:27[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:30[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:30[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:33[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:33[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:36[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:36[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:39[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:40[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:43[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:44[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:47[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:47[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:51[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:51[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:56[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:33:56[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:00[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:01[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:03[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:06[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:10[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:14[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:17[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:21[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:25[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:29[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:34[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:35[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:38[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:41[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:45[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:47[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:50[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:54[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:59[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:34:59[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:05[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:06[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:12[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:13[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:19[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:20[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:26[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:26[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:32[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:33[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:40[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:42[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:46[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:50[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:53[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:35:55[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:00[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:00[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:07[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:08[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:14[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:16[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:19[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:26[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:27[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:33[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:36[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:41[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:44[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:36:45[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/@fs/C:/Users/HP/Desktop/Yeni klasör (3)/frontend/src/index.css, /@fs/C:/Users/HP/Desktop/Yeni klasör (3)/frontend/src/App.tsx, /src/components/SystemPanel.tsx[22m
+[VITE] [2m15:36:47[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/@fs/C:/Users/HP/Desktop/Yeni klasör (3)/frontend/src/index.css, /@fs/C:/Users/HP/Desktop/Yeni klasör (3)/frontend/src/App.tsx[22m
+[VITE] [2m15:36:56[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] [2m15:37:03[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+[VITE] AggregateError [ECONNREFUSED]: 
+[VITE]     at internalConnectMultiple (node:net:1134:18)
+[VITE]     at afterConnectMultiple (node:net:1715:7)
+[VITE] npm run dev exited with code 1

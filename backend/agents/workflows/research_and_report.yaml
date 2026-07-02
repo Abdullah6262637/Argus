@@ -1,0 +1,40 @@
+name: research_and_report
+description: Bir konuyu araştır, özetle, PDF rapor üret ve email'le ilet.
+inputs:
+  - topic
+  - recipient_email
+
+steps:
+  - id: research
+    agent_id: researcher
+    prompt: |
+      "{{ topic }}" konusunu detaylı araştır. En az 3 farklı güvenilir kaynaktan
+      bilgi topla. Her kaynaktan kısa not çıkar.
+    outputs: [research_notes]
+
+  - id: synthesize
+    agent_id: writer
+    prompt: |
+      Aşağıdaki araştırma notlarını kullanarak {{ topic }} hakkında 800-1200 kelimelik
+      yapılandırılmış bir rapor yaz. Bölümler: Özet, Bulgular, Öneriler, Kaynaklar.
+
+      Notlar:
+      {{ steps.research.result }}
+    outputs: [final_report]
+
+  - id: pdf
+    agent_id: writer
+    prompt: |
+      pdf_generate aracını çağırarak şu içeriği "report_{{ topic | slugify }}.pdf"
+      adıyla kaydet:
+      ---
+      {{ steps.synthesize.result }}
+    outputs: [pdf_path]
+
+  - id: notify
+    agent_id: writer
+    prompt: |
+      email_send aracıyla şu adrese rapor PDF yolunu mesajda belirterek e-posta gönder:
+      to: {{ recipient_email }}
+      subject: "Rapor hazır: {{ topic }}"
+      body: PDF dosya yolu: {{ steps.pdf.result }}

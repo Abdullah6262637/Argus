@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UmtalAgent — Derin Analiz Raporu v2</title>
+<style>
+:root {
+  --bg: #0f1115;
+  --bg-soft: #161922;
+  --bg-card: #1b1f2a;
+  --border: #2a2f3d;
+  --text: #e6e8ef;
+  --text-soft: #a0a6b8;
+  --text-mute: #6b7280;
+  --accent: #6ea8ff;
+  --accent-2: #8a7cff;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #38bdf8;
+  --code-bg: #11141c;
+  --shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f8fb;
+    --bg-soft: #ffffff;
+    --bg-card: #ffffff;
+    --border: #e3e6ee;
+    --text: #1a1d26;
+    --text-soft: #4a5060;
+    --text-mute: #8b91a3;
+    --accent: #2563eb;
+    --accent-2: #7c3aed;
+    --success: #15803d;
+    --warning: #b45309;
+    --danger: #b91c1c;
+    --info: #0369a1;
+    --code-bg: #f1f3f9;
+    --shadow: 0 4px 14px rgba(0,0,0,0.06);
+  }
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+header.hero {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  border-radius: 20px;
+  padding: 48px 40px;
+  color: white;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow);
+}
+
+header.hero h1 {
+  margin: 0 0 8px;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+header.hero .meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  font-size: 14px;
+  opacity: 0.92;
+}
+
+section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+
+section h2 {
+  margin: 0 0 20px;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 12px;
+}
+
+section h3 {
+  font-size: 18px;
+  margin: 24px 0 10px;
+  color: var(--text);
+}
+
+.pill {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+.pill.critical { color: var(--danger); border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.1); }
+.pill.high { color: var(--warning); border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.1); }
+.pill.medium { color: var(--info); border-color: rgba(56,189,248,0.4); background: rgba(56,189,248,0.1); }
+.pill.ok { color: var(--success); border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.1); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 16px 0;
+}
+
+th, td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--bg-soft);
+  color: var(--text);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+tr:hover td { background: var(--bg-soft); }
+
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: var(--text);
+}
+
+.callout {
+  border-left: 4px solid var(--accent);
+  background: var(--bg-soft);
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin: 16px 0;
+  font-size: 14.5px;
+}
+
+.callout.danger { border-left-color: var(--danger); background: rgba(248,113,113,0.05); }
+.callout.warning { border-left-color: var(--warning); background: rgba(251,191,36,0.05); }
+.callout.ok { border-left-color: var(--success); background: rgba(74,222,128,0.05); }
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.score-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.score-card .label {
+  font-size: 11px;
+  color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.score-card .value {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 6px 0 4px;
+  color: var(--text);
+}
+
+.bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.bar.good > i { background: linear-gradient(90deg, var(--success), #22c55e); }
+.bar.warn > i { background: linear-gradient(90deg, var(--warning), #f59e0b); }
+.bar.bad > i { background: linear-gradient(90deg, var(--danger), #dc2626); }
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--text-mute);
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>🔬 UmtalAgent — Derin Analiz Raporu</h1>
+  <p style="font-size: 18px; opacity: 0.92; margin: 12px 0 0;">
+    Terminal log analizi + Kod incelemesi + Güvenlik değerlendirmesi
+  </p>
+  <div class="meta">
+    <span><strong>Tarih:</strong> 1 Mayıs 2026</span>
+    <span><strong>Sürüm:</strong> v0.2.1</span>
+    <span><strong>Analiz Türü:</strong> Kapsamlı</span>
+    <span><strong>Tespit Edilen Bug:</strong> 12 (3 kritik)</span>
+  </div>
+</header>
+
+<!-- Kritik Bulgular -->
+<section>
+  <h2>🚨 Kritik Bug'lar (Terminal Loglarından)</h2>
+  
+  <div class="callout danger">
+    <strong>3 Kritik Bug Tespit Edildi</strong>
+    Bu bug'lar sistemin temel özelliklerini kullanılamaz hale getiriyor.
+  </div>
+
+  <h3>1. Voice TTS HTTP Method Uyumsuzluğu</h3>
+  <table>
+    <tr>
+      

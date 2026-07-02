@@ -1,0 +1,28 @@
+# UmtalAgent — Code owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners (varsayilan repo sahibi)
+* @owner
+
+# Backend
+/backend/app/services/         @backend-team
+/backend/app/routers/          @backend-team
+/backend/app/models/           @backend-team
+/backend/tests/                @backend-team
+
+# Frontend
+/frontend/src/                 @frontend-team
+/frontend/src/components/      @frontend-team
+/frontend/src/hooks/           @frontend-team
+/frontend/electron/            @frontend-team
+
+# CI / DevOps
+/.github/workflows/            @devops-team
+/installer/                    @devops-team
+/start.bat                     @devops-team
+/start.ps1                     @devops-team
+
+# Plans / Docs
+/plans/                        @owner
+/docs/                         @owner
+*.md                           @owner

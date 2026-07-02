@@ -1,0 +1,30 @@
+name: research_and_write
+description: |
+  Bir konuyu researcher ile arastir, writer ile makaleye donustur.
+inputs:
+  - topic
+steps:
+  - id: search
+    agent: sds
+    prompt: |
+      "{{ inputs.topic }}" konusu hakkinda 5-7 guvenilir kaynak topla.
+      Her kaynak icin: baslik, ozet (2-3 cumle), URL.
+    max_steps: 6
+
+  - id: outline
+    agent: sds
+    prompt: |
+      Asagidaki kaynaklara dayanarak makale icin outline olustur (giris, 3-5 ana baslik, kapanis):
+
+      {{ steps.search.result }}
+    max_steps: 3
+
+  - id: draft
+    agent: sds
+    prompt: |
+      Asagidaki outline'a sadik kalarak yaklasik 800-1000 kelimelik bir makale yaz.
+      Markdown kullan, akic dil, somut ornekler.
+
+      OUTLINE:
+      {{ steps.outline.result }}
+    max_steps: 3

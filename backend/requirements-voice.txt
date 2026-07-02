@@ -1,0 +1,6 @@
+# Voice mode (FAZ 8.2) - opsiyonel
+# Kurulum: pip install -r requirements-voice.txt
+
+faster-whisper>=1.1.0
+edge-tts>=6.1.0
+pyttsx3>=2.98

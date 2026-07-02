@@ -1,0 +1,76 @@
+# UmtalAgent — Pre-commit hooks
+# Kurulum: pip install pre-commit && pre-commit install --hook-type commit-msg
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: ^backend/agents/.*\.yaml$  # encoded api_key icin esnek
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=1024']
+      - id: detect-private-key
+
+  # Python
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: ^backend/
+      - id: ruff-format
+        files: ^backend/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        files: ^backend/app/
+        additional_dependencies:
+          - pydantic>=2.0
+          - sqlalchemy>=2.0
+          - fastapi
+        args: [--ignore-missing-imports, --no-strict-optional]
+
+  # JS / TS
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.15.0
+    hooks:
+      - id: eslint
+        files: ^frontend/src/
+        types: [file]
+        types_or: [javascript, jsx, ts, tsx]
+        additional_dependencies:
+          - eslint@9.15.0
+          - '@typescript-eslint/parser@8.16.0'
+          - '@typescript-eslint/eslint-plugin@8.16.0'
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        files: ^frontend/
+        types_or: [javascript, jsx, ts, tsx, json, css, html, markdown]
+
+  # Conventional commits validator (commit-msg stage)
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args:
+          - feat
+          - fix
+          - docs
+          - style
+          - refactor
+          - perf
+          - test
+          - build
+          - ci
+          - chore
+          - revert

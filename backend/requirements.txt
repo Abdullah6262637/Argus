@@ -1,0 +1,59 @@
+# Core
+fastapi>=0.115.5
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.2
+pydantic-settings>=2.6.1
+SQLAlchemy>=2.0.36
+aiosqlite>=0.20.0
+aiofiles>=24.1.0
+greenlet>=3.2.0
+python-dotenv>=1.0.1
+PyYAML>=6.0.2
+APScheduler>=3.10.4
+# voice.py UploadFile icin zorunlu - aksi halde FastAPI ImportError'la patliyor
+python-multipart>=0.0.20
+
+# LLM providers
+openai>=1.55.0
+anthropic>=0.39.0
+httpx>=0.27.2
+websockets>=13.1
+
+# System / UI tools (FAZ 1)
+pyautogui>=0.9.54
+mss>=9.0.2
+duckduckgo-search>=6.3.0
+psutil>=6.1.0
+Pillow>=10.4.0
+
+# v2: Browser otomasyon (FAZ 2.1, 2.2, 2.3)
+# Kurulumdan sonra: playwright install chromium
+playwright>=1.47.0
+readability-lxml>=0.8.1
+lxml>=5.3.0
+
+# v2: Dokuman okuma (FAZ 2.4)
+pypdf>=5.1.0
+python-docx>=1.1.2
+openpyxl>=3.1.5
+
+# v2: Memory & embedding (FAZ 3)
+# chromadb>=0.5.20,<0.6
+# sentence-transformers>=3.3.0
+networkx>=3.4.2
+tiktoken>=0.8.0
+
+# v3 Sprint 5: MCP (Model Context Protocol) - opsiyonel ama artik gercek baglanti destekli
+# Kapatmak icin yorumda birakin; bridge zaten try/except ile guvenli.
+mcp>=1.0.0
+
+# v3 Sprint 6.1: API key sifrelemesi
+cryptography>=43.0.0
+keyring>=25.5.0
+
+# v3 Sprint 6.6: Plugin sandbox (opsiyonel - AST tarayicisi her zaman aktif)
+# RestrictedPython>=8.0
+
+# FAZ 4: Blockchain & Crypto Tools
+web3>=6.20.0
+eth-account>=0.13.0

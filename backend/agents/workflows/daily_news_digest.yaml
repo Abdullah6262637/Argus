@@ -1,0 +1,29 @@
+name: daily_news_digest
+description: Belirli bir alanın günlük haber özetini üret ve mesajlaşma kanalına ilet.
+inputs:
+  - topic
+  - slack_webhook
+
+steps:
+  - id: search_news
+    agent_id: researcher
+    prompt: |
+      Son 24 saatte "{{ topic }}" konusundaki en önemli 5 haberi web'de ara.
+      Her haber için: başlık, kaynak, 2 cümlelik özet, link.
+
+  - id: format_digest
+    agent_id: writer
+    prompt: |
+      Aşağıdaki haberleri bir bültene dönüştür. Format: "📰 [TARIH] [KONU] Bülteni"
+      başlık, ardından her haber için emoji + tek paragraf.
+
+      Kaynak veriler:
+      {{ steps.search_news.result }}
+
+  - id: send_to_slack
+    agent_id: writer
+    prompt: |
+      slack_send aracıyla aşağıdaki mesajı şu webhook URL'sine gönder:
+      webhook_url: {{ slack_webhook }}
+      text: |
+      {{ steps.format_digest.result }}

@@ -1,0 +1,37 @@
+name: code_review_pipeline
+description: Bir git repo'sunda son commit'leri inceleyip review raporu hazırla.
+inputs:
+  - repo_path
+  - branch
+
+steps:
+  - id: pull
+    agent_id: developer
+    prompt: |
+      git_pull aracıyla "{{ repo_path }}" path'inde "{{ branch }}" branch'ine
+      en son değişiklikleri çek.
+
+  - id: diff
+    agent_id: developer
+    prompt: |
+      git_diff aracıyla "{{ repo_path }}" path'inde son commit ile bir önceki
+      arasındaki farkı al (ref1=HEAD~1, ref2=HEAD).
+
+  - id: review
+    agent_id: code_reviewer
+    prompt: |
+      Aşağıdaki diff'i incele. Olası sorunları (güvenlik, performans, bug, stil)
+      maddele. Pozitif yönleri de belirt. Final değerlendirmeyi yaz:
+      [APPROVE / REQUEST_CHANGES / COMMENT].
+
+      DIFF:
+      {{ steps.diff.result }}
+
+  - id: report
+    agent_id: writer
+    prompt: |
+      pdf_generate aracıyla şu içeriği "code_review_{{ branch }}.pdf" adıyla kaydet:
+      ---
+      # Code Review — {{ branch }}
+
+      {{ steps.review.result }}
