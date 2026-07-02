@@ -1431,7 +1431,11 @@ function CustomSelect<T extends string>({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!disabled) setIsOpen(!isOpen);
+        }}
         className="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text focus:outline-none focus:border-brand-accent transition flex items-center justify-between text-left disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <span className="truncate">{selectedOpt ? selectedOpt.label : placeholder}</span>
@@ -1450,9 +1454,11 @@ function CustomSelect<T extends string>({
             <button
               key={opt.value}
               type="button"
-              onClick={() => {
-                onChange(opt.value);
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 setIsOpen(false);
+                onChange(opt.value);
               }}
               className={`w-full px-3 py-2 text-left text-sm transition flex items-center justify-between ${
                 value === opt.value
@@ -1479,7 +1485,7 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block space-y-1">
+    <div className="block space-y-1">
       <span className="text-xs text-brand-textSoft">{label}</span>
       {children}
       {hint && (
@@ -1487,7 +1493,7 @@ function Field({
           {hint}
         </span>
       )}
-    </label>
+    </div>
   );
 }
 
