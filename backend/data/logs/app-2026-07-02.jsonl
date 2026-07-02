@@ -441,3 +441,14 @@
 {"timestamp": "2026-07-02T14:50:58.680757Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-307"}
 {"timestamp": "2026-07-02T14:50:58.701802Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-335"}
 {"timestamp": "2026-07-02T14:56:08.221011Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-335"}
+{"timestamp": "2026-07-02T15:17:16.306733Z", "level": "info", "logger": "argus", "message": "Uygulama baslatiliyor...", "module": "main", "line": 49, "taskName": "Task-2"}
+{"timestamp": "2026-07-02T15:17:16.886857Z", "level": "info", "logger": "app.services.agent_manager", "message": "AgentManager: 3 ajan yuklendi", "module": "agent_manager", "line": 202, "taskName": "Task-2"}
+{"timestamp": "2026-07-02T15:17:16.962467Z", "level": "info", "logger": "apscheduler.scheduler", "message": "Scheduler started", "module": "base", "line": 214, "taskName": "Task-2"}
+{"timestamp": "2026-07-02T15:17:16.963188Z", "level": "info", "logger": "app.services.scheduler", "message": "Scheduler basladi, 0 aktif gorev var", "module": "scheduler", "line": 126, "taskName": "Task-2"}
+{"timestamp": "2026-07-02T15:17:18.257523Z", "level": "info", "logger": "app.services.mcp.bridge", "message": "MCP konfigurasyonu bos veya yok", "module": "bridge", "line": 206, "taskName": "Task-2"}
+{"timestamp": "2026-07-02T15:17:18.257849Z", "level": "info", "logger": "argus", "message": "Uygulama hazir.", "module": "main", "line": 86, "taskName": "Task-2"}
+{"timestamp": "2026-07-02T15:17:18.275694Z", "level": "info", "logger": "argus", "message": "Playwright Chromium hazir.", "module": "main", "line": 76, "taskName": "Task-5"}
+{"timestamp": "2026-07-02T15:17:22.552098Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-14"}
+{"timestamp": "2026-07-02T15:17:22.601320Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 2", "module": "manager", "line": 24, "taskName": "Task-32"}
+{"timestamp": "2026-07-02T15:17:22.899297Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 1", "module": "manager", "line": 29, "taskName": "Task-14"}
+{"timestamp": "2026-07-02T15:17:29.506141Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-32"}

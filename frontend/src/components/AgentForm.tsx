@@ -349,81 +349,83 @@ export function AgentForm({
 
         {/* Icerik */}
         <div className="flex-1 overflow-y-auto p-6">
-          {step === 0 && (
-            <StepBasic
-              name={name}
-              setName={setName}
-              role={role}
-              setRole={setRole}
-              description={description}
-              setDescription={setDescription}
-              onApplyTemplate={applyTemplate}
-            />
-          )}
+          <div key={step} className="animate-step-in">
+            {step === 0 && (
+              <StepBasic
+                name={name}
+                setName={setName}
+                role={role}
+                setRole={setRole}
+                description={description}
+                setDescription={setDescription}
+                onApplyTemplate={applyTemplate}
+              />
+            )}
 
-          {step === 1 && (
-            <StepLLM
-              provider={provider}
-              setProvider={setProvider}
-              model={model}
-              setModel={setModel}
-              baseUrl={baseUrl}
-              setBaseUrl={setBaseUrl}
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-              showApiKey={showApiKey}
-              setShowApiKey={setShowApiKey}
-              clearApiKey={clearApiKey}
-              setClearApiKey={setClearApiKey}
-              modelSuggestions={modelSuggestions}
-              isEditing={isEditing}
-              initial={initial}
-              onTest={handleTest}
-              testing={testing}
-              testResult={testResult}
-              envStatus={envStatus}
-              onOpenEnvSettings={onOpenEnvSettings}
-            />
-          )}
+            {step === 1 && (
+              <StepLLM
+                provider={provider}
+                setProvider={setProvider}
+                model={model}
+                setModel={setModel}
+                baseUrl={baseUrl}
+                setBaseUrl={setBaseUrl}
+                apiKey={apiKey}
+                setApiKey={setApiKey}
+                showApiKey={showApiKey}
+                setShowApiKey={setShowApiKey}
+                clearApiKey={clearApiKey}
+                setClearApiKey={setClearApiKey}
+                modelSuggestions={modelSuggestions}
+                isEditing={isEditing}
+                initial={initial}
+                onTest={handleTest}
+                testing={testing}
+                testResult={testResult}
+                envStatus={envStatus}
+                onOpenEnvSettings={onOpenEnvSettings}
+              />
+            )}
 
-          {step === 2 && (
-            <StepMedia
-              image={image}
-              setImage={setImage}
-              video={video}
-              setVideo={setVideo}
-              audio={audio}
-              setAudio={setAudio}
-              isEditing={isEditing}
-              initialImageMask={initial?.image?.api_key_masked}
-              initialVideoMask={initial?.video?.api_key_masked}
-              initialAudioMask={initial?.audio?.api_key_masked}
-            />
-          )}
+            {step === 2 && (
+              <StepMedia
+                image={image}
+                setImage={setImage}
+                video={video}
+                setVideo={setVideo}
+                audio={audio}
+                setAudio={setAudio}
+                isEditing={isEditing}
+                initialImageMask={initial?.image?.api_key_masked}
+                initialVideoMask={initial?.video?.api_key_masked}
+                initialAudioMask={initial?.audio?.api_key_masked}
+              />
+            )}
 
-          {step === 3 && (
-            <StepBehavior
-              systemPrompt={systemPrompt}
-              setSystemPrompt={setSystemPrompt}
-              temperature={temperature}
-              setTemperature={setTemperature}
-              maxTokens={maxTokens}
-              setMaxTokens={setMaxTokens}
-              tagsText={tagsText}
-              setTagsText={setTagsText}
-              isActive={isActive}
-              setIsActive={setIsActive}
-            />
-          )}
+            {step === 3 && (
+              <StepBehavior
+                systemPrompt={systemPrompt}
+                setSystemPrompt={setSystemPrompt}
+                temperature={temperature}
+                setTemperature={setTemperature}
+                maxTokens={maxTokens}
+                setMaxTokens={setMaxTokens}
+                tagsText={tagsText}
+                setTagsText={setTagsText}
+                isActive={isActive}
+                setIsActive={setIsActive}
+              />
+            )}
 
-          {step === 4 && (
-            <StepPermissions
-              permissions={permissions}
-              setPermissions={setPermissions}
-            />
-          )}
+            {step === 4 && (
+              <StepPermissions
+                permissions={permissions}
+                setPermissions={setPermissions}
+              />
+            )}
 
-          {step === 5 && <StepPlugins />}
+            {step === 5 && <StepPlugins />}
+          </div>
 
           {error && (
             <div className="mt-4 p-3 text-xs text-brand-danger bg-brand-danger/10 border border-brand-danger/40 rounded">
