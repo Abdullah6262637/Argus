@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
 import type {
@@ -817,31 +817,28 @@ function StepLLM({
 
       {/* Sprint A.11.1: Proxy preset */}
       <Field label="Proxy / Preset (opsiyonel)">
-        <select
+        <CustomSelect
           value={presetId}
-          onChange={(e) => applyPreset(e.target.value)}
-          className={inputCls}
-        >
-          <option value="">— Manuel yapilandirma —</option>
-          {PROXY_PRESETS.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.label}{p.base_url ? ` — ${p.base_url}` : ''}
-            </option>
-          ))}
-        </select>
+          onChange={applyPreset}
+          placeholder="— Manuel yapılandırma —"
+          options={PROXY_PRESETS.map((p) => ({
+            value: p.id,
+            label: `${p.label}${p.base_url ? ` — ${p.base_url}` : ''}`
+          }))}
+        />
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Saglayici *">
-          <select
+        <Field label="Sağlayıcı *">
+          <CustomSelect
             value={provider}
-            onChange={(e) => setProvider(e.target.value as ProviderName)}
-            className={inputCls}
-          >
-            <option value="openai">OpenAI (ve uyumlu)</option>
-            <option value="anthropic">Anthropic (Claude)</option>
-            <option value="local">Yerel (Ollama, LM Studio vb.)</option>
-          </select>
+            onChange={(v) => setProvider(v as ProviderName)}
+            options={[
+              { value: 'openai', label: 'OpenAI (ve uyumlu)' },
+              { value: 'anthropic', label: 'Anthropic (Claude)' },
+              { value: 'local', label: 'Yerel (Ollama, LM Studio vb.)' }
+            ]}
+          />
         </Field>
         <Field label="Model *">
           <input
@@ -1290,19 +1287,16 @@ function StepBehavior({
             Bunu yeni SOUL olarak kaydet
           </button>
         </div>
-        <select
-          onChange={(e) => handleSoulPick(e.target.value)}
-          defaultValue=""
+        <CustomSelect
+          value=""
+          onChange={handleSoulPick}
           disabled={soulLoading}
-          className={inputCls}
-        >
-          <option value="">{soulLoading ? 'Yukleniyor...' : '— Sec ve system_prompt\'a yapistir —'}</option>
-          {souls.map((s) => (
-            <option key={s.name} value={s.name}>
-              {s.name}{s.is_system ? ' (sistem)' : ''} — {s.preview.substring(0, 60)}...
-            </option>
-          ))}
-        </select>
+          placeholder={soulLoading ? 'Yükleniyor...' : '— Seç ve system_prompt\'a yapıştır —'}
+          options={souls.map((s) => ({
+            value: s.name,
+            label: `${s.name}${s.is_system ? ' (sistem)' : ''} — ${s.preview.substring(0, 60)}...`
+          }))}
+        />
 
         {showSaveSoul && (
           <div className="mt-2 flex items-center gap-1.5">
@@ -1401,6 +1395,80 @@ Ornek:
 
 const inputCls =
   'w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent transition';
+
+interface CustomSelectProps<T> {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: React.ReactNode }[];
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+function CustomSelect<T extends string>({
+  value,
+  onChange,
+  options,
+  placeholder = 'Seçiniz...',
+  disabled = false
+}: CustomSelectProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, []);
+
+  const selectedOpt = options.find((o) => o.value === value);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text focus:outline-none focus:border-brand-accent transition flex items-center justify-between text-left disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        <span className="truncate">{selectedOpt ? selectedOpt.label : placeholder}</span>
+        <Icon
+          name="expand_more"
+          size={16}
+          className={`text-brand-mutedSoft transition-transform duration-200 ${
+            isOpen ? 'rotate-180 text-brand-accent' : ''
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute left-0 right-0 mt-1 z-[80] bg-brand-panel border border-brand-borderStrong rounded-md shadow-xl max-h-60 overflow-y-auto py-1 animate-command-palette-in">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
+              className={`w-full px-3 py-2 text-left text-sm transition flex items-center justify-between ${
+                value === opt.value
+                  ? 'bg-brand-accent/15 text-brand-accent font-semibold'
+                  : 'text-brand-textSoft hover:bg-brand-panelAlt hover:text-brand-text'
+              }`}
+            >
+              <span className="truncate">{opt.label}</span>
+              {value === opt.value && <Icon name="check" size={14} className="text-brand-accent" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Field({
   label,

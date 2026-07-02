@@ -500,3 +500,5 @@
 {"timestamp": "2026-07-02T15:26:42.098656Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-32"}
 {"timestamp": "2026-07-02T15:28:42.101782Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-32"}
 {"timestamp": "2026-07-02T15:28:42.114044Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-88"}
+{"timestamp": "2026-07-02T15:31:23.127357Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-88"}
+{"timestamp": "2026-07-02T15:31:23.149962Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-140"}
