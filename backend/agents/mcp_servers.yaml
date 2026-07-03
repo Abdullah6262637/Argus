@@ -1,12 +1,12 @@
 servers:
 - name: filesystem
-  enabled: false
+  enabled: true
   description: Yerel dosya sistemine güvenli erişim (sandboxed klasör).
   command:
   - npx
   - -y
   - '@modelcontextprotocol/server-filesystem'
-  - ${HOME}/Documents
+  - C:/Users/HP/Documents
 - name: github
   enabled: false
   description: GitHub repo, issue, PR yönetimi.
@@ -17,14 +17,14 @@ servers:
   env:
     GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN}
 - name: sqlite
-  enabled: false
+  enabled: true
   description: Yerel SQLite veritabanı sorgulama.
   command:
   - npx
   - -y
   - '@modelcontextprotocol/server-sqlite'
   - --db-path
-  - ./backend/data/umtalagent.db
+  - c:/Users/HP/Desktop/Argus/backend/data/umtalagent.db
 - name: brave-search
   enabled: false
   description: Brave Search API ile web arama.
@@ -59,7 +59,7 @@ servers:
   - -y
   - '@modelcontextprotocol/server-memory'
 - name: fetch
-  enabled: false
+  enabled: true
   description: Web sayfası fetch + içerik temizleme.
   command:
   - npx
