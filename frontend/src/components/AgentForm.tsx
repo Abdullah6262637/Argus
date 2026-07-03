@@ -863,10 +863,26 @@ function StepLLM({
           value={presetId}
           onChange={applyPreset}
           placeholder="— Manuel yapılandırma —"
-          options={PROXY_PRESETS.map((p) => ({
-            value: p.id,
-            label: `${p.label}${p.base_url ? ` — ${p.base_url}` : ''}`
-          }))}
+          options={PROXY_PRESETS.map((p) => {
+            const providerImg = 
+              p.id === 'openai-official' ? 'openai' :
+              p.id === 'frostai' ? 'openai' :
+              p.id === 'openrouter' ? 'openrouter' :
+              p.id === 'groq' ? 'groq' :
+              p.id === 'together' ? 'openai' :
+              p.id === 'lmstudio' ? 'local' :
+              p.id === 'ollama' ? 'local' :
+              p.id === 'anthropic-official' ? 'anthropic' : 'openai';
+            return {
+              value: p.id,
+              label: (
+                <span className="flex items-center gap-2">
+                  <img src={`/providers/${providerImg}.png`} alt={p.label} className="w-4 h-4 object-contain rounded-sm" />
+                  <span>{p.label}{p.base_url ? ` — ${p.base_url}` : ''}</span>
+                </span>
+              )
+            };
+          })}
         />
       </Field>
 
@@ -876,15 +892,87 @@ function StepLLM({
             value={provider}
             onChange={(v) => setProvider(v as ProviderName)}
             options={[
-              { value: 'openai', label: 'OpenAI (ve uyumlu)' },
-              { value: 'anthropic', label: 'Anthropic (Claude)' },
-              { value: 'gemini', label: 'Google Gemini' },
-              { value: 'openrouter', label: 'OpenRouter' },
-              { value: 'groq', label: 'Groq Cloud' },
-              { value: 'deepseek', label: 'DeepSeek' },
-              { value: 'mistral', label: 'Mistral AI' },
-              { value: 'xai', label: 'xAI (Grok)' },
-              { value: 'local', label: 'Yerel (Ollama, LM Studio vb.)' }
+              {
+                value: 'openai',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/openai.png" alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>OpenAI (ve uyumlu)</span>
+                  </span>
+                )
+              },
+              {
+                value: 'anthropic',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/anthropic.png" alt="Anthropic" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Anthropic (Claude)</span>
+                  </span>
+                )
+              },
+              {
+                value: 'gemini',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/gemini.png" alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Google Gemini</span>
+                  </span>
+                )
+              },
+              {
+                value: 'openrouter',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/openrouter.png" alt="OpenRouter" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>OpenRouter</span>
+                  </span>
+                )
+              },
+              {
+                value: 'groq',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/groq.png" alt="Groq" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Groq Cloud</span>
+                  </span>
+                )
+              },
+              {
+                value: 'deepseek',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/deepseek.png" alt="DeepSeek" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>DeepSeek</span>
+                  </span>
+                )
+              },
+              {
+                value: 'mistral',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/mistral.png" alt="Mistral AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Mistral AI</span>
+                  </span>
+                )
+              },
+              {
+                value: 'xai',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/xai.png" alt="xAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>xAI (Grok)</span>
+                  </span>
+                )
+              },
+              {
+                value: 'local',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/local.png" alt="Yerel" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Yerel (Ollama, LM Studio vb.)</span>
+                  </span>
+                )
+              }
             ]}
           />
         </Field>
