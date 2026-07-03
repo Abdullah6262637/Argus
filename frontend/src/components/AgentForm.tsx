@@ -414,11 +414,30 @@ export function AgentForm({
     }
   };
 
+  const STEP_GLOWS = [
+    'from-brand-accent/15 via-purple-500/5 to-transparent',       // Step 0: Purple/Indigo
+    'from-blue-500/10 via-brand-accent/5 to-transparent',         // Step 1: Blue LLM
+    'from-emerald-500/10 via-teal-500/5 to-transparent',          // Step 2: Teal Media
+    'from-rose-500/10 via-pink-500/5 to-transparent',             // Step 3: Rose Behavior
+    'from-amber-500/10 via-orange-500/5 to-transparent',          // Step 4: Amber Permissions
+    'from-violet-500/10 via-indigo-500/5 to-transparent',         // Step 5: Violet Plugins
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-backdrop-in">
-      <div className="w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl animate-modal-in">
+      <div className="w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl animate-modal-in relative overflow-hidden">
+        {/* Ambient Glow Background Effect */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div 
+            className={`absolute -top-40 -left-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
+          />
+          <div 
+            className={`absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
+          />
+        </div>
+
         {/* Baslik + Adim gostergesi */}
-        <div className="px-6 py-4 border-b border-brand-border bg-brand-panelAlt">
+        <div className="relative z-10 px-6 py-4 border-b border-brand-border bg-brand-panelAlt/90 backdrop-blur-[2px]">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-semibold text-brand-text tracking-wide">
@@ -440,7 +459,7 @@ export function AgentForm({
         </div>
 
         {/* Icerik */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="relative z-10 h-[480px] overflow-y-auto p-6 border-b border-brand-border/60">
           <div key={step} className="animate-step-in">
             {step === 0 && (
               <StepBasic
@@ -529,7 +548,7 @@ export function AgentForm({
         </div>
 
         {/* Aksiyonlar */}
-        <div className="flex items-center justify-between gap-2 px-6 py-4 border-t border-brand-border bg-brand-panelAlt">
+        <div className="relative z-10 flex items-center justify-between gap-2 px-6 py-4 bg-brand-panelAlt/90 backdrop-blur-[2px]">
           <button
             onClick={onCancel}
             className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text hover:border-brand-borderStrong transition"
