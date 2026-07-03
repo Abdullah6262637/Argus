@@ -12,6 +12,7 @@ import { ApprovalDialog } from './components/ApprovalDialog';
 import { WorkflowsModal } from './components/WorkflowsModal';
 import { CommandPalette } from './components/CommandPalette';
 import { AgentInspectorModal } from './components/AgentInspectorModal';
+import { Icon } from './components/Icon';
 import { api } from './api/client';
 import { useAgents } from './hooks/useAgents';
 import { useChat } from './hooks/useChat';
@@ -34,6 +35,8 @@ interface ConfirmState {
   variant?: 'default' | 'danger';
   requireTypeText?: string;
   onConfirm: () => void | Promise<void>;
+  onCancel?: () => void;
+  hideCancel?: boolean;
 }
 
 export default function App() {
@@ -320,9 +323,15 @@ export default function App() {
   const handleTestConnection = async (id: string) => {
     try {
       openConfirm({
-        title: 'Baglanti Test Ediliyor',
-        message: 'Ajan icin LLM baglantisi test ediliyor. Lutfen bekleyin...',
+        title: 'Bağlantı Test Ediliyor',
+        message: (
+          <div className="flex items-center gap-3 py-1">
+            <Icon name="progress_activity" size={16} className="animate-spin-slow text-brand-accent flex-shrink-0" />
+            <span>Ajan için LLM bağlantısı test ediliyor. Lütfen bekleyin...</span>
+          </div>
+        ),
         confirmLabel: 'Kapat',
+        hideCancel: true,
         onConfirm: closeConfirm
       });
       const detail = await api.getAgent(id);
@@ -780,6 +789,7 @@ export default function App() {
             await confirmState.onConfirm();
           }}
           onCancel={closeConfirm}
+          hideCancel={confirmState.hideCancel}
         />
       )}
     </div>

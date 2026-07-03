@@ -10,12 +10,11 @@ export interface ConfirmDialogProps {
   variant?: 'default' | 'danger';
   onConfirm: () => void;
   onCancel: () => void;
-  /** ekstra detay paragrafi */
   details?: React.ReactNode;
-  /** confirm butonuna basmadan once yazilmasi zorunlu metin (reset gibi) */
   requireTypeText?: string;
   typedText?: string;
   onTypedTextChange?: (v: string) => void;
+  hideCancel?: boolean;
 }
 
 export function ConfirmDialog({
@@ -31,6 +30,7 @@ export function ConfirmDialog({
   requireTypeText,
   typedText = '',
   onTypedTextChange,
+  hideCancel = false,
 }: ConfirmDialogProps) {
   // ESC ile kapat
   useEffect(() => {
@@ -108,12 +108,14 @@ export function ConfirmDialog({
 
         {/* Aksiyonlar */}
         <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-brand-border bg-brand-panelAlt">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text hover:border-brand-borderStrong transition"
-          >
-            {cancelLabel}
-          </button>
+          {!hideCancel && (
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text hover:border-brand-borderStrong transition"
+            >
+              {cancelLabel}
+            </button>
+          )}
           <button
             onClick={onConfirm}
             disabled={confirmDisabled}
