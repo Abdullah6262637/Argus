@@ -191,6 +191,14 @@ from app.services.tools.data_science_tools import (
     PandasReadCSVTool,
     TimeSeriesForecastTool,
 )
+from app.services.tools.utility_tools import (
+    GetIPAddressTool,
+    Base64Tool,
+    HashGeneratorTool,
+    UUIDGeneratorTool,
+    TextStatsTool,
+    WeatherTool,
+)
 # FAZ 4: Blockchain & Crypto Tools (Devre disi)
 # from app.services.tools.blockchain_tools import (
 #     BitcoinBalanceTool,
@@ -891,6 +899,13 @@ class ToolRegistry:
             BackupEncryptionTool(),
             BackupCompressionTool(),
             BackupRetentionPolicyTool(),
+            # Utility Tools
+            GetIPAddressTool(),
+            Base64Tool(),
+            HashGeneratorTool(),
+            UUIDGeneratorTool(),
+            TextStatsTool(),
+            WeatherTool(),
         ]
         for t in defaults:
             self.register(t)

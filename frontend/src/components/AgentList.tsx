@@ -38,6 +38,25 @@ export function AgentList({
   const [ctx, setCtx] = useState<ContextState | null>(null);
   const [search, setSearch] = useState('');
 
+  const [isOpen, setIsOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('argus_agent_list_open');
+      return saved !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const togglePanel = () => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('argus_agent_list_open', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
   const filteredAgents = useMemo(() => {
     if (!search.trim()) return agents;
     const q = search.toLowerCase();
@@ -88,7 +107,8 @@ export function AgentList({
       onClick: () => onDelete(agentId)}];
 
   return (
-    <aside className="w-72 flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col animate-fade-in-left animate-stagger-1">
+    <aside className={`relative h-full flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'w-72' : 'w-0 !border-r-0'}`}>
+      <div className="w-72 h-full flex flex-col overflow-hidden">
       {/* ============ Üst Başlık ============ */}
       <header className="px-3 py-3 border-b border-brand-border space-y-2.5">
         <div className="flex items-center justify-between">
@@ -235,6 +255,20 @@ export function AgentList({
           onClose={() => setCtx(null)}
         />
       )}
+      </div>
+
+      {/* Floating Toggle Handle Button */}
+      <button
+        onClick={togglePanel}
+        title={isOpen ? 'Ajanları Gizle' : 'Ajanları Göster'}
+        className="absolute top-1/2 -translate-y-1/2 -right-3 z-40 w-6 h-12 rounded-r-md border border-l-0 border-brand-border bg-brand-panel text-brand-mutedSoft hover:text-brand-accent flex items-center justify-center transition-all shadow-md group hover:bg-brand-panelAlt"
+      >
+        <Icon 
+          name={isOpen ? 'chevron_left' : 'chevron_right'} 
+          size={14} 
+          className="transition-transform duration-300 group-hover:scale-110" 
+        />
+      </button>
     </aside>
   );
 }
