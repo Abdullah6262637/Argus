@@ -20,9 +20,14 @@ interface CommandPaletteProps {
   onSelectAgent: (id: string) => void;
   onCreateAgent: () => void;
   onNewConversation: () => void;
-  onOpenSettings: () => void;
+  onOpenSettings: (tab?: 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about') => void;
   onOpenWorkflows?: () => void;
   onReloadAgents: () => void;
+  onChangeTheme?: (theme: any) => void;
+  onChangeDensity?: (density: any) => void;
+  onChangeFontSize?: (fontSize: any) => void;
+  onEditAgent?: (id: string) => void;
+  onExportChat?: () => void;
 }
 
 export function CommandPalette({
@@ -34,7 +39,12 @@ export function CommandPalette({
   onNewConversation,
   onOpenSettings,
   onOpenWorkflows,
-  onReloadAgents}: CommandPaletteProps) {
+  onReloadAgents,
+  onChangeTheme,
+  onChangeDensity,
+  onChangeFontSize,
+  onEditAgent,
+  onExportChat}: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -64,52 +74,215 @@ export function CommandPalette({
   // Tum komutlar
   const allCommands: CommandAction[] = useMemo(() => {
     const list: CommandAction[] = [
+      // --- Aksiyonlar ---
       {
         id: 'new-agent',
-        label: 'Yeni ajan oluştur',
+        label: 'Aksiyon: Yeni uzman ajan oluştur',
         shortcut: 'Ctrl+Shift+N',
         icon: 'add_circle',
         group: 'Aksiyon',
-        run: onCreateAgent},
+        run: onCreateAgent
+      },
       {
         id: 'new-chat',
-        label: 'Yeni sohbet başlat',
+        label: 'Aksiyon: Yeni sohbet başlat (Sohbeti Temizle)',
         shortcut: 'Ctrl+N',
         icon: 'forum',
         group: 'Aksiyon',
-        run: onNewConversation},
+        run: onNewConversation
+      },
       {
-        id: 'reload',
-        label: 'Ajanları yeniden yükle',
+        id: 'reload-agents',
+        label: 'Aksiyon: Ajanları config dosyasından yeniden yükle',
         icon: 'refresh',
         group: 'Aksiyon',
-        run: onReloadAgents},
+        run: onReloadAgents
+      },
       {
-        id: 'settings',
-        label: 'Ayarları aç',
+        id: 'export-chat',
+        label: 'Aksiyon: Sohbet geçmişini dışa aktar (JSON)',
+        icon: 'download',
+        group: 'Aksiyon',
+        run: () => onExportChat?.()
+      },
+      {
+        id: 'docs-api',
+        label: 'Aksiyon: FastAPI API Dokümantasyonunu Aç (Docs)',
+        icon: 'api',
+        group: 'Aksiyon',
+        run: () => window.open('http://127.0.0.1:8000/docs', '_blank')
+      },
+      {
+        id: 'github-repo',
+        label: 'Aksiyon: Argus GitHub Kod Deposunu Ziyaret Et',
+        icon: 'code',
+        group: 'Aksiyon',
+        run: () => window.open('https://github.com/Abdullah6262637/Argus', '_blank')
+      },
+      {
+        id: 'help-guide',
+        label: 'Aksiyon: Kullanım kılavuzunu görüntüle (Hakkında)',
+        icon: 'help',
+        group: 'Aksiyon',
+        run: () => onOpenSettings('about')
+      },
+
+      // --- Sayfalar & Modallar ---
+      {
+        id: 'settings-theme',
+        label: 'Navigasyon: Görünüm & Tema ayarlarını aç',
         shortcut: 'Ctrl+,',
-        icon: 'settings',
+        icon: 'palette',
         group: 'Sayfa',
-        run: onOpenSettings}];
+        run: () => onOpenSettings('theme')
+      },
+      {
+        id: 'settings-apikeys',
+        label: 'Navigasyon: API Anahtarları ayarlarını aç',
+        icon: 'vpn_key',
+        group: 'Sayfa',
+        run: () => onOpenSettings('apikeys')
+      },
+      {
+        id: 'settings-plugins',
+        label: 'Navigasyon: Eklentiler & MCP sunucu yönetimini aç',
+        icon: 'extension',
+        group: 'Sayfa',
+        run: () => onOpenSettings('plugins_mcp')
+      },
+      {
+        id: 'settings-reset',
+        label: 'Navigasyon: Sistem sıfırlama panelini aç',
+        icon: 'restart_alt',
+        group: 'Sayfa',
+        run: () => onOpenSettings('reset')
+      },
+      {
+        id: 'settings-about',
+        label: 'Navigasyon: Sürüm & Hakkında sayfasını aç',
+        icon: 'info',
+        group: 'Sayfa',
+        run: () => onOpenSettings('about')
+      },
+      
+      // --- Temalar ---
+      {
+        id: 'theme-midnight',
+        label: 'Tema: Koyu Midnight temasını seç',
+        icon: 'dark_mode',
+        group: 'Sayfa',
+        run: () => onChangeTheme?.('midnight')
+      },
+      {
+        id: 'theme-sunset',
+        label: 'Tema: Sunset (Turuncu) temasını seç',
+        icon: 'light_mode',
+        group: 'Sayfa',
+        run: () => onChangeTheme?.('sunset')
+      },
+      {
+        id: 'theme-forest',
+        label: 'Tema: Forest (Yeşil) temasını seç',
+        icon: 'forest',
+        group: 'Sayfa',
+        run: () => onChangeTheme?.('forest')
+      },
+      {
+        id: 'theme-mono',
+        label: 'Tema: Klasik Mono (Renksiz) temayı seç',
+        icon: 'contrast',
+        group: 'Sayfa',
+        run: () => onChangeTheme?.('mono')
+      },
+
+      // --- Görünüm & Düzen ---
+      {
+        id: 'density-normal',
+        label: 'Görünüm: Normal arayüz yerleşimi (Cozy)',
+        icon: 'view_cozy',
+        group: 'Sayfa',
+        run: () => onChangeDensity?.('cozy')
+      },
+      {
+        id: 'density-compact',
+        label: 'Görünüm: Sıkışık/Yoğun arayüz yerleşimi (Compact)',
+        icon: 'view_comfy',
+        group: 'Sayfa',
+        run: () => onChangeDensity?.('compact')
+      },
+      {
+        id: 'density-comfortable',
+        label: 'Görünüm: Geniş arayüz yerleşimi (Comfortable)',
+        icon: 'table_rows',
+        group: 'Sayfa',
+        run: () => onChangeDensity?.('comfortable')
+      },
+      {
+        id: 'font-sm',
+        label: 'Görünüm: Küçük yazı boyutu (Small)',
+        icon: 'text_fields',
+        group: 'Sayfa',
+        run: () => onChangeFontSize?.('sm')
+      },
+      {
+        id: 'font-md',
+        label: 'Görünüm: Normal yazı boyutu (Medium)',
+        icon: 'format_size',
+        group: 'Sayfa',
+        run: () => onChangeFontSize?.('md')
+      },
+      {
+        id: 'font-lg',
+        label: 'Görünüm: Büyük yazı boyutu (Large)',
+        icon: 'text_increase',
+        group: 'Sayfa',
+        run: () => onChangeFontSize?.('lg')
+      }
+    ];
+
     if (onOpenWorkflows) {
       list.push({
         id: 'workflows',
-        label: "Workflow'ları aç",
+        label: "Navigasyon: Workflow YAML Akış Panelini Aç",
         icon: 'bolt',
         group: 'Sayfa',
-        run: onOpenWorkflows});
+        run: onOpenWorkflows
+      });
     }
-    // Ajanlar
+
+    // Ajanlar - Sohbet et
     for (const a of agents) {
       list.push({
-        id: `agent:${a.id}`,
-        label: `${a.name}${a.role ? ' · ' + a.role : ''}`,
+        id: `agent-select:${a.id}`,
+        label: `Ajan: ${a.name} ile sohbet et (${a.role || 'Uzman'})`,
         icon: 'smart_toy',
         group: 'Ajan',
-        run: () => onSelectAgent(a.id)});
+        run: () => onSelectAgent(a.id)
+      });
+      list.push({
+        id: `agent-edit:${a.id}`,
+        label: `Ajan: ${a.name} yetenek ve ayarlarını düzenle`,
+        icon: 'edit',
+        group: 'Ajan',
+        run: () => onEditAgent?.(a.id)
+      });
     }
+
     return list;
-  }, [agents, onCreateAgent, onNewConversation, onReloadAgents, onOpenSettings, onOpenWorkflows, onSelectAgent]);
+  }, [
+    agents,
+    onCreateAgent,
+    onNewConversation,
+    onReloadAgents,
+    onOpenSettings,
+    onOpenWorkflows,
+    onSelectAgent,
+    onChangeTheme,
+    onChangeDensity,
+    onChangeFontSize,
+    onEditAgent,
+    onExportChat
+  ]);
 
   // Fuzzy filter (basit substring match, küçük harf duyarsız + Türkçe karakter normalize)
   const filtered = useMemo(() => {

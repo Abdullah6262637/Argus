@@ -45,12 +45,12 @@ export default function App() {
   const [formSubmitting, setFormSubmitting] = useState(false);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsInitialTab, setSettingsInitialTab] = useState<'theme' | 'apikeys' | 'reset' | 'about'>('theme');
+  const [settingsInitialTab, setSettingsInitialTab] = useState<'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about'>('theme');
   const [workflowsOpen, setWorkflowsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   // Sprint E.6: density + font size
-  useAppearance();
+  const { setDensity, setFontSize } = useAppearance();
 
   // Sprint E.7: Klavye kisayollari
   useEffect(() => {
@@ -376,12 +376,23 @@ export default function App() {
         onSelectAgent={setSelectedId}
         onCreateAgent={openCreateForm}
         onNewConversation={() => chat.newConversation()}
-        onOpenSettings={() => {
-          setSettingsInitialTab('theme');
+        onOpenSettings={(tab = 'theme') => {
+          setSettingsInitialTab(tab);
           setSettingsOpen(true);
         }}
         onOpenWorkflows={() => setWorkflowsOpen(true)}
         onReloadAgents={reload}
+        onChangeTheme={setTheme}
+        onChangeDensity={setDensity}
+        onChangeFontSize={setFontSize}
+        onEditAgent={(id) => {
+          openEditForm(id);
+        }}
+        onExportChat={() => {
+          if (selectedAgent) {
+            handleExport('json');
+          }
+        }}
       />
 
       {formOpen && (
