@@ -102,6 +102,13 @@ class OpenAIProvider(BaseLLMProvider):
             if self.base_url and ("127.0.0.1" in self.base_url or "localhost" in self.base_url):
                 is_local = True
 
+            if "402" in exc_str or "credits" in exc_str or "payment required" in exc_str:
+                raise LLMError(
+                    "Sağlayıcı kredi/limit yetersizliği (Hata 402). "
+                    "Mevcut sohbet geçmişinin toplam boyutu ücretsiz hesabınızın tek seferlik limitini aştı. "
+                    "Lütfen yeni bir temiz sohbet başlatın ya da sağlayıcı (OpenRouter vb.) hesabınıza kredi yükleyin."
+                ) from exc
+
             if is_local:
                 if ("connection error" in exc_str or "connecterror" in exc_str or "api connection" in exc_str or "clienterror" in exc_str):
                     raise LLMError(
