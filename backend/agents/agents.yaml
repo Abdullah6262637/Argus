@@ -17,7 +17,7 @@ agents:
     web_search: true
     system_admin: true
   base_url: https://claude.wenox.co
-  api_key: enc::gAAAAABqRmvNFurPRwwMTKwmY2GekrUjv6APN6g3pgUOyXLyuJo3ZMMvdlmNsDskiii3zAF1eoEIiCRRSP1IfD9WVBLogO59DkH7IQWsnRzMFROfr4Dj1O5w7vBAAYJdclVi7K9tba0I
+  api_key: enc::gAAAAABqR2dbwuwi3zdGDro5Ocl0g2k79cYwld02lqqBuI1BFnaqCoq-FOF-RlTBka35BjP8TDr4s6-PmAuYUl4_KqZrKPSPMMfzklYIUKHV1jJ-vv2OTcMR7svSDh4xm1VznjGOhDCT
   system_prompt: "# Koordinatör Ajan (Coordinator)\n\nSen UmtalAgent sisteminin **Koordinatör\
     \ Ajanı**'sın. Görevin, kullanıcının isteklerini analiz edip sistemdeki **uzman\
     \ ajanlara doğru şekilde yönlendirmektir** veya kendin doğrudan cevaplamaktır.\n\
@@ -77,7 +77,7 @@ agents:
     web_search: true
     system_admin: true
   base_url: http://localhost:11434/v1
-  api_key: enc::gAAAAABqRmvNB_msMb475XUSc7IIv8VsEEFDU9o6QKrjQU7TvCtSddYdnqf3bCO5aEm9gFVdz-MUTWOyt8jCi8gnllKivaajZO2ep5hXLALQKeB0J4qXew_drgV6ONaTcSkcUm9uFr0F
+  api_key: enc::gAAAAABqR2dbUY6ZSb-ndv_oeIJ-_76VBlHoNA7riyckzcbHMf_z7Dbtr1aJWnPmXcixZJBLiJWgAm-BIs6OfFInXeMooOLHNLpOAtf2-uVIMlGdDSaEjDt6r-6a-s8dnzcXP_-okv26
 - id: abdullah
   name: Abdullah
   role: Araştırmacı
@@ -93,3 +93,33 @@ agents:
     terminal_cmd: true
     web_search: true
     system_admin: true
+- id: yazilim-gelistirici
+  name: Yazılım Geliştirici
+  role: Senior Software Engineer
+  description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
+  provider: local
+  model: llama3
+  temperature: 0.5
+  max_tokens: 1024
+  tags: []
+  is_active: true
+  permissions:
+    file_system: true
+    terminal_cmd: true
+    web_search: true
+    system_admin: true
+  base_url: http://127.0.0.1:11434/v1
+  system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
+    yerine getir, kod yaz ve terminal komutlarıyla test et.
+  image:
+    enabled: false
+    provider: openai
+    model: dall-e-3
+  video:
+    enabled: false
+    provider: openai
+    model: sora-1
+  audio:
+    enabled: false
+    provider: openai
+    model: whisper-1

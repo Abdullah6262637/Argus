@@ -34,6 +34,25 @@ export function SettingsModal({
   const [pendingTheme, setPendingTheme] = useState<ThemeId>(theme);
   const isDirty = pendingTheme !== initialTheme;
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number>(560);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Measure unconstrained tab content height, add headers, footer, padding (approx 140px)
+        const computedHeight = entry.contentRect.height + 140;
+        const bounded = Math.max(500, Math.min(computedHeight, window.innerHeight * 0.88));
+        setContentHeight(bounded);
+      }
+    });
+
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, [tab]);
+
   useEffect(() => {
     onChangeTheme(pendingTheme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,7 +75,10 @@ export function SettingsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-backdrop-in">
-      <div className="w-full max-w-3xl max-h-[92vh] flex rounded-xl border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden animate-modal-in">
+      <div 
+        style={{ height: `${contentHeight}px` }}
+        className="w-full max-w-3xl max-h-[92vh] flex rounded-xl border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden animate-modal-in transition-[height] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]"
+      >
         {/* ---------- Sol Sidebar ---------- */}
         <aside className="w-56 flex-shrink-0 border-r border-brand-border bg-brand-bg/40 flex flex-col">
           {/* Sidebar Header */}
@@ -125,7 +147,7 @@ export function SettingsModal({
 
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto p-5">
-            <div key={tab} className="animate-step-in min-h-[420px]">
+            <div key={tab} ref={contentRef} className="animate-step-in">
               {tab === 'theme' && (
                 <ThemeTab
                   theme={pendingTheme}
