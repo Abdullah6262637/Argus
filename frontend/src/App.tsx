@@ -45,7 +45,7 @@ export default function App() {
   const [formSubmitting, setFormSubmitting] = useState(false);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsInitialTab, setSettingsInitialTab] = useState<'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about'>('theme');
+  const [settingsInitialTab, setSettingsInitialTab] = useState<'agents' | 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about'>('agents');
   const [workflowsOpen, setWorkflowsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
 
@@ -720,6 +720,10 @@ export default function App() {
           onClose={() => setSettingsOpen(false)}
           onRequestReset={handleRequestReset}
           initialTab={settingsInitialTab}
+          onEditAgent={openEditForm}
+          onDeleteAgent={handleDelete}
+          onDuplicateAgent={handleDuplicate}
+          onReloadAgents={reload}
         />
       )}
 

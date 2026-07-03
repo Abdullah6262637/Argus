@@ -92,7 +92,7 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   // Ajanlar
-  listAgents: (): Promise<AgentInfo[]> => http('/agents'),
+  listAgents: (includeInactive = false): Promise<AgentInfo[]> => http('/agents' + (includeInactive ? '?include_inactive=true' : '')),
   getAgent: (id: string): Promise<AgentDetail> => http(`/agents/${id}`),
   reloadAgents: (): Promise<AgentInfo[]> =>
     http('/agents/reload', { method: 'POST' }),

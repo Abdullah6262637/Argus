@@ -20,7 +20,7 @@ interface CommandPaletteProps {
   onSelectAgent: (id: string) => void;
   onCreateAgent: () => void;
   onNewConversation: () => void;
-  onOpenSettings: (tab?: 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about') => void;
+  onOpenSettings: (tab?: 'agents' | 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about') => void;
   onOpenWorkflows?: () => void;
   onReloadAgents: () => void;
   onChangeTheme?: (theme: any) => void;
@@ -173,6 +173,14 @@ export function CommandPalette({
       },
 
       // --- Sayfalar & Modallar ---
+      {
+        id: 'settings-agents',
+        label: 'Navigasyon: Ajan Havuzu ve Yönetim panelini aç (Pasif Ajanları Aktifleştir)',
+        shortcut: 'Ctrl+Alt+M',
+        icon: 'smart_toy',
+        group: 'Sayfa',
+        run: () => onOpenSettings('agents')
+      },
       {
         id: 'settings-theme',
         label: 'Navigasyon: Görünüm & Tema ayarlarını aç',

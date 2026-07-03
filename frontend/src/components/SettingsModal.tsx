@@ -3,7 +3,8 @@ import { THEMES, type ThemeId } from '@/hooks/useTheme';
 import { useAppearance, type Density, type FontSize } from '@/hooks/useAppearance';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
-import type { ConnectionTestResponse, ProviderName } from '@/types';
+import { getModelLogo } from '../utils/modelHelper';
+import type { ConnectionTestResponse, ProviderName, AgentInfo } from '@/types';
 
 interface SettingsModalProps {
   theme: ThemeId;
@@ -11,11 +12,16 @@ interface SettingsModalProps {
   onClose: () => void;
   onRequestReset: () => void;
   initialTab?: TabId;
+  onEditAgent?: (id: string) => void;
+  onDeleteAgent?: (id: string) => void;
+  onDuplicateAgent?: (id: string) => void;
+  onReloadAgents?: () => void;
 }
 
-export type TabId = 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about';
+export type TabId = 'agents' | 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about';
 
 const TAB_CONFIG: Record<TabId, { icon: string; label: string }> = {
+  agents: { icon: 'smart_toy', label: 'Ajan Havuzu' },
   theme: { icon: 'palette', label: 'Görünüm' },
   apikeys: { icon: 'vpn_key', label: 'API Anahtarları' },
   plugins_mcp: { icon: 'extension', label: 'Eklentiler & MCP' },
@@ -27,8 +33,12 @@ export function SettingsModal({
   onChangeTheme,
   onClose,
   onRequestReset,
-  initialTab}: SettingsModalProps) {
-  const [tab, setTab] = useState<TabId>(initialTab ?? 'theme');
+  initialTab,
+  onEditAgent,
+  onDeleteAgent,
+  onDuplicateAgent,
+  onReloadAgents}: SettingsModalProps) {
+  const [tab, setTab] = useState<TabId>(initialTab ?? 'agents');
 
   const [initialTheme] = useState<ThemeId>(theme);
   const [pendingTheme, setPendingTheme] = useState<ThemeId>(theme);
@@ -148,6 +158,17 @@ export function SettingsModal({
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto p-5">
             <div key={tab} ref={contentRef} className="animate-step-in">
+              {tab === 'agents' && (
+                <AgentsManagerTab
+                  onEditAgent={(id) => {
+                    onEditAgent?.(id);
+                    onClose();
+                  }}
+                  onDeleteAgent={onDeleteAgent}
+                  onDuplicateAgent={onDuplicateAgent}
+                  onReloadAgents={onReloadAgents}
+                />
+              )}
               {tab === 'theme' && (
                 <ThemeTab
                   theme={pendingTheme}
@@ -1462,6 +1483,161 @@ function PluginsMcpTab() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Ajan Yönetimi Sekmesi
+// ============================================================
+
+function AgentsManagerTab({
+  onEditAgent,
+  onDeleteAgent,
+  onDuplicateAgent,
+  onReloadAgents
+}: {
+  onEditAgent?: (id: string) => void;
+  onDeleteAgent?: (id: string) => void;
+  onDuplicateAgent?: (id: string) => void;
+  onReloadAgents?: () => void;
+}) {
+  const [allAgents, setAllAgents] = useState<AgentInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadAgents = async () => {
+    setLoading(true);
+    try {
+      const list = await api.listAgents(true); // includeInactive = true
+      setAllAgents(list);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAgents();
+  }, []);
+
+  const handleToggleActive = async (id: string, currentStatus: boolean) => {
+    try {
+      await api.updateAgent(id, { is_active: !currentStatus });
+      await loadAgents();
+      onReloadAgents?.(); // reload App.tsx active agents list
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-sm font-semibold text-brand-text">Ajan Havuzu (Tüm Ajanlar)</h3>
+        <p className="text-[11px] text-brand-mutedSoft mt-0.5">
+          Sistemdeki aktif ve pasif tüm uzman ajanları buradan yönetebilir, pasif ajanları tekrar aktifleştirebilirsiniz.
+        </p>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8 text-xs text-brand-mutedSoft font-mono">
+          Yükleniyor...
+        </div>
+      ) : allAgents.length === 0 ? (
+        <div className="text-center py-8 text-xs text-brand-mutedSoft font-mono">
+          Sistemde tanımlı ajan bulunamadı.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-2 max-h-[50vh] overflow-y-auto pr-1">
+          {allAgents.map((agent) => (
+            <div
+              key={agent.id}
+              className={`flex items-center justify-between p-3 rounded-lg border transition ${
+                agent.is_active
+                  ? 'bg-brand-panelAlt/40 border-brand-border hover:border-brand-borderStrong'
+                  : 'bg-brand-bg/25 border-brand-border/40 opacity-70'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <img
+                  src={getModelLogo(agent.model, agent.provider)}
+                  alt=""
+                  className="w-8 h-8 object-contain rounded-md bg-brand-bg/50 p-1 flex-shrink-0"
+                />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-semibold text-xs truncate text-brand-text">{agent.name}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wide font-mono uppercase ${
+                      agent.is_active 
+                        ? 'bg-brand-accent/10 text-brand-accent' 
+                        : 'bg-brand-muted/15 text-brand-mutedSoft'
+                    }`}>
+                      {agent.is_active ? 'Aktif' : 'Pasif'}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-brand-mutedSoft font-mono truncate mt-0.5">
+                    {agent.provider} / {agent.model}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* Switch (Durum değiştirme) */}
+                <button
+                  type="button"
+                  onClick={() => handleToggleActive(agent.id, agent.is_active)}
+                  className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${
+                    agent.is_active ? 'bg-brand-accent' : 'bg-brand-muted/20'
+                  }`}
+                >
+                  <div
+                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
+                      agent.is_active ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+
+                {/* Düzenle */}
+                <button
+                  type="button"
+                  onClick={() => onEditAgent?.(agent.id)}
+                  title="Düzenle"
+                  className="p-1 rounded hover:bg-brand-panelAlt text-brand-muted hover:text-brand-text transition"
+                >
+                  <Icon name="edit" size={14} />
+                </button>
+
+                {/* Kopyala */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onDuplicateAgent?.(agent.id);
+                    setTimeout(() => loadAgents(), 1200); // refresh list
+                  }}
+                  title="Kopyala"
+                  className="p-1 rounded hover:bg-brand-panelAlt text-brand-muted hover:text-brand-text transition"
+                >
+                  <Icon name="content_copy" size={14} />
+                </button>
+
+                {/* Sil */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onDeleteAgent?.(agent.id);
+                    setTimeout(() => loadAgents(), 1200); // refresh list
+                  }}
+                  title="Sil"
+                  className="p-1 rounded hover:bg-brand-danger/10 text-brand-muted hover:text-brand-danger transition"
+                >
+                  <Icon name="delete" size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

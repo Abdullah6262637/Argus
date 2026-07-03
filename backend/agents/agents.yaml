@@ -8,7 +8,7 @@ agents:
   temperature: 0.5
   max_tokens: 1024
   tags: []
-  is_active: true
+  is_active: false
   permissions:
     file_system: true
     terminal_cmd: true
@@ -38,14 +38,14 @@ agents:
   temperature: 0.5
   max_tokens: 1024
   tags: []
-  is_active: true
+  is_active: false
   permissions:
     file_system: true
     terminal_cmd: true
     web_search: true
     system_admin: true
   base_url: https://openrouter.ai/api/v1
-  api_key: enc::gAAAAABqR4ooa-rw0Mo2LfHTjdwYM7WPBJMzZ1MnFRMAHnnnuDK9EUBgjlTjBA4FUJIt3NCB7J3NP6wutXeMyMKbbbYu490QlSPmmUbqGW_zdt-pNe0uLSaOCv1ExLqfb6w84Dw7Ta_EDOOhETW1ZesZvGCefqXEHCde15tiHH1pPpFrKUcTeUs=
+  api_key: enc::gAAAAABqR6M4E44Rk7rlkQO3iW_2mtWe4-t5tqgkw9WryZXOOd70oZAkhZH9g3u3q3kgy34icY3IPbWvBJh-fiiwm2g7np9Bsmfdwi_N-PuQLTVFupptdD_JQFvREjGTL0ziMjP6kKq3NXriHuD2F9Trw6q74QIbTs7NneCSQ8KAnYkn8hI3JMc=
   system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
     yerine getir, kod yaz ve terminal komutlarıyla test et.
   image:
