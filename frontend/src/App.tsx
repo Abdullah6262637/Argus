@@ -584,10 +584,6 @@ export default function App() {
           onSubmit={handleSubmit}
           onCancel={closeForm}
           submitting={formSubmitting}
-          onOpenEnvSettings={() => {
-            closeForm();
-            openSettings('apikeys');
-          }}
         />
       )}
 
