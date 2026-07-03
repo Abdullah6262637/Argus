@@ -837,7 +837,15 @@ function StepLLM({
         : 'Yerel servis URL\'i (Ollama: http://localhost:11434/v1, LM Studio: http://localhost:1234/v1)';
 
   // .env'de hangi key var?
-  const envKey = provider === 'openai' ? 'OPENAI_API_KEY' : provider === 'anthropic' ? 'ANTHROPIC_API_KEY' : null;
+  const envKey = 
+    provider === 'openai' ? 'OPENAI_API_KEY' : 
+    provider === 'anthropic' ? 'ANTHROPIC_API_KEY' : 
+    provider === 'gemini' ? 'GEMINI_API_KEY' : 
+    provider === 'openrouter' ? 'OPENROUTER_API_KEY' : 
+    provider === 'groq' ? 'GROQ_API_KEY' : 
+    provider === 'deepseek' ? 'DEEPSEEK_API_KEY' : 
+    provider === 'mistral' ? 'MISTRAL_API_KEY' : 
+    provider === 'xai' ? 'XAI_API_KEY' : null;
   const envHasKey = envKey ? !!envStatus?.has?.[envKey] : false;
   const envMaskedKey = envKey ? envStatus?.masked?.[envKey] : null;
   const isLocal = provider === 'local';
@@ -870,6 +878,12 @@ function StepLLM({
             options={[
               { value: 'openai', label: 'OpenAI (ve uyumlu)' },
               { value: 'anthropic', label: 'Anthropic (Claude)' },
+              { value: 'gemini', label: 'Google Gemini' },
+              { value: 'openrouter', label: 'OpenRouter' },
+              { value: 'groq', label: 'Groq Cloud' },
+              { value: 'deepseek', label: 'DeepSeek' },
+              { value: 'mistral', label: 'Mistral AI' },
+              { value: 'xai', label: 'xAI (Grok)' },
               { value: 'local', label: 'Yerel (Ollama, LM Studio vb.)' }
             ]}
           />

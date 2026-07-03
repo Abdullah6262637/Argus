@@ -4,7 +4,7 @@ agents:
   role: Senior Software Engineer
   description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
   provider: local
-  model: llama3
+  model: qwen2.5:0.5b
   temperature: 0.5
   max_tokens: 1024
   tags: []
