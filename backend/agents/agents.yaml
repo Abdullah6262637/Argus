@@ -34,7 +34,7 @@ agents:
   role: Senior Software Engineer
   description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
   provider: openrouter
-  model: openai/gpt-oss-120b
+  model: openai/gpt-oss-20b
   temperature: 0.5
   max_tokens: 1024
   tags: []
@@ -45,7 +45,7 @@ agents:
     web_search: true
     system_admin: true
   base_url: https://openrouter.ai/api/v1
-  api_key: enc::gAAAAABqR37ZM__PwIkAYKIgRGK1Xk7G0rUXOo0zUtIICAdGh1k1xcdkyO-b1fwxzHONlUIyMKZzsXRLHtUMCAiIfxVLe6zz4a0lKW1oJAW5LtJUO-9OM4S7TKb2JLoyj1QhjLAm5hWAoHeu71U83FH5U1AJ1LmvuwApPIFhtvJc6okQTvV6SKQ=
+  api_key: enc::gAAAAABqR4ooa-rw0Mo2LfHTjdwYM7WPBJMzZ1MnFRMAHnnnuDK9EUBgjlTjBA4FUJIt3NCB7J3NP6wutXeMyMKbbbYu490QlSPmmUbqGW_zdt-pNe0uLSaOCv1ExLqfb6w84Dw7Ta_EDOOhETW1ZesZvGCefqXEHCde15tiHH1pPpFrKUcTeUs=
   system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
     yerine getir, kod yaz ve terminal komutlarıyla test et.
   image:
