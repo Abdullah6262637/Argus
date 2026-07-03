@@ -866,10 +866,10 @@ function StepLLM({
           options={PROXY_PRESETS.map((p) => {
             const providerImg = 
               p.id === 'openai-official' ? 'openai' :
-              p.id === 'frostai' ? 'openai' :
+              p.id === 'frostai' ? 'frostai' :
               p.id === 'openrouter' ? 'openrouter' :
               p.id === 'groq' ? 'groq' :
-              p.id === 'together' ? 'openai' :
+              p.id === 'together' ? 'together' :
               p.id === 'lmstudio' ? 'local' :
               p.id === 'ollama' ? 'local' :
               p.id === 'anthropic-official' ? 'anthropic' : 'openai';
