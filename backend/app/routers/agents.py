@@ -268,12 +268,27 @@ async def get_models_catalog() -> ModelsCatalogOut:
 
 @router.post("/test", response_model=ConnectionTestResponse)
 async def test_agent_connection(payload: ConnectionTestRequest) -> ConnectionTestResponse:
-    """Verilen provider/model/api_key/base_url kombinasyonunu minik bir ping ile dogrular."""
+    """Verilen provider/model/api_key/base_url kombinasyonunu veya mevcut ajanin baglantisini test eder."""
+    provider = payload.provider
+    model = payload.model
+    api_key = payload.api_key
+    base_url = payload.base_url
+
+    if payload.agent_id:
+        agent = agent_manager.get(payload.agent_id)
+        if agent:
+            if not api_key or "xx" in api_key.lower() or api_key == "":
+                api_key = agent.api_key
+            if not base_url:
+                base_url = agent.base_url
+            provider = agent.provider
+            model = agent.model
+
     result = await test_connection(
-        provider=payload.provider,
-        model=payload.model,
-        api_key=payload.api_key,
-        base_url=payload.base_url,
+        provider=provider,
+        model=model,
+        api_key=api_key,
+        base_url=base_url,
     )
     return ConnectionTestResponse(
         ok=result.ok,

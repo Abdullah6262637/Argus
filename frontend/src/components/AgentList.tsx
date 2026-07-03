@@ -18,6 +18,11 @@ interface AgentListProps {
   error: string | null;
   isOpen: boolean;
   onToggle: () => void;
+  onToggleActive?: (id: string) => void;
+  onInspect?: (id: string) => void;
+  onTestConnection?: (id: string) => void;
+  onClearConversations?: (id: string) => void;
+  onExportChatMD?: (id: string) => void;
 }
 
 interface ContextState {
@@ -39,7 +44,12 @@ export function AgentList({
   loading,
   error,
   isOpen,
-  onToggle}: AgentListProps) {
+  onToggle,
+  onToggleActive,
+  onInspect,
+  onTestConnection,
+  onClearConversations,
+  onExportChatMD}: AgentListProps) {
   const [ctx, setCtx] = useState<ContextState | null>(null);
   const [search, setSearch] = useState('');
 
@@ -62,35 +72,75 @@ export function AgentList({
     setCtx({ x: e.clientX, y: e.clientY, agentId: id });
   };
 
-  const menuItemsFor = (agentId: string): ContextMenuEntry[] => [
-    {
-      id: 'edit',
-      label: 'Düzenle',
-      icon: <Icon name="edit" size={16} />,
-      onClick: () => onEdit(agentId)},
-    {
-      id: 'new-conv',
-      label: 'Yeni Sohbet',
-      icon: <Icon name="add_comment" size={16} />,
-      onClick: () => onNewConversation(agentId)},
-    { id: 's1', separator: true },
-    {
-      id: 'duplicate',
-      label: 'Kopyala',
-      icon: <Icon name="content_copy" size={16} />,
-      onClick: () => onDuplicate(agentId)},
-    {
-      id: 'export',
-      label: 'JSON Dışa Aktar',
-      icon: <Icon name="download" size={16} />,
-      onClick: () => onExport(agentId)},
-    { id: 's2', separator: true },
-    {
-      id: 'delete',
-      label: 'Sil',
-      icon: <Icon name="delete" size={16} />,
-      danger: true,
-      onClick: () => onDelete(agentId)}];
+  const menuItemsFor = (agentId: string): ContextMenuEntry[] => {
+    const agent = agents.find((a) => a.id === agentId);
+    return [
+      {
+        id: 'edit',
+        label: 'Ajanı Düzenle',
+        icon: <Icon name="edit" size={16} />,
+        onClick: () => onEdit(agentId)
+      },
+      {
+        id: 'new-conv',
+        label: 'Yeni Sohbet Başlat',
+        icon: <Icon name="add_comment" size={16} />,
+        onClick: () => onNewConversation(agentId)
+      },
+      {
+        id: 'toggle-active',
+        label: agent?.is_active ? 'Ajanı Pasifleştir' : 'Ajanı Aktifleştir',
+        icon: <Icon name={agent?.is_active ? 'toggle_on' : 'toggle_off'} size={16} className={agent?.is_active ? 'text-brand-accent' : 'text-brand-muted'} />,
+        onClick: () => onToggleActive?.(agentId)
+      },
+      { id: 's1', separator: true },
+      {
+        id: 'inspect',
+        label: 'Özellikleri Denetle (Inspector)',
+        icon: <Icon name="visibility" size={16} />,
+        onClick: () => onInspect?.(agentId)
+      },
+      {
+        id: 'test-conn',
+        label: 'Bağlantıyı Test Et',
+        icon: <Icon name="network_check" size={16} />,
+        onClick: () => onTestConnection?.(agentId)
+      },
+      { id: 's2', separator: true },
+      {
+        id: 'export-md',
+        label: 'Sohbeti Markdown (.md) Olarak İndir',
+        icon: <Icon name="article" size={16} />,
+        onClick: () => onExportChatMD?.(agentId)
+      },
+      {
+        id: 'clear-conv',
+        label: 'Sohbet Geçmişini Temizle',
+        icon: <Icon name="delete_sweep" size={16} />,
+        onClick: () => onClearConversations?.(agentId)
+      },
+      {
+        id: 'duplicate',
+        label: 'Ajanı Kopyala (Çoğalt)',
+        icon: <Icon name="content_copy" size={16} />,
+        onClick: () => onDuplicate(agentId)
+      },
+      {
+        id: 'export',
+        label: 'JSON Olarak Dışa Aktar',
+        icon: <Icon name="download" size={16} />,
+        onClick: () => onExport(agentId)
+      },
+      { id: 's3', separator: true },
+      {
+        id: 'delete',
+        label: 'Ajanı Sistemden Sil',
+        icon: <Icon name="delete" size={16} />,
+        danger: true,
+        onClick: () => onDelete(agentId)
+      }
+    ];
+  };
 
   return (
     <aside className={`relative h-full flex-shrink-0 border-r bg-brand-panel flex flex-col transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'w-72 border-brand-border opacity-100' : 'w-0 border-transparent opacity-0'}`}>

@@ -122,6 +122,7 @@ export interface ConnectionTestRequest {
   model: string;
   api_key?: string | null;
   base_url?: string | null;
+  agent_id?: string | null;
 }
 
 export interface ConnectionTestResponse {

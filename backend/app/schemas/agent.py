@@ -140,6 +140,7 @@ class ConnectionTestRequest(BaseModel):
     model: str = Field(..., min_length=1, max_length=160)
     api_key: Optional[str] = None
     base_url: Optional[str] = None
+    agent_id: Optional[str] = None
 
 
 class ConnectionTestResponse(BaseModel):

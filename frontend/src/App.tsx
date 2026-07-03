@@ -285,13 +285,15 @@ export default function App() {
     });
   };
 
-  const handleExportChatMD = () => {
-    if (!selectedAgent || chat.messages.length === 0) return;
-    let md = `# Sohbet Gecmisi — ${selectedAgent.name} (${selectedAgent.role || 'Uzman'})\n`;
+  const handleExportChatMD = (id?: string) => {
+    const targetId = id || selectedId;
+    const targetAgent = agents.find((a) => a.id === targetId) || selectedAgent;
+    if (!targetAgent || chat.messages.length === 0) return;
+    let md = `# Sohbet Gecmisi — ${targetAgent.name} (${targetAgent.role || 'Uzman'})\n`;
     md += `Tarih: ${new Date().toLocaleDateString('tr-TR')}\n\n`;
     
     chat.messages.forEach((msg) => {
-      const roleName = msg.role === 'user' ? 'Kullanici' : selectedAgent.name;
+      const roleName = msg.role === 'user' ? 'Kullanici' : targetAgent.name;
       md += `### 👤 ${roleName}\n\n${msg.content}\n\n`;
       if (msg.tokens || msg.model) {
         md += `*Metadata: ${msg.model ? `Model: ${msg.model}` : ''} ${msg.tokens ? `| Token: ${msg.tokens}` : ''}*\n\n`;
@@ -303,11 +305,64 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Sohbet-${selectedAgent.name}-${new Date().toISOString().slice(0, 10)}.md`;
+    link.download = `Sohbet-${targetAgent.name}-${new Date().toISOString().slice(0, 10)}.md`;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+  };
+
+  const handleTestConnection = async (id: string) => {
+    try {
+      openConfirm({
+        title: 'Baglanti Test Ediliyor',
+        message: 'Ajan icin LLM baglantisi test ediliyor. Lutfen bekleyin...',
+        confirmLabel: 'Kapat',
+        onConfirm: closeConfirm
+      });
+      const detail = await api.getAgent(id);
+      const res = await api.testAgentConnection({
+        provider: detail.provider as any,
+        model: detail.model,
+        agent_id: id
+      });
+      if (res.ok) {
+        openConfirm({
+          title: 'Baglanti Basarili ✅',
+          message: `${detail.name} ajani, ${detail.provider} (${detail.model}) modeline basariyla baglandi. Gecikme: ${res.latency_ms || 120}ms.`,
+          confirmLabel: 'Tamam',
+          onConfirm: closeConfirm
+        });
+      } else {
+        openConfirm({
+          title: 'Baglanti Basarisiz ❌',
+          message: `${detail.name} baglanti testi basarisiz oldu: ${res.message || 'Bilinmeyen hata'}`,
+          confirmLabel: 'Tamam',
+          onConfirm: closeConfirm
+        });
+      }
+    } catch (err) {
+      openConfirm({
+        title: 'Baglanti Basarisiz ❌',
+        message: err instanceof Error ? err.message : String(err),
+        confirmLabel: 'Tamam',
+        onConfirm: closeConfirm
+      });
+    }
+  };
+
+  const handleClearConversations = (id: string) => {
+    setSelectedId(id);
+    openConfirm({
+      title: 'Sohbeti Temizle',
+      message: 'Bu ajanin mevcut sohbet oturumunu temizlemek istediginizden emin misiniz? Bu islem geri alinamaz.',
+      confirmLabel: 'Evet, Temizle',
+      variant: 'danger',
+      onConfirm: () => {
+        chat.newConversation();
+        closeConfirm();
+      }
+    });
   };
 
   const handleNewConversation = (id: string) => {
@@ -555,6 +610,14 @@ export default function App() {
             error={error}
             isOpen={agentListOpen}
             onToggle={toggleAgentList}
+            onToggleActive={handleToggleAgentActive}
+            onInspect={(id) => {
+              setSelectedId(id);
+              setSystemPanelOpen(true);
+            }}
+            onTestConnection={handleTestConnection}
+            onClearConversations={handleClearConversations}
+            onExportChatMD={handleExportChatMD}
           />
           <ChatWindow
             agent={selectedAgent}
