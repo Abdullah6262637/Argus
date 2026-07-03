@@ -1,252 +1,869 @@
-<p align="center">
-  <img src="logo/Ana Logo.png" width="180" height="180" alt="Argus Logo" style="border-radius: 20%; object-fit: contain;" />
-</p>
+# 🦅 Argus — Çoklu Ajan Sistemi
 
-# 👁️ Argus — Çoklu Ajan Sistemi (UmtalAgent)
+> **Aynı anda her şeyi gören çoklu ajan sistemi.**  
+> Yerel olarak çalışan, tam kapsamlı yapay zeka ajan platformu. Birden fazla LLM sağlayıcısını destekler, 200'den fazla araca sahiptir, gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle gelir.
 
-> **"Aynı anda her şeyi gören, otonom ve yerel çoklu ajan platformu."**
-> 
-> *Adını mitolojideki yüz gözlü dev Argus'tan alan; yerel çalışan, çoklu-ajanlı (multi-agent) ve çoklu-LLM destekli yeni nesil yapay zeka asistan platformu. Electron (React + TS) ve FastAPI mimarisiyle sıradan sohbet pencerelerini aşan; planlama, yansıtma (reflection), ince taneli HITL kontrolü ve interaktif kavramsal ilişki grafikleri sunan tam donanımlı bir geliştirici ortamıdır.*
+<div align="center">
 
----
+![Version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)
+![Backend](https://img.shields.io/badge/backend-FastAPI%20%2B%20Python%203.12-009688?style=flat-square)
+![Frontend](https://img.shields.io/badge/frontend-React%2019%20%2B%20TypeScript-61DAFB?style=flat-square)
+![Database](https://img.shields.io/badge/database-SQLite%20(aiosqlite)-lightgrey?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
-## 🎯 Nedir ve Neden Farklıdır?
-
-Argus, masaüstünüzde tamamen yerel kontrolle çalışan ve **birden fazla AI ajanını** tek bir orkestrasyon çatısı altında birleştiren gelişmiş bir sistemdir. Geleneksel AI sohbet arayüzlerinin aksine Argus, bağımsız karar mekanizmalarıyla çalışır:
-
-1. **Ajan Tabanlı Otonom Yapı:** Her ajanın kendi rolü (yazılım geliştirici, araştırmacı asistan, DevOps, içerik yazarı vb.), kendine has sistem yönergesi (`soul.md`), seçili LLM sağlayıcısı ve özel güvenlik/sistem izinleri vardır.
-2. **Plan-Driven Görev Yürütme:** Ajanlar bir kullanıcı isteği aldığında doğrudan cevap yazmak yerine arka planda adım adım bir **yapılacaklar planı** çıkartır, bu planı yansıtır (reflect) ve araçları (tools) kullanarak planı sırayla icra eder.
-3. **İnsan Onaylı (HITL) Güvenlik:** Ajanın terminal komutları çalıştırma veya dosya yazma gibi hassas sistem araçlarını kullanmadan önce kullanıcıdan izin almasını sağlar. Kullanıcı sadece izin vermekle kalmaz; parametreleri JSON düzeyinde düzenleyip gönderebilir.
-4. **Kavramsal Hafıza ve Bilgi Grafiği:** Ajanların yaptığı araştırmalardan elde ettiği veriler ve hafıza kayıtları, interaktif bir HTML5 Canvas fizik motoru üzerinde anlık olarak ilişkisel düğümler (nodes/edges) şeklinde izlenebilir.
+</div>
 
 ---
 
-## 🏗️ Sistem Mimarisi ve Veri Akışı
+## 📋 İçindekiler
 
-Argus, modern bir masaüstü uygulaması olarak üç ana katmanda tasarlanmıştır:
+- [Genel Bakış](#-genel-bakış)
+- [Mimari](#-mimari)
+- [Özellikler](#-özellikler)
+- [LLM Sağlayıcıları](#-llm-sağlayıcıları)
+- [Araç Kataloğu](#️-araç-kataloğu)
+- [Kurulum](#-kurulum)
+- [Ortam Değişkenleri](#-ortam-değişkenleri)
+- [API Referansı](#-api-referansı)
+- [Frontend Yapısı](#-frontend-yapısı)
+- [Ajan Yönetimi](#-ajan-yönetimi)
+- [Bellek ve Bilgi Grafiği](#-bellek-ve-bilgi-grafiği)
+- [İş Akışları (Workflows)](#-i̇ş-akışları-workflows)
+- [MCP Entegrasyonu](#-mcp-entegrasyonu)
+- [Güvenlik ve İzinler](#-güvenlik-ve-i̇zinler)
+- [Ses (Voice)](#-ses-voice)
+- [Gözlemlenebilirlik](#-gözlemlenebilirlik)
+- [Kısayollar](#️-klavye-kısayolları)
+- [Geliştirici Rehberi](#-geliştirici-rehberi)
 
-```mermaid
-flowchart TB
-    subgraph Frontend ["🖥️ Frontend (Electron / React 18 + TS)"]
-        UI[React View layer<br/>Tailwind CSS + Custom Animations]
-        WS[WebSocket Client<br/>Anlık Sistem Logları & Tool Durumları]
-        SSE[SSE Reader<br/>Chat Streaming & Plan Güncellemeleri]
-    end
+---
 
-    subgraph Backend ["⚙️ Backend (FastAPI + SQLAlchemy)"]
-        API[REST + SSE + WS Endpoints]
-        Coord[Coordinator Service<br/>Ajan Yönlendirme & Seçimi]
-        AM[Agent Manager<br/>agents.yaml & souls/*]
-        Planner[Task Planner & Reflector<br/>Adım Adım Planlama]
-        TR[Tool Registry<br/>74+ Sistem & Geliştirici Aracı]
-        Audit[HMAC Audit Chain<br/>Kriptografik İşlem Doğrulama]
-        Approval[HITL Approval Manager<br/>Parametre override]
-    end
+## 🌟 Genel Bakış
 
-    subgraph LLM ["☁️ LLM Sağlayıcıları"]
-        OAI[OpenAI - GPT-4o / mini]
-        Anth[Anthropic - Claude 3.5 Sonnet]
-        Local[Local LLMs - Ollama / LM Studio]
-        Proxy[OpenRouter / Groq / Gemini]
-    end
+**Argus**, birden fazla yapay zeka ajanını aynı anda çalıştırmanıza, yönetmenize ve birbirleriyle iletişim kurmasına olanak tanıyan yerel bir platform sistemidir. Tek bir makine üzerinde OpenAI, Anthropic, Google Gemini, Mistral, DeepSeek, xAI Grok, Groq ve yerel Ollama modellerini kullanarak ajan ekipleri kurabilirsiniz.
 
-    subgraph Storage ["💾 Lokal Depolama (Data Layer)"]
-        SQLite[(SQLite DB - argus.db<br/>WAL Modu Eşzamanlılık)]
-        Chroma[(ChromaDB<br/>Vektör Hafıza / RAG)]
-        Graph[(NetworkX<br/>İlişkisel Bilgi Grafiği)]
-        YAML[agents.yaml & workflows/*.yaml]
-    end
+### Neden Argus?
 
-    %% İletişim Hatları
-    UI -- REST / HTTP --> API
-    UI -. SSE .-> SSE
-    SSE -.-> API
-    UI -. WebSocket .-> WS
-    WS -.-> API
+| Özellik | Argus | Alternatifler |
+|---|---|---|
+| Tamamen yerel çalışma | ✅ | ❌ Bulut zorunlu |
+| Çoklu LLM sağlayıcı | ✅ 8+ | ⚠️ Genellikle 1-2 |
+| 200+ yerleşik araç | ✅ | ❌ Az araç |
+| Gerçek zamanlı WebSocket | ✅ SSE + WS | ⚠️ Çoğu yalnızca HTTP |
+| Onay mekanizması | ✅ | ❌ |
+| MCP protokol desteği | ✅ | ❌ |
+| Vektör belleği + KG | ✅ | ⚠️ Ek kütüphane gerekir |
+| Görsel iş akışı editörü | ✅ | ❌ |
+| Planlama motoru | ✅ Çok adımlı | ⚠️ Basit |
 
-    API --> Coord
-    API --> AM
-    API --> Planner
-    API --> TR
-    Planner --> TR
-    TR --> Approval
-    Approval --> Audit
+---
 
-    AM --> LLM
-    Planner --> LLM
-    Coord --> LLM
+## 🏗️ Mimari
 
-    AM --> YAML
-    API --> SQLite
-    TR --> Chroma
-    TR --> Graph
+```
+argus/
+├── backend/                        # FastAPI + Python 3.12
+│   ├── app/
+│   │   ├── main.py                 # Uygulama giriş noktası (lifespan, CORS, routing)
+│   │   ├── config.py               # Pydantic-settings ile .env yönetimi
+│   │   ├── database.py             # SQLite (aiosqlite + SQLAlchemy async)
+│   │   ├── models/                 # SQLAlchemy ORM modelleri
+│   │   ├── schemas/                # Pydantic request/response şemaları
+│   │   ├── routers/                # API endpoint grupları (14 router)
+│   │   └── services/
+│   │       ├── agent_loop.py       # Ajan çalışma döngüsü (ReAct tarzı)
+│   │       ├── agent_manager.py    # Ajan yaşam döngüsü ve durum yönetimi
+│   │       ├── chat_service.py     # Sohbet ve SSE streaming servisi
+│   │       ├── workflow.py         # Görsel iş akışı yürütücüsü
+│   │       ├── scheduler.py        # APScheduler tabanlı görev zamanlayıcı
+│   │       ├── coordinator.py      # Çoklu ajan koordinasyonu
+│   │       ├── llm/                # LLM sağlayıcı katmanı
+│   │       │   ├── factory.py      # Sağlayıcı fabrikası
+│   │       │   ├── openai_provider.py
+│   │       │   ├── anthropic_provider.py
+│   │       │   ├── gemini_provider.py
+│   │       │   ├── tester.py       # Bağlantı test sistemi (SSL + format doğrulama)
+│   │       │   └── models_catalog.py
+│   │       ├── tools/              # 200+ araç (50+ dosya)
+│   │       ├── memory/             # Vektör belleği + bilgi grafiği
+│   │       ├── mcp/                # Model Context Protocol köprüsü
+│   │       ├── browser/            # Playwright tabanlı tarayıcı otomasyonu
+│   │       ├── planning/           # Çok adımlı planlama motoru
+│   │       ├── security/           # Sandbox ve rate limiting
+│   │       ├── observability/      # Yapısal loglama + trace ID
+│   │       └── plugins/            # Plugin yükleyici
+│   └── agents/                     # Ajan YAML konfigürasyonları
+├── frontend/                       # React 19 + TypeScript + Vite
+│   └── src/
+│       ├── App.tsx                 # Ana uygulama koordinatörü
+│       ├── components/             # 28 UI bileşeni
+│       ├── hooks/                  # 9 custom React hook
+│       ├── api/                    # API istemci katmanı
+│       ├── types/                  # TypeScript tür tanımları
+│       └── utils/                  # Yardımcı fonksiyonlar
+├── plugins/                        # Harici plugin sistemi
+├── scripts/                        # Yardımcı betikler
+├── installer/                      # Kurulum araçları
+├── start.bat                       # Windows başlatma betiği
+└── start.ps1                       # PowerShell başlatma betiği
 ```
 
-### İletişim Protokolleri
-*   **REST API:** Ajan oluşturma, düzenleme, silme, dosya gezgini ve çevre ayarlarının yönetimi için kullanılır.
-*   **SSE (Server-Sent Events):** LLM'den gelen metin akışlarını (streaming) ve otonom planlama adımlarının arayüze anlık olarak yansıtılmasını sağlar.
-*   **WebSocket:** Arka planda çalışan sistem araçlarının detaylı çıktılarını, terminal loglarını ve anlık görev durumlarını kesintisiz izlemek için kullanılır.
+### Veri Akışı
+
+```
+Kullanıcı → React UI
+    ↓ HTTP REST veya SSE (Server-Sent Events)
+FastAPI Backend (port 8000)
+    ↓
+Agent Loop (ReAct: Düşün → Araç Çağır → Gözlemle → Yanıt ver)
+    ↓                    ↓                    ↓
+  LLM API           Tool Registry         Memory Store
+(OpenAI, vb.)    (200+ araç)          (ChromaDB + KG)
+    ↓
+WebSocket → React UI (gerçek zamanlı güncelleme)
+```
 
 ---
 
-## ✨ Öne Çıkan Gelişmiş Özellikler
+## ✨ Özellikler
 
-### 👥 1. Coordinator (Koordinatör) Ajanı ve Yönlendirme
-*   Kullanıcı bir mesaj yazıp göndermeden önce arka planda çalışan **Coordinator**, isteğin amacını analiz eder.
-*   Projedeki tüm aktif ajanların yeteneklerini ve system prompt'larını tarayarak "Bu görevi en iyi **Yeliştirici Ajan** veya **Araştırmacı Ajan** yapabilir" şeklinde dinamik tavsiyeler üretir.
-*   Kullanıcı tek tıklamayla sohbet akışını en uygun ajana devredebilir.
+### 🤖 Ajan Motoru
+- **ReAct döngüsü**: Her ajan Düşün → Araç Çağır → Gözlemle → Yanıt ver döngüsüyle çalışır
+- **Çok adımlı planlama**: Karmaşık görevleri otomatik olarak alt adımlara böler
+- **Yansıma (Reflection)**: Plan yürütüldükten sonra ajan kendi çıktısını değerlendirir
+- **Paralel ajan çalışması**: Birden fazla ajan eş zamanlı olarak farklı görevleri yürütebilir
+- **Ajan koordinasyonu**: Bir ajan başka bir ajana görev devredebilir (`DelegateToAgent` aracı)
+- **Kara tahta (Blackboard)**: Ajanlar arası paylaşılan hafıza alanı (`BlackboardSet/Get`)
+- **Onay mekanizması**: Riskli araç çağrıları kullanıcı onayına sunulur
+- **Prompt versiyonlama**: Her sistem prompt değişikliği tarihsel olarak saklanır
 
-### 🛡️ 2. İnce Taneli HITL Parametre Düzenleme (Parameter Overrides)
-*   Ajan tehlikeli bir araç (örneğin terminal komutu çalıştırma veya git commit yapma) tetiklediğinde, sistem bunu duraklatır ve onay onay kuyruğuna alır.
-*   Kullanıcı arayüzdeki JSON Editörü sayesinde çalışacak parametreleri (örneğin komut parametreleri, dosya yolları vb.) elle düzenleyebilir.
-*   Böylece ajan sizin düzelttiğiniz argümanlarla güvenli ve hatasız bir şekilde çalışmaya devam eder.
+### 💬 Sohbet Sistemi
+- **SSE streaming**: Gerçek zamanlı token akışı (Server-Sent Events)
+- **WebSocket**: Çift yönlü canlı iletişim (ajan durum güncellemeleri)
+- **Sohbet geçmişi**: Konuşma geçmişi korunur ve SQLite'ta saklanır
+- **Markdown render**: Kod blokları, tablolar, matematiksel denklemler
+- **Dosya yükleme**: Sohbet penceresine dosya bırakma (drag & drop)
+- **Ses girişi**: Mikrofon ile sesli mesaj gönderme (Web Speech API)
+- **Ekran görüntüsü görüntüleyici**: Ajan tarafından alınan ekran görüntüleri satır içi gösterilir
+- **Görev zaman çizelgesi**: Her ajan adımı görsel olarak takip edilebilir
 
-### 🌐 3. Canvas Tabanlı İnteraktif Bilgi Grafiği
-*   Ajanların çalışma esnasında elde ettiği kavramsal ilişkiler (örneğin `Ajan A` -> `Kullanıcı B` -> `Veritabanı C`), NetworkX üzerinde modellenir.
-*   Frontend tarafında HTML5 Canvas tabanlı, **Coulomb İtmesi** ve **Hooke Çekimi** tabanlı bir fizik motoru yardımıyla bu kavramlar görselleştirilir.
-*   Grafik üzerinde sürükleme (drag), yakınlaştırma (zoom/pan) ve düğüm detaylarını inceleme özellikleri tamamen interaktiftir.
+### 🖥️ Kullanıcı Arayüzü
+- **Premium kurulum sihirbazı**: 4 adımlı, animasyonlu ilk kurulum akışı
+- **Splash screen**: Sistem başlatılırken animasyonlu boot ekranı (logo + adım adım)
+- **Reset screen**: Sistem sıfırlanırken adımlı silme animasyonu
+- **Komut paleti**: `Ctrl+K` ile hızlı komut erişimi (Spotlight benzeri)
+- **4 tema**: Mono (siyah-beyaz), Midnight (lacivert), Sunset (turuncu), Forest (yeşil)
+- **Tema renk paleti önizlemesi**: Her tema kartında 4 renkli swatch gösterimi
+- **Yoğunluk + font boyutu**: Kullanıcı tercihlerine göre ayarlanabilir
+- **Çoklu panel düzeni**: Ajan listesi + sohbet + sistem paneli
+- **Klavye kısayolları**: Tüm kritik işlevlere kısayol ataması
+- **Sağ tık bağlam menüsü**: Ajan listesinde bağlam tabanlı işlemler
+- **Ajan denetçisi**: Ajan ayrıntıları, prompt geçmişi ve istatistikler
+- **Boş durum ekranı**: Ajan yokken kullanıcıyı yönlendiren premium tasarım
 
-### ⚙️ 4. SQLite WAL (Write-Ahead Logging) Modu
-*   Aynı anda çok sayıda ajanın veritabanına veri yazması durumunda oluşan SQLite kilitlenmeleri (`database is locked` hatası), veritabanı motoruna entegre edilen `PRAGMA journal_mode=WAL` ve `busy_timeout=30000` yapılandırmasıyla tamamen çözülmüştür.
-*   Arka plandaki yoğun paralel yazma süreçleri birbirini engellemeden pürüzsüzce yürütülür.
-
-### 🛠️ 5. Skill Learning (Makro Yetenek Çıkarımı)
-*   Ajan, otonom olarak çalıştırdığı bir dizi başarılı komut ve işlem adımlarını analiz ederek bunları bir **Skill (Yetenek)** olarak formüle edebilir.
-*   Oluşturulan bu makrolar daha sonraki görevlerde bağımsız birer araç (tool) gibi diğer ajanlar tarafından da yeniden kullanılabilir.
-
-### 🔊 6. Entegre Ses Desteği (STT & TTS)
-*   Sesli etkileşim butonu sayesinde konuşarak mesaj girişi yapılabilir.
-*   Ajanın ürettiği yanıtlar, mesaj kutusundaki **Sesli Oku (🔊)** butonu yardımıyla anlık olarak konuşmaya (Text-to-Speech) dönüştürülür.
-
-### 🔑 7. HMAC-SHA256 Audit Log Güvenlik Zinciri
-*   Sistemde ajanlar tarafından gerçekleştirilen tüm işlemler (tool çağrıları, dosya yazmaları, onay kararları) kriptografik olarak imzalanır.
-*   Audit log zinciri, işlem geçmişinin sonradan değiştirilemeyeceğini ve manipüle edilemeyeceğini doğrular (zero-trust security model).
-
----
-
-## 🛠️ Sistem Araç Kataloğu (74+ Entegre Tool)
-
-Argus, ajanların işletim sistemi ve dış servislerle etkileşime girmesi için zengin bir araç kataloğu barındırır. Öne çıkan araç kategorileri ve işlevleri şunlardır:
-
-| Kategori | Araç Adı / Kodu | Açıklama ve Kullanım Amacı |
-| :--- | :--- | :--- |
-| **İzole Çalıştırma** | `docker_sandbox_run` | Ajanın yazdığı kodları ana sisteme zarar vermeden izole bir Docker konteynerinde test etmesini sağlar. |
-| **Web & Doküman** | `read_webpage_markdown` | Jina Reader API'lerini kullanarak web sayfalarını reklamsız, temiz Markdown metnine dönüştürür. |
-| **Sürüm Kontrolü** | `github_api` | Ajanın doğrudan GitHub üzerinde PR açmasını, issue yönetmesini ve commit'leri kontrol etmesini sağlar. |
-| **Paket Yönetimi** | `install_project_dependency` | Projenin sanal ortamına (`pip`) veya frontend dizinine (`npm`) güvenli bir şekilde paket yükler. |
-| **Dosya İşleme** | `parse_layout_document` | PDF ve Word belgelerini, içerisindeki tablo yapılarını bozmadan analiz edip düz metin olarak okur. |
-| **İşletim Sistemi** | `execute_terminal_command` | Güvenli dizin sınırları içinde terminal komutları yürütür (HITL onayına tabidir). |
-| **Vektör Arama** | `vector_db_search` | ChromaDB üzerinde anlamsal (semantic) aramalar yaparak uzun vadeli hafızadan veri çağırır. |
+### 🔧 Ajan Yapılandırma Formu (6 Adım)
+1. **Temel Bilgiler**: Ad, rol, açıklama, sistem prompt, avatar, renk
+2. **LLM Yapılandırması**: Sağlayıcı, model, sıcaklık, API anahtarı, bağlantı testi (SSL seçeneği dahil), animasyonlu test izleyicisi
+3. **Medya Yetenekleri**: Görüntü, video, ses işleme yetkinlikleri
+4. **Davranış**: Araç izinleri, bellek limitleri, planlama ayarları
+5. **Yetkiler**: Araç grubuna göre erişim izinleri
+6. **Plugins ve MCP**: Aktif plugin ve MCP sunucu bağlantıları
 
 ---
 
-## 💻 Teknoloji Yığını (Tech Stack)
+## 🧠 LLM Sağlayıcıları
 
-### Frontend (Masaüstü Arayüzü)
-*   **Electron (v33.0):** Masaüstü entegrasyonu, pencere yönetimi ve yerel işletim sistemi erişimi.
-*   **React (v18.3) & TypeScript (v5.6):** Tip güvenli, bileşen tabanlı ve performanslı arayüz yapısı.
-*   **Vite (v5.4):** Hızlı geliştirme ortamı (HMR) ve optimize edilmiş production derlemesi.
-*   **Tailwind CSS (v3.4):** Modern, esnek ve özelleştirilmiş tasarım sistemi.
-*   **CSS Animations (Custom Bezier & Spring):** Modallar ve paneller için göze hoş gelen, spring/overshoot mekanizmalı pürüzsüz geçiş animasyonları.
+Argus, aşağıdaki sağlayıcıları yerel **provider factory** katmanı üzerinden destekler:
 
-### Backend (Ajan Çekirdeği)
-*   **Python (v3.12+):** Ajan mantığı, veri işleme ve yapay zeka entegrasyonları.
-*   **FastAPI (v0.115):** Asenkron, hızlı ve otomatik OpenAPI dokümantasyonlu REST/WS/SSE sunucu katmanı.
-*   **SQLAlchemy & SQLite (WAL Mode):** Veritabanı yönetim katmanı ve yüksek eşzamanlı lokal depolama.
-*   **ChromaDB:** Ajan hafızaları için yerel vektör veri tabanı (vector store).
-*   **NetworkX:** Bellek içi ilişkisel bilgi grafiği oluşturma ve analiz etme.
-*   **Docker SDK:** İzole kod çalıştırma ortamlarının (sandbox) yönetimi.
+| Sağlayıcı | Ortam Değişkeni | Model Örnekleri |
+|---|---|---|
+| **OpenAI** | `OPENAI_API_KEY` | gpt-4o, gpt-4o-mini, o1, o3, gpt-4-turbo |
+| **Anthropic** | `ANTHROPIC_API_KEY` | claude-3-5-sonnet, claude-3-5-haiku, claude-3-opus |
+| **Google Gemini** | `GEMINI_API_KEY` | gemini-2.5-pro, gemini-2.5-flash, gemini-1.5-pro |
+| **OpenRouter** | `OPENROUTER_API_KEY` | 100+ model (tüm büyük sağlayıcılar) |
+| **Groq** | `GROQ_API_KEY` | llama-3.3-70b, mixtral-8x7b, gemma-2-9b |
+| **DeepSeek** | `DEEPSEEK_API_KEY` | deepseek-v3, deepseek-reasoner (r1) |
+| **Mistral** | `MISTRAL_API_KEY` | mistral-large, mistral-medium, codestral |
+| **xAI (Grok)** | `XAI_API_KEY` | grok-4, grok-2, grok-beta |
+| **Yerel (Ollama/LM Studio)** | — | llama3.3, qwen2.5, deepseek-r1, phi4 |
 
----
+### Bağlantı Test Sistemi
 
-## 🗄️ Veritabanı Şeması ve Tablolar
+Her sağlayıcı için gelişmiş bir bağlantı doğrulama sistemi mevcuttur:
 
-Argus'un veri yapısı yerel SQLite veritabanında (`argus.db`) tutulur ve 10 ana tablodan oluşur:
-
-1.  **`agents`:** Ajanların kimlikleri, rolleri, prompt'ları, LLM modelleri ve özel yapılandırmaları.
-2.  **`conversations`:** Oluşturulan sohbet oturumları ve hangi ajanla ilişkilendirildikleri.
-3.  **`messages`:** Kullanıcı ve ajan mesajları, yanıt süreleri ve token kullanımları.
-4.  **`plans`:** Otonom görevler için ajanlar tarafından hazırlanan adım adım planlar.
-5.  **`plan_steps`:** Planların alt adımları, durumları (`pending`, `running`, `success`, `failed`) ve çıktıları.
-6.  **`approvals`:** HITL (Human-in-the-loop) onay bekleyen hassas komutlar ve verilen kararlar.
-7.  **`tasks`:** Arka planda zamanlanmış veya asenkron yürütülen görev kayıtları.
-8.  **`skills`:** Ajanların kendi süreçlerinden öğrenip kaydettiği makro yetenek tanımları.
-9.  **`mcp_servers`:** Entegre edilen Model Context Protocol (MCP) sunucu listesi ve durumları.
-10. **`audit_logs`:** HMAC-SHA256 imzalı kriptografik denetim zinciri kayıtları.
+- **API anahtar format doğrulaması**: OpenAI `sk-`, Anthropic `sk-ant-` prefix kontrolü
+- **Gerçek istek testi**: `max_tokens: 32` ile küçük bir istek atılır
+- **Latency ölçümü**: Milisaniye bazında yanıt süresi gösterilir
+- **Örnek yanıt**: Dönen ilk token önizlemesi
+- **SSL/TLS seçeneği**: Kurumsal proxy veya self-signed sertifikalı ortamlar için SSL doğrulama atlama
+- **Yerel model tanısı**: Ollama bağlantı hatalarında `ollama serve` yönlendirmesi
+- **Animasyonlu test izleyici**: 4 adımlı görsel ilerleme göstergesi
 
 ---
 
-## 🚀 Hızlı Başlangıç (Kurulum ve Çalıştırma)
+## 🛠️ Araç Kataloğu
+
+Argus, **200'den fazla** yerleşik araç içerir. Bu araçlar izin tabanlı filtreleme sistemiyle ajanın yetkilerine göre kısıtlanır.
+
+### 📁 Dosya Sistemi
+| Araç | Açıklama |
+|---|---|
+| `read_file` | Dosya okuma |
+| `write_file` | Dosya yazma |
+| `append_file` | Dosyaya ekleme |
+| `list_dir` | Dizin listeleme |
+| `copy_file` | Dosya kopyalama |
+| `move_file` | Dosya taşıma |
+| `delete_file` | Dosya silme |
+| `mkdir` | Klasör oluşturma |
+| `search_files` | Dosya arama |
+| `zip_files` / `unzip` | Sıkıştırma işlemleri |
+
+### 🌐 Web & Tarayıcı
+| Araç | Açıklama |
+|---|---|
+| `web_search` | DuckDuckGo web araması |
+| `open_url` | URL açma |
+| `browser_navigate` | Playwright ile sayfa gezinme |
+| `browser_click` | Eleman tıklama |
+| `browser_fill` | Form doldurma |
+| `browser_get_text` | Sayfa metni çıkarma |
+| `browser_screenshot` | Sayfa ekran görüntüsü |
+| `read_webpage` | Web sayfası içeriği |
+| `read_webpage_markdown` | Markdown formatında sayfa içeriği |
+| `generate_pdf_from_webpage` | Web sayfasından PDF üretme |
+
+### 💻 Sistem & İşlem
+| Araç | Açıklama |
+|---|---|
+| `run_command` | Terminal komutu çalıştırma (izin listesi ile kısıtlı) |
+| `system_info` | Sistem bilgisi |
+| `list_processes` | İşlem listesi |
+| `kill_process` | İşlem sonlandırma |
+| `open_app` | Uygulama açma |
+| `get_datetime` | Tarih/saat |
+| `shutdown` / `lock_screen` | Sistem güç kontrolü |
+| `set_volume` | Ses seviyesi |
+
+### 🖱️ UI Otomasyonu
+| Araç | Açıklama |
+|---|---|
+| `screenshot` | Ekran görüntüsü alma |
+| `click` | Koordinata tıklama |
+| `type_text` | Metin yazma |
+| `key_press` | Tuş basımı |
+| `mouse_move` | Fare hareketi |
+| `list_windows` | Pencere listesi |
+| `focus_window` | Pencere odaklama |
+| `minimize/maximize_window` | Pencere boyutu |
+
+### 🧬 AI & ML
+| Araç | Açıklama |
+|---|---|
+| `sentiment_analysis` | Duygu analizi |
+| `text_summarization` | Metin özetleme |
+| `code_generation` | Kod üretimi |
+| `code_explanation` | Kod açıklama |
+| `bug_detection` | Hata tespiti |
+| `test_generation` | Test kodu üretimi |
+| `sql_query_generate` | SQL sorgu üretimi |
+| `huggingface_inference` | HuggingFace model çalıştırma |
+| `openai_embedding` | Embedding vektörü üretimi |
+| `openai_moderation` | İçerik moderasyonu |
+| `prompt_optimize` | Prompt optimizasyonu |
+
+### 📊 Veri Bilimi
+| Araç | Açıklama |
+|---|---|
+| `pandas_read_csv` | CSV okuma |
+| `pandas_describe` | İstatistiksel özet |
+| `matplotlib_line/bar/scatter` | Grafik oluşturma |
+| `linear_regression` | Lineer regresyon |
+| `kmeans_clustering` | K-means kümeleme |
+| `correlation_analysis` | Korelasyon analizi |
+| `time_series_forecast` | Zaman serisi tahmini |
+
+### 🔧 Git & DevOps
+| Araç | Açıklama |
+|---|---|
+| `git_init/clone/status/diff` | Git temel işlemleri |
+| `git_commit/push/pull` | Git senkronizasyon |
+| `git_log/branch` | Git geçmiş ve dal |
+| `docker_run/build/ps/logs` | Docker container yönetimi |
+| `kubectl_get/apply/logs` | Kubernetes yönetimi |
+
+### 🔐 Güvenlik & Ağ
+| Araç | Açıklama |
+|---|---|
+| `http_request` | HTTP/HTTPS istekleri |
+| `download_file` | Dosya indirme |
+| `ping_host` | Ağ bağlantı testi |
+| `port_scan` | Port tarama |
+| `ssl_cert_check` | SSL sertifika doğrulama |
+| `whois_query` | Alan adı sorgulama |
+| `dns_lookup` | DNS çözümleme |
+
+### 📧 İletişim & Mesajlaşma
+| Araç | Açıklama |
+|---|---|
+| `email_send` | E-posta gönderme |
+| `email_read_inbox` | Gelen kutusu okuma |
+| `telegram_send` | Telegram mesajı |
+| `slack_send` | Slack mesajı |
+| `discord_send` | Discord mesajı |
+
+### 📄 Belge İşleme
+| Araç | Açıklama |
+|---|---|
+| `read_document` | Word/PDF/metin okuma |
+| `pdf_generate` | PDF oluşturma |
+| `xlsx_write` | Excel dosyası oluşturma |
+| `pptx_generate` | PowerPoint oluşturma |
+| `pdf_merge/split` | PDF birleştirme/bölme |
+| `markdown_to_html` | Format dönüştürme |
+
+### 🧠 Bellek Araçları
+| Araç | Açıklama |
+|---|---|
+| `save_memory` | Vektör belleğine kaydetme |
+| `recall_memory` | Anlam bazlı bellek arama |
+| `list_memory` | Bellek listeleme |
+| `delete_memory` | Bellek silme |
+| `vector_search` / `vector_upsert` | Vektör veritabanı işlemleri |
+| `ingest_document` | Belge vektörize etme |
+| `kg_add_entity/relation` | Bilgi grafiği düğüm/ilişki ekleme |
+| `kg_search` / `kg_query_neighbors` | Bilgi grafiği sorgulama |
+
+### ☁️ Bulut Servisleri
+| Araç | Açıklama |
+|---|---|
+| `aws_s3_list/upload` | AWS S3 işlemleri |
+| `aws_ec2_list` | AWS EC2 listeleme |
+| `azure_blob_list` | Azure Blob Storage |
+| `gcp_storage_list` | Google Cloud Storage |
+
+### 🔬 Araştırma
+| Araç | Açıklama |
+|---|---|
+| `arxiv_search` | arXiv akademik arama |
+| `wikipedia_lookup` | Wikipedia sorgulama |
+| `youtube_search` | YouTube video arama |
+| `youtube_transcript` | Video transkript alma |
+
+### 🧪 Test & QA
+| Araç | Açıklama |
+|---|---|
+| `unit_test_generate/run` | Birim test üretme/çalıştırma |
+| `integration_test` | Entegrasyon testi |
+| `api_test_generate/run` | API test senaryoları |
+| `ui_test_record/playback` | UI test kayıt/oynatma |
+| `performance_test` | Performans testi |
+
+### ⚙️ Diğer
+| Araç | Açıklama |
+|---|---|
+| `sandbox_execute_python/js` | İzolated ortamda kod çalıştırma |
+| `github_api` | GitHub API erişimi |
+| `docker_sandbox_run` | Docker izole çalıştırma |
+| `delegate_to_agent` | Başka ajana görev devretme |
+| `agent_wait_for_approval` | Kullanıcı onayı bekleme |
+| `blackboard_set/get` | Ajanlar arası paylaşılan veri |
+| `uuid_generator` | UUID üretme |
+| `hash_generator` | Hash üretme |
+| `weather` | Hava durumu |
+| `get_ip_address` | IP adresi |
+
+---
+
+## 🚀 Kurulum
 
 ### Gereksinimler
-*   [Node.js 20+](https://nodejs.org/)
-*   [Python 3.12+](https://www.python.org/downloads/)
-*   [Git](https://git-scm.com/)
-*   *Önerilen:* Docker Desktop (İzole sandbox çalıştırmak istiyorsanız)
+
+- **Python 3.12+**
+- **Node.js 18+**
+- **Git**
 
 ### 1. Depoyu Klonlayın
+
 ```bash
 git clone https://github.com/Abdullah6262637/Argus.git
 cd Argus
 ```
 
-### 2. Windows Üzerinde Başlatma (Kolay Kurulum)
-Kök dizinde bulunan başlatıcı betikleri otomatik olarak backend sanal ortamını oluşturur, bağımlılıkları yükler ve Electron arayüzünü açar:
+### 2. Backend Kurulumu
 
-**Çift tıklayarak veya Terminalden:**
-```powershell
-.\start.bat
-```
-*(Alternatif olarak PowerShell için `.\start.ps1` dosyasını da çalıştırabilirsiniz.)*
-
-### 3. Manuel Kurulum adımları (Tüm İşletim Sistemleri)
-
-#### Backend Kurulumu:
 ```bash
-# Sanal ortam oluşturun ve aktif edin
+cd backend
 python -m venv .venv
 
-# Windows için aktif etme:
+# Windows
 .venv\Scripts\activate
-# Linux/macOS için aktif etme:
+
+# Linux/macOS
 source .venv/bin/activate
 
-# Bağımlılıkları yükleyin
-pip install -r backend/requirements.txt
+pip install -r requirements.txt
 ```
 
-#### Frontend Kurulumu:
+### 3. Frontend Kurulumu
+
 ```bash
 cd frontend
 npm install
 ```
 
-#### Geliştirici Modunda Çalıştırma:
-Frontend klasöründeyken hem backend sunucusunu hem de Electron penceresini tek bir komutla başlatabilirsiniz:
+### 4. Ortam Değişkenleri
+
 ```bash
-npm run electron:dev
+cp backend/.env.example backend/.env
+# .env dosyasını düzenleyin (API anahtarlarını ekleyin)
+```
+
+### 5. Başlatma
+
+**Windows (tek tıkla):**
+```
+start.bat
+```
+
+**PowerShell:**
+```powershell
+.\start.ps1
+```
+
+**Manuel:**
+```bash
+# Backend (terminal 1)
+cd backend
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Frontend (terminal 2)
+cd frontend
+npm run dev
+```
+
+Uygulama `http://localhost:5173` adresinde çalışır. İlk açılışta **Kurulum Sihirbazı** otomatik olarak açılır.
+
+---
+
+## ⚙️ Ortam Değişkenleri
+
+`backend/.env` dosyasına aşağıdaki değişkenleri ekleyin:
+
+```env
+# ── LLM API Anahtarları ──────────────────────────
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=AIza...
+OPENROUTER_API_KEY=sk-or-...
+GROQ_API_KEY=gsk_...
+DEEPSEEK_API_KEY=sk-...
+MISTRAL_API_KEY=...
+XAI_API_KEY=...
+
+# ── Uygulama ─────────────────────────────────────
+APP_ENV=development
+APP_HOST=0.0.0.0
+APP_PORT=8000
+
+# ── Veritabanı ───────────────────────────────────
+DATABASE_URL=sqlite+aiosqlite:///./data/argus.db
+
+# ── Güvenlik Limitleri ───────────────────────────
+MAX_TOKENS_PER_REQUEST=2048
+MAX_HISTORY_MESSAGES=30
+
+# ── Planlama Motoru ──────────────────────────────
+PLAN_MAX_STEPS=7
+PLAN_REFLECTION_ENABLED=true
+PLAN_RETRY_LIMIT=2
+
+# ── Tarayıcı Otomasyonu ──────────────────────────
+BROWSER_HEADLESS=true
+BROWSER_TIMEOUT_MS=30000
+
+# ── Vektör Belleği ───────────────────────────────
+EMBEDDING_PROVIDER=local           # local | openai
+EMBEDDING_MODEL_LOCAL=sentence-transformers/all-MiniLM-L6-v2
+CHROMA_PATH=./data/chroma
+KNOWLEDGE_GRAPH_PATH=./data/knowledge_graph.json
+
+# ── Sandbox Güvenliği ────────────────────────────
+RUN_COMMAND_ALLOWLIST=git,npm,python,pip,node,echo,dir,ls
+
+# ── Rate Limiting ────────────────────────────────
+RATE_LIMIT_OPENAI_RPM=60
+RATE_LIMIT_OPENAI_TPM=200000
+RATE_LIMIT_ANTHROPIC_RPM=50
+RATE_LIMIT_ANTHROPIC_TPM=100000
+
+# ── Gözlemlenebilirlik ───────────────────────────
+LOG_FORMAT=text                    # text | json
+
+# ── Ses ─────────────────────────────────────────
+VOICE_ENABLED=false
+
+# ── Plugin ──────────────────────────────────────
+PLUGINS_DIR=../plugins
 ```
 
 ---
 
-## 🧪 Testleri Çalıştırma
+## 📡 API Referansı
 
-Ajanların planlama ve araç icra mekanizmalarının kararlılığını test etmek için backend dizininde `pytest` testlerini koşturabilirsiniz:
+Backend, `http://localhost:8000` adresinde çalışır. Tam interaktif dokümantasyon için `http://localhost:8000/docs` adresini ziyaret edin.
+
+### Ajan Endpointleri (`/api/agents`)
+
+| Method | Endpoint | Açıklama |
+|---|---|---|
+| `GET` | `/api/agents` | Tüm ajanları listele |
+| `POST` | `/api/agents` | Yeni ajan oluştur |
+| `GET` | `/api/agents/{id}` | Ajan detayı |
+| `PATCH` | `/api/agents/{id}` | Ajan güncelle |
+| `DELETE` | `/api/agents/{id}` | Ajan sil |
+| `POST` | `/api/agents/{id}/duplicate` | Ajan kopyala |
+| `POST` | `/api/agents/test-connection` | LLM bağlantısını test et |
+| `GET` | `/api/agents/{id}/models` | Sağlayıcı model listesi |
+| `POST` | `/api/agents/bulk-update-provider` | Toplu sağlayıcı güncelleme |
+
+### Sohbet Endpointleri (`/api/chat`)
+
+| Method | Endpoint | Açıklama |
+|---|---|---|
+| `GET` | `/api/chat/{agent_id}/history` | Sohbet geçmişi |
+| `POST` | `/api/chat/{agent_id}` | Mesaj gönder (streaming) |
+| `DELETE` | `/api/chat/{agent_id}/history` | Geçmişi temizle |
+| `GET` | `/api/chat/{agent_id}/stream` | SSE stream başlat |
+
+### Sistem Endpointleri (`/api/system`)
+
+| Method | Endpoint | Açıklama |
+|---|---|---|
+| `GET` | `/api/system/status` | Sistem durumu |
+| `GET` | `/api/system/setup-status` | Kurulum durumu |
+| `POST` | `/api/system/setup-save` | Kurulum ayarlarını kaydet |
+| `POST` | `/api/system/reset` | Sistemi sıfırla |
+| `GET` | `/api/system/env-status` | API anahtar durumu |
+| `GET` | `/api/system/doctor` | Sistem tanı |
+
+### Diğer Endpointler
+
+| Router | Prefix | Açıklama |
+|---|---|---|
+| Tasks | `/api/tasks` | Zamanlanmış görevler (APScheduler) |
+| Logs | `/api/logs` | Sistem ve ajan logları |
+| Memory | `/api/memory` | Vektör belleği CRUD |
+| Skills | `/api/skills` | Ajan yetenekleri |
+| MCP | `/api/mcp` | MCP sunucu yönetimi |
+| Workflows | `/api/workflows` | İş akışı CRUD ve çalıştırma |
+| Voice | `/api/voice` | Ses sentezi |
+| Approvals | `/api/approvals` | Onay kuyrukları |
+| Coordinator | `/api/coordinator` | Çoklu ajan koordinasyonu |
+| WebSocket | `/ws/{agent_id}` | Gerçek zamanlı bağlantı |
+
+---
+
+## 🎨 Frontend Yapısı
+
+### Bileşenler
+
+| Bileşen | Açıklama |
+|---|---|
+| `App.tsx` | Ana koordinatör; routing, state yönetimi |
+| `SetupWizard.tsx` | 4 adımlı kurulum sihirbazı |
+| `SplashScreen.tsx` | Boot animasyon ekranı |
+| `ResetScreen.tsx` | Sıfırlama animasyon ekranı |
+| `AgentForm.tsx` | 6 adımlı ajan oluşturma/düzenleme formu |
+| `AgentList.tsx` | Sol panel ajan listesi |
+| `ChatWindow.tsx` | Ana sohbet alanı (SSE streaming) |
+| `MessageBubble.tsx` | Mesaj balonu (Markdown, araç çıktıları) |
+| `SystemPanel.tsx` | Sağ panel sistem monitörü |
+| `SettingsModal.tsx` | Ayarlar (tema, API anahtarları, plugins, sıfırlama) |
+| `WorkflowsModal.tsx` | Görsel iş akışı editörü |
+| `CommandPalette.tsx` | Spotlight benzeri komut paleti (Ctrl+K) |
+| `KnowledgeGraphModal.tsx` | Bilgi grafiği görselleştirici |
+| `AgentInspector.tsx` | Ajan denetçisi (prompt geçmişi, istatistikler) |
+| `TaskTimeline.tsx` | Ajan adım zaman çizelgesi |
+| `ApprovalDialog.tsx` | Araç onay diyaloğu |
+| `ConfirmDialog.tsx` | Onay diyaloğu (silme, sıfırlama) |
+| `Header.tsx` | Üst navigasyon çubuğu |
+| `VoiceButton.tsx` | Ses girişi butonu |
+| `FileBrowser.tsx` | Dosya gezgini |
+| `FileDropZone.tsx` | Sürükle-bırak dosya alanı |
+
+### Custom Hooks
+
+| Hook | Açıklama |
+|---|---|
+| `useAgents` | Ajan listesi ve CRUD işlemleri |
+| `useChat` | SSE streaming ve mesaj yönetimi |
+| `useWebSocket` | Gerçek zamanlı WS bağlantısı |
+| `useTheme` | Tema yönetimi (localStorage kalıcı) |
+| `useAppearance` | Yoğunluk ve font boyutu |
+| `useApprovals` | Araç onay kuyruk yönetimi |
+| `useKeyboardShortcuts` | Global klavye kısayolları |
+| `useModal` | Modal ve form state yönetimi (Context) |
+
+### Tema Sistemi
+
+4 ayrı tema CSS değişkenleri üzerinden çalışır (`data-theme` niteliği):
+
+| Tema | Arka Plan | Vurgu Rengi | Atmosfer |
+|---|---|---|---|
+| `mono` | `#000000` | `#ffffff` | Siyah-beyaz minimalist |
+| `midnight` | `#0b1220` | `#60a5fa` | Gece mavisi |
+| `sunset` | `#1a0f0a` | `#fb923c` | Sıcak turuncu-amber |
+| `forest` | `#0a1410` | `#34d399` | Koyu orman yeşili |
+
+---
+
+## 👤 Ajan Yönetimi
+
+### Ajan Şablon Koleksiyonu
+
+Kurulum sihirbazında 12 hazır şablon ajan seçilebilir:
+
+| Şablon | Rol |
+|---|---|
+| 🧑‍💻 Geliştirici | Kod yazar, refaktör eder, hata ayıklar |
+| 🔍 Araştırmacı | Web'de derin araştırma yapar |
+| ✍️ Yazar | Blog, makale ve uzun form içerikler |
+| 📢 Sosyal Medya | Kısa, çekici sosyal medya içerikleri |
+| 🔧 DevOps | CI/CD, Docker, Kubernetes |
+| 📊 Veri Analisti | SQL, pandas, veri analizi |
+| 📋 Proje Yöneticisi | Görev planı, durum raporları |
+| 🎧 Müşteri Desteği | Empatik, çözüm odaklı yanıtlar |
+| 👁️ Kod Reviewer | PR kalite ve güvenlik incelemesi |
+| 🌍 Çevirmen | TR-EN ve diğer dil çevirileri |
+| 📣 Pazarlama | Kampanya, reklam metni |
+| 🎓 Eğitmen | Konuları sade örneklerle öğretir |
+
+### Ajan İzin Sistemi
+
+Her ajana aşağıdaki izinler ayrı ayrı verilebilir:
+
+- `web_search` — Web araması
+- `file_read` / `file_write` — Dosya okuma/yazma
+- `code_execution` — Kod çalıştırma
+- `system_commands` — Terminal komutları
+- `ui_automation` — UI otomasyonu
+- `network_access` — HTTP istekleri
+- `memory_read` / `memory_write` — Bellek erişimi
+- `browser_control` — Playwright tarayıcı kontrolü
+
+---
+
+## 🧠 Bellek ve Bilgi Grafiği
+
+### Vektör Belleği (ChromaDB)
+
+Ajanlar uzun vadeli anlam tabanlı belleğe sahiptir:
+
+```
+Kaydet → Anlamsal vektör üretimi → ChromaDB'ye depola
+Hatırla → Sorgu vektörizasyonu → Cosine similarity araması → İlgili anılar
+```
+
+- **Yerel embedding**: `sentence-transformers/all-MiniLM-L6-v2` (internet gerektirmez)
+- **OpenAI embedding**: `text-embedding-3-small` (daha yüksek kalite)
+- Her ajan kendi izole bellek alanına sahiptir
+
+### Bilgi Grafiği (Knowledge Graph)
+
+Ajanlar yapılandırılmış bilgi ilişkileri oluşturabilir:
+
+- **Düğüm ekleme**: `kg_add_entity` — Varlık, özellik ve etiket
+- **İlişki ekleme**: `kg_add_relation` — İki düğüm arasında yönlü ilişki
+- **Anlam araması**: `kg_search` — Metin tabanlı düğüm arama
+- **Komşu sorgulama**: `kg_query_neighbors` — Bir düğümün bağlantıları
+- **Görsel keşif**: `KnowledgeGraphModal` bileşeni ile interaktif grafik
+
+---
+
+## 🔄 İş Akışları (Workflows)
+
+Görsel iş akışı editörü ile karmaşık otomasyon zincirleri oluşturabilirsiniz:
+
+- **Sürükle-bırak node editörü**: Adımları görsel olarak bağlayın
+- **Koşullu dallanma**: Şart tabanlı akış yönlendirmesi
+- **Ajan adımları**: Her node bir ajan çağrısı
+- **Araç adımları**: Doğrudan araç çalıştırma
+- **Döngü desteği**: Tekrarlayan görevler için döngü yapıları
+- **İş akışı şablonları**: Hazır iş akışı şablonları
+- **Zamanlama**: APScheduler ile belirli aralıklarda otomatik çalıştırma
+
+---
+
+## 🔌 MCP Entegrasyonu
+
+[Model Context Protocol](https://modelcontextprotocol.io/) desteği ile harici araç sunucularına bağlanabilirsiniz:
+
+```json
+// Örnek MCP sunucu yapılandırması
+{
+  "name": "filesystem",
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/dir"]
+}
+```
+
+- MCP araçları otomatik olarak ajan araç kataloğuna eklenir
+- Stdio ve SSE transport protokolleri desteklenir
+- Bağlantı durumu arayüzde gerçek zamanlı gösterilir
+
+---
+
+## 🔐 Güvenlik ve İzinler
+
+### Sandbox Koruması
+
+- `run_command` aracı yalnızca `RUN_COMMAND_ALLOWLIST`'teki komutlara izin verir
+- Çalışma dizini `RUN_COMMAND_CWD_JAIL` ile kısıtlanabilir
+- Docker sandbox aracı tamamen izole ortamda kod çalıştırır
+
+### Rate Limiting
+
+Her LLM sağlayıcı için istek ve token limitleri:
+- OpenAI: dakikada 60 istek, 200.000 token
+- Anthropic: dakikada 50 istek, 100.000 token
+
+### Denetim Günlüğü (Audit Log)
+
+Kritik işlemler HMAC imzalı denetim kaydına alınır:
+- Ajan oluşturma/silme
+- Sistem sıfırlama
+- Araç yetki değişiklikleri
+
+### Onay Mekanizması
+
+Riskli araçlar (`delete_file`, `run_command`, vb.) kullanıcı onayına sunulabilir:
+1. Ajan araç çağrısı yapar
+2. Sistem onay kuyruğuna ekler
+3. Kullanıcı arayüzde onay/red diyaloğu görür
+4. Onay verilirse araç çalışır, red verilirse ajan başka yol dener
+
+---
+
+## 🎤 Ses (Voice)
+
+```env
+VOICE_ENABLED=true
+```
+
+- **Ses girişi**: Web Speech API ile tarayıcı tabanlı konuşma tanıma
+- **Ses çıkışı**: TTS (Text-to-Speech) araçları ile metinden ses sentezi
+- **Sesli yanıt**: Ajan yanıtları sesli olarak okunabilir
+
+---
+
+## 📈 Gözlemlenebilirlik
+
+### Yapısal Loglama
+
+```env
+LOG_FORMAT=json  # Yapısal JSON logları (log aggregation sistemleri için)
+```
+
+### Trace ID
+
+Her HTTP isteği `x-trace-id` başlığıyla izlenir. Tüm log satırları bu ID'yi içerir, böylece dağıtık sistemlerde hata takibi kolaylaşır.
+
+### Sistem Paneli
+
+Sağ panel şunları gerçek zamanlı gösterir:
+- Ajan çalışma durumu
+- Son araç çağrıları
+- Sistem kaynakları
+- Log akışı
+
+---
+
+## ⌨️ Klavye Kısayolları
+
+| Kısayol | İşlev |
+|---|---|
+| `Ctrl + K` | Komut paletini aç |
+| `Ctrl + N` | Yeni ajan oluştur |
+| `Ctrl + Shift + N` | Yeni sohbet |
+| `Ctrl + R` | Ajanları yenile |
+| `Ctrl + ,` | Ayarları aç |
+| `Ctrl + E` | Seçili ajanı düzenle |
+| `Ctrl + Shift + E` | Ajan JSON'ını dışa aktar |
+| `Ctrl + Shift + S` | Sohbeti Markdown olarak dışa aktar |
+| `1-9` | İlgili ajanı seç |
+
+---
+
+## 🧑‍💻 Geliştirici Rehberi
+
+### Backend Test
 
 ```bash
 cd backend
-# Windows üzerinde sanal ortam aktifken:
-python -m pytest
+pytest tests/ -v
 ```
 
+### Frontend Test
+
+```bash
+cd frontend
+npm test
+```
+
+### Tip Kontrolü
+
+```bash
+cd frontend
+npx tsc --noEmit
+```
+
+### Yeni Araç Ekleme
+
+1. `backend/app/services/tools/` altında yeni dosya oluşturun
+2. `BaseTool` sınıfını extend edin:
+
+```python
+from app.services.tools.base import BaseTool, PermissionKey, ToolResult
+
+class MyNewTool(BaseTool):
+    name = "my_new_tool"
+    description = "Aracın ne yaptığını açıkla"
+    permission_key = PermissionKey.CODE_EXECUTION  # İzin gereksinimleri
+
+    async def run(self, ctx, param1: str, param2: int = 10) -> ToolResult:
+        # Araç mantığı
+        return ToolResult(output=f"Sonuç: {param1}")
+```
+
+3. `registry.py` dosyasına import edin ve `_all_tools` listesine ekleyin
+
+### Yeni LLM Sağlayıcı Ekleme
+
+1. `backend/app/services/llm/` altında `myprovider_provider.py` oluşturun
+2. `BaseLLMProvider`'ı extend edin
+3. `factory.py`'daki `get_provider()` fonksiyonuna ekleyin
+
 ---
 
-## 📜 Lisans
+## 📄 Lisans
 
-Argus, [MIT Lisansı](LICENSE) altında geliştirilen açık kaynaklı ve özgür bir yazılımdır. Ticari veya kişisel amaçlarla özgürce modifiye edilebilir ve dağıtılabilir.
+MIT License — Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
 ---
 
-<p align="center">
-  <sub>Argus · v0.4.0 · 2026 · Made with ❤️</sub>
-</p>
+## 🤝 Katkı
+
+1. Fork edin
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'feat: amazing feature'`)
+4. Push edin (`git push origin feature/amazing-feature`)
+5. Pull Request açın
+
+---
+
+<div align="center">
+  <strong>Argus</strong> — Aynı anda her şeyi gören çoklu ajan sistemi
+  <br/>
+  <sub>FastAPI + React + SQLite + ChromaDB + Playwright</sub>
+</div>
