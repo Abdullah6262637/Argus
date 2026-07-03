@@ -8,46 +8,46 @@ export function getModelLogo(model: string, provider: string): string {
 
   // 1. Check model family keywords
   if (m.includes('gpt') || m.includes('o1') || m.includes('o3')) {
-    return '/providers/openai.png';
+    return '/providers/openai.png?v=3';
   }
   if (m.includes('claude')) {
-    return '/providers/anthropic.png';
+    return '/providers/anthropic.png?v=3';
   }
   if (m.includes('gemini') || m.includes('gemma')) {
-    return '/providers/gemini.png';
+    return '/providers/gemini.png?v=3';
   }
   if (m.includes('llama')) {
-    return '/models/llama.png';
+    return '/models/llama.png?v=3';
   }
   if (m.includes('qwen')) {
-    return '/models/qwen.png';
+    return '/models/qwen.png?v=3';
   }
   if (m.includes('deepseek')) {
-    return '/providers/deepseek.png';
+    return '/providers/deepseek.png?v=3';
   }
   if (m.includes('mistral') || m.includes('mixtral') || m.includes('codestral') || m.includes('pixtral')) {
-    return '/providers/mistral.png';
+    return '/providers/mistral.png?v=3';
   }
   if (m.includes('grok')) {
-    return '/providers/xai.png';
+    return '/providers/xai.png?v=3';
   }
   if (m.includes('command') || m.includes('cohere')) {
-    return '/models/cohere.png';
+    return '/models/cohere.png?v=3';
   }
   if (m.includes('phi') || m.includes('microsoft')) {
-    return '/models/microsoft.png';
+    return '/models/microsoft.png?v=3';
   }
 
   // 2. Fallback to provider logo if model name doesn't match a specific family
-  if (p === 'openai') return '/providers/openai.png';
-  if (p === 'anthropic') return '/providers/anthropic.png';
-  if (p === 'gemini') return '/providers/gemini.png';
-  if (p === 'openrouter') return '/providers/openrouter.png';
-  if (p === 'groq') return '/providers/groq.png';
-  if (p === 'deepseek') return '/providers/deepseek.png';
-  if (p === 'mistral') return '/providers/mistral.png';
-  if (p === 'xai') return '/providers/xai.png';
-  if (p === 'local') return '/providers/local.png';
+  if (p === 'openai') return '/providers/openai.png?v=3';
+  if (p === 'anthropic') return '/providers/anthropic.png?v=3';
+  if (p === 'gemini') return '/providers/gemini.png?v=3';
+  if (p === 'openrouter') return '/providers/openrouter.png?v=3';
+  if (p === 'groq') return '/providers/groq.png?v=3';
+  if (p === 'deepseek') return '/providers/deepseek.png?v=3';
+  if (p === 'mistral') return '/providers/mistral.png?v=3';
+  if (p === 'xai') return '/providers/xai.png?v=3';
+  if (p === 'local') return '/providers/local.png?v=3';
   
-  return '/providers/local.png';
+  return '/providers/local.png?v=3';
 }

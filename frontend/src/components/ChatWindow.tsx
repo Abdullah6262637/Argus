@@ -510,15 +510,15 @@ export function ChatWindow({
 
             {/* Alt satır: Provider + model + token rozeti */}
             <div className="flex items-center gap-1.5 mt-0.5 text-[10.5px] text-brand-mutedSoft min-w-0">
-              {/* Provider rozeti */}
-              <span
-                className="inline-flex items-center h-4 px-1.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-brand-accent/10 text-brand-accent flex-shrink-0"
-                title={`${agent.provider} sağlayıcısı`}
-              >
-                {agent.provider}
+              {/* Provider adı ve logosu */}
+              <span className="font-mono truncate flex items-center gap-1" title={`${agent.provider} sağlayıcısı`}>
+                <img src={`/providers/${agent.provider}.png?v=3`} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
+                <span className="capitalize">{agent.provider}</span>
               </span>
 
-              {/* Model adı */}
+              <span className="text-brand-border flex-shrink-0">/</span>
+
+              {/* Model adı ve logosu */}
               <span className="font-mono truncate flex items-center gap-1" title={agent.model}>
                 <img src={getModelLogo(agent.model, agent.provider)} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
                 <span>{agent.model}</span>
