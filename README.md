@@ -1,9 +1,13 @@
-# 🦅 Argus — Çoklu Ajan Sistemi
-
-> **Aynı anda her şeyi gören çoklu ajan sistemi.**  
-> Yerel olarak çalışan, tam kapsamlı yapay zeka ajan platformu. Birden fazla LLM sağlayıcısını destekler, 200'den fazla araca sahiptir, gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle gelir.
-
 <div align="center">
+
+<img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/logo/Ana%20Logo.png" alt="Argus Logo" width="140" />
+
+# Argus — Çoklu Ajan Sistemi
+
+**Aynı anda her şeyi gören çoklu ajan sistemi.**  
+Yerel olarak çalışan, tam kapsamlı yapay zeka ajan platformu.  
+Birden fazla LLM sağlayıcısını destekler, 200'den fazla araca sahiptir,  
+gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle gelir.
 
 ![Version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)
 ![Backend](https://img.shields.io/badge/backend-FastAPI%20%2B%20Python%203.12-009688?style=flat-square)
@@ -174,6 +178,67 @@ WebSocket → React UI (gerçek zamanlı güncelleme)
 ## 🧠 LLM Sağlayıcıları
 
 Argus, aşağıdaki sağlayıcıları yerel **provider factory** katmanı üzerinden destekler:
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/openai-official.png" width="48" height="48" alt="OpenAI" /><br/>
+      <b>OpenAI</b><br/>
+      <sub>gpt-4o · o1 · o3</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/anthropic.png" width="48" height="48" alt="Anthropic" /><br/>
+      <b>Anthropic</b><br/>
+      <sub>claude-3.5-sonnet · opus</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/gemini.png" width="48" height="48" alt="Gemini" /><br/>
+      <b>Google Gemini</b><br/>
+      <sub>gemini-2.5-pro · flash</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/openrouter.png" width="48" height="48" alt="OpenRouter" /><br/>
+      <b>OpenRouter</b><br/>
+      <sub>100+ model</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/groq.png" width="48" height="48" alt="Groq" /><br/>
+      <b>Groq</b><br/>
+      <sub>llama-3.3 · mixtral</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/deepseek.png" width="48" height="48" alt="DeepSeek" /><br/>
+      <b>DeepSeek</b><br/>
+      <sub>deepseek-v3 · r1</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/mistral.png" width="48" height="48" alt="Mistral" /><br/>
+      <b>Mistral</b><br/>
+      <sub>large · medium · codestral</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/xai.png" width="48" height="48" alt="xAI" /><br/>
+      <b>xAI Grok</b><br/>
+      <sub>grok-4 · grok-2</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/local.png" width="48" height="48" alt="Local" /><br/>
+      <b>Yerel (Ollama)</b><br/>
+      <sub>llama3 · qwen2.5 · phi4</sub>
+    </td>
+    <td align="center" width="130">
+      <img src="https://raw.githubusercontent.com/Abdullah6262637/Argus/main/frontend/public/providers/lmstudio.png" width="48" height="48" alt="LM Studio" /><br/>
+      <b>LM Studio</b><br/>
+      <sub>Tüm GGUF modeller</sub>
+    </td>
+  </tr>
+</table>
+
+</div>
 
 | Sağlayıcı | Ortam Değişkeni | Model Örnekleri |
 |---|---|---|
