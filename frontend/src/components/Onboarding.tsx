@@ -274,12 +274,12 @@ export function Onboarding({
             <ProviderItem
               icon="bolt"
               name="OpenAI"
-              desc="GPT-5, GPT-4.1, GPT-4o, o3, o4-mini ve digerleri"
+              desc="o1, o3-mini, GPT-4o, GPT-4o-mini ve en son modeller"
             />
             <ProviderItem
               icon="psychology"
               name="Anthropic"
-              desc="Claude Opus 4.7, Sonnet 4.5, Haiku 4.5 vb."
+              desc="Claude 3.5 Sonnet, Claude 3.5 Haiku, Claude 3 Opus vb."
             />
             <ProviderItem
               icon="extension"
@@ -475,15 +475,13 @@ export function Onboarding({
                       : 'border-brand-border bg-brand-bg/30 opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <div
-                    className={`w-7 h-7 rounded flex items-center justify-center flex-shrink-0 ${
-                      active
-                        ? 'bg-brand-accent/15 text-brand-accent'
-                        : 'bg-brand-panel text-brand-muted'
+                  <Icon
+                    name={t.icon}
+                    size={20}
+                    className={`flex-shrink-0 mt-0.5 transition-colors ${
+                      active ? 'text-brand-accent' : 'text-brand-textSoft'
                     }`}
-                  >
-                    <Icon name={t.icon} size={16} />
-                  </div>
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="text-xs font-semibold text-brand-text flex items-center gap-1">
                       {t.name}
