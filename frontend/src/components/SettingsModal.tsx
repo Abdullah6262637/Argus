@@ -637,7 +637,7 @@ function ApiKeysTab() {
   // Loading durumu — layout shift'i azaltmak için minimum yükseklik
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 text-xs text-brand-muted min-h-[400px]">
+      <div className="flex items-center justify-center gap-2 text-xs text-brand-muted min-h-[250px]">
         <Icon
           name="progress_activity"
           size={14}
@@ -1222,7 +1222,7 @@ function PluginsMcpTab() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 text-xs text-brand-muted min-h-[420px]">
+      <div className="flex items-center justify-center gap-2 text-xs text-brand-muted min-h-[250px]">
         <Icon name="progress_activity" size={14} className="animate-spin" />
         <span>Yükleniyor...</span>
       </div>

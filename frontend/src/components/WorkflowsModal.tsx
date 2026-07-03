@@ -1,6 +1,6 @@
 // WorkflowsModal: YAML workflow CRUD + run (kurumsal sade tasarım)
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
 
@@ -59,6 +59,26 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
   const [savingEdit, setSavingEdit] = useState(false);
   const [savedEdit, setSavedEdit] = useState(false);
   const [isNew, setIsNew] = useState(true);
+
+  // Height Observer
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number>(600);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // Measure unconstrained content height, add header (48px) + padding (40px)
+        const computedHeight = entry.contentRect.height + 88;
+        const bounded = Math.max(500, Math.min(computedHeight, window.innerHeight * 0.88));
+        setContentHeight(bounded);
+      }
+    });
+
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, [selected, mode, running, result, error]);
 
   const reload = async () => {
     setLoading(true);
@@ -177,7 +197,10 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-backdrop-in">
-      <div className="bg-brand-bg border border-brand-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex overflow-hidden animate-modal-in">
+      <div 
+        style={{ height: `${contentHeight}px` }}
+        className="bg-brand-bg border border-brand-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex overflow-hidden animate-modal-in transition-[height] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]"
+      >
         {/* ============ Sol Sidebar: Workflow Listesi ============ */}
         <aside className="w-64 flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col">
           {/* Sidebar Header */}
@@ -367,55 +390,57 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
 
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto p-5">
-            {/* RUN MODE */}
-            {mode === 'run' && (
-              <>
-                {!selected ? (
-                  <div className="flex flex-col items-center justify-center text-center py-16 gap-2">
-                    <Icon
-                      name="touch_app"
-                      size={36}
-                      weight={300}
-                      className="text-brand-mutedSoft"
+            <div key={`${selected}_${mode}_${running}_${result ? 'res' : 'no'}`} ref={contentRef} className="animate-step-in">
+              {/* RUN MODE */}
+              {mode === 'run' && (
+                <>
+                  {!selected ? (
+                    <div className="flex flex-col items-center justify-center text-center py-16 gap-2">
+                      <Icon
+                        name="touch_app"
+                        size={36}
+                        weight={300}
+                        className="text-brand-mutedSoft"
+                      />
+                      <h3 className="text-sm font-semibold text-brand-text">
+                        Workflow seç
+                      </h3>
+                      <p className="text-[11px] text-brand-mutedSoft max-w-xs">
+                        Sol panelden bir workflow seçerek çalıştırabilir veya
+                        düzenleyebilirsin.
+                      </p>
+                    </div>
+                  ) : (
+                    <RunPanel
+                      workflowName={selected}
+                      inputsJson={inputsJson}
+                      onInputsChange={setInputsJson}
+                      running={running}
+                      result={result}
+                      error={error}
+                      onRun={handleRun}
+                      onEdit={() => startEdit(selected)}
                     />
-                    <h3 className="text-sm font-semibold text-brand-text">
-                      Workflow seç
-                    </h3>
-                    <p className="text-[11px] text-brand-mutedSoft max-w-xs">
-                      Sol panelden bir workflow seçerek çalıştırabilir veya
-                      düzenleyebilirsin.
-                    </p>
-                  </div>
-                ) : (
-                  <RunPanel
-                    workflowName={selected}
-                    inputsJson={inputsJson}
-                    onInputsChange={setInputsJson}
-                    running={running}
-                    result={result}
-                    error={error}
-                    onRun={handleRun}
-                    onEdit={() => startEdit(selected)}
-                  />
-                )}
-              </>
-            )}
+                  )}
+                </>
+              )}
 
-            {/* EDIT MODE */}
-            {mode === 'edit' && (
-              <EditPanel
-                isNew={isNew}
-                editName={editName}
-                onEditNameChange={setEditName}
-                editContent={editContent}
-                onEditContentChange={setEditContent}
-                error={error}
-                saved={savedEdit}
-                saving={savingEdit}
-                onSave={saveEdit}
-                onDelete={() => deleteWorkflow(editName)}
-              />
-            )}
+              {/* EDIT MODE */}
+              {mode === 'edit' && (
+                <EditPanel
+                  isNew={isNew}
+                  editName={editName}
+                  onEditNameChange={setEditName}
+                  editContent={editContent}
+                  onEditContentChange={setEditContent}
+                  error={error}
+                  saved={savedEdit}
+                  saving={savingEdit}
+                  onSave={saveEdit}
+                  onDelete={() => deleteWorkflow(editName)}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
