@@ -11,7 +11,7 @@ export function useAgents() {
     setLoading(true);
     setError(null);
     try {
-      const list = await api.listAgents();
+      const list = await api.listAgents(true);
       setAgents(list);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

@@ -275,13 +275,21 @@ export function AgentList({
         {/* Ajan Kartları */}
         <div className="space-y-0.5">
           {filteredAgents.map((a) => (
-            <AgentCard
+            <div
               key={a.id}
-              agent={a}
-              active={a.id === selectedId}
-              onSelect={() => onSelect(a.id)}
-              onContextMenu={(e) => openContext(e, a.id)}
-            />
+              className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top overflow-hidden ${
+                a.is_active
+                  ? 'max-h-[120px] opacity-100 scale-100 py-0.5 pointer-events-auto'
+                  : 'max-h-0 opacity-0 scale-90 py-0 my-0 border-0 pointer-events-none'
+              }`}
+            >
+              <AgentCard
+                agent={a}
+                active={a.id === selectedId}
+                onSelect={() => onSelect(a.id)}
+                onContextMenu={(e) => openContext(e, a.id)}
+              />
+            </div>
           ))}
         </div>
       </div>

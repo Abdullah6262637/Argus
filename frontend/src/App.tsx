@@ -67,6 +67,8 @@ export default function App() {
     }
   });
 
+  const [systemPanelTab, setSystemPanelTab] = useState<'tasks' | 'logs' | 'inspector'>('tasks');
+
   const toggleAgentList = () => {
     setAgentListOpen((prev) => {
       const next = !prev;
@@ -442,8 +444,32 @@ export default function App() {
       else if (isMod && isShift && key === 'e') {
         e.preventDefault();
         if (selectedAgent) {
-          handleExport('json');
+          handleExport(selectedAgent.id);
         }
+      }
+      // Ctrl+Shift+M -> Markdown Dışa Aktar
+      else if (isMod && isShift && key === 'm') {
+        e.preventDefault();
+        if (selectedAgent) {
+          handleExportChatMD(selectedAgent.id);
+        }
+      }
+      // Ctrl+Shift+Backspace -> Sohbeti Temizle
+      else if (isMod && isShift && key === 'backspace') {
+        e.preventDefault();
+        handleDeleteConversation();
+      }
+      // Ctrl+Alt+L -> Sistem/Log Panelini Göster/Gizle
+      else if (isMod && isAlt && key === 'l') {
+        e.preventDefault();
+        setSystemPanelTab('tasks');
+        toggleSystemPanel();
+      }
+      // Ctrl+Alt+M -> Ajan Havuzu/Yönetim Panelini Aç
+      else if (isMod && isAlt && key === 'm') {
+        e.preventDefault();
+        setSettingsInitialTab('agents');
+        setSettingsOpen(true);
       }
       // Ctrl+Shift+D -> API Dokümantasyonu
       else if (isMod && isShift && key === 'd') {
@@ -613,6 +639,7 @@ export default function App() {
             onToggleActive={handleToggleAgentActive}
             onInspect={(id) => {
               setSelectedId(id);
+              setSystemPanelTab('inspector');
               setSystemPanelOpen(true);
             }}
             onTestConnection={handleTestConnection}
@@ -642,6 +669,7 @@ export default function App() {
             refreshSignal={systemRefresh}
             isOpen={systemPanelOpen}
             onToggle={toggleSystemPanel}
+            defaultTab={systemPanelTab}
           />
         </div>
       )}

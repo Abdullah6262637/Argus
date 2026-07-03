@@ -14,6 +14,7 @@ interface SystemPanelProps {
   refreshSignal?: number;
   isOpen: boolean;
   onToggle: () => void;
+  defaultTab?: Tab;
 }
 
 // --------- Cron çözümleyici ---------
@@ -68,14 +69,21 @@ export function SystemPanel({
   selectedAgentId,
   refreshSignal = 0,
   isOpen,
-  onToggle}: SystemPanelProps) {
-  const [tab, setTab] = useState<Tab>('tasks');
+  onToggle,
+  defaultTab}: SystemPanelProps) {
+  const [tab, setTab] = useState<Tab>(defaultTab ?? 'tasks');
   const [tasks, setTasks] = useState<ScheduledTask[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showNewTask, setShowNewTask] = useState(false);
   const [runningId, setRunningId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (defaultTab) {
+      setTab(defaultTab);
+    }
+  }, [defaultTab]);
 
   const loadAll = async () => {
     setLoading(true);
