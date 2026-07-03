@@ -152,6 +152,32 @@ def _build_system_prompt(
     return "\n\n---\n".join(parts)
 
 
+def _get_fallback_provider_info(primary_provider: str, primary_model: str) -> Optional[tuple[str, str]]:
+    """Cevap alinamamasi durumunda API anahtari olan yedek LLM seceneklerini doner."""
+    import os
+    
+    # 1. Gemini
+    gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    if gemini_key and primary_provider != "gemini":
+        return "gemini", "gemini-1.5-flash"
+        
+    # 2. OpenRouter (Llama 3 Free)
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY")
+    if openrouter_key and primary_provider != "openrouter":
+        return "openrouter", "meta-llama/llama-3-8b-instruct:free"
+
+    # 3. Groq (Llama 3)
+    groq_key = os.environ.get("GROQ_API_KEY")
+    if groq_key and primary_provider != "groq":
+        return "groq", "llama3-8b-8192"
+
+    # 4. Yerel Ollama
+    if primary_provider != "ollama" and primary_provider != "local":
+        return "ollama", "qwen2.5:7b-instruct"
+        
+    return None
+
+
 async def run_agent_loop(
     agent: AgentDefinition,
     history: List[ChatMessage],
@@ -214,10 +240,53 @@ async def run_agent_loop(
                 max_tokens=agent.max_tokens,
                 tools=tools_schema if tools_schema else None,
             )
-        except LLMError:
-            raise
-        except Exception as exc:
-            raise LLMError(f"LLM cagrisi sirasinda hata: {exc}") from exc
+        except Exception as primary_exc:
+            logger.warning(
+                "Primary LLM provider %s (%s) failed: %s. Fallback checking...",
+                provider_name, agent.model, primary_exc
+            )
+            fallback_info = _get_fallback_provider_info(provider_name, agent.model)
+            if fallback_info:
+                fb_provider_name, fb_model = fallback_info
+                logger.info(
+                    "[FALLBACK AKTIF] Birincil saglayici (%s - %s) hata verdi: %s. "
+                    "Alternatif saglayiciya geciliyor: %s (%s)",
+                    provider_name, agent.model, primary_exc, fb_provider_name, fb_model
+                )
+                try:
+                    fallback_provider = get_provider(
+                        fb_provider_name,
+                        fb_model,
+                    )
+                    fb_tools_schema = (
+                        tool_registry.anthropic_schemas(agent.permissions)
+                        if fb_provider_name == "anthropic"
+                        else tool_registry.openai_schemas(agent.permissions)
+                    )
+                    
+                    response = await fallback_provider.chat(
+                        messages,
+                        temperature=agent.temperature,
+                        max_tokens=agent.max_tokens,
+                        tools=fb_tools_schema if fb_tools_schema else None,
+                    )
+                    
+                    # Sonuc bilgisini guncelle
+                    result.provider = fb_provider_name
+                    result.model = fb_model
+                    provider = fallback_provider
+                    provider_name = fb_provider_name
+                    tools_schema = fb_tools_schema
+                    
+                except Exception as fb_exc:
+                    logger.error("Fallback LLM saglayicisi da hata verdi: %s", fb_exc)
+                    raise LLMError(
+                        f"Birincil LLM hatasi: {primary_exc} | Yedek LLM hatasi: {fb_exc}"
+                    ) from fb_exc
+            else:
+                if isinstance(primary_exc, LLMError):
+                    raise
+                raise LLMError(f"LLM cagrisi sirasinda hata: {primary_exc}") from primary_exc
 
         # Token bilgileri
         if response.prompt_tokens:
