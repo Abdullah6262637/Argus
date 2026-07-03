@@ -7,7 +7,6 @@ import { AgentForm } from './components/AgentForm';
 import { EmptyState } from './components/EmptyState';
 import { SettingsModal } from './components/SettingsModal';
 import { ConfirmDialog } from './components/ConfirmDialog';
-import { Onboarding } from './components/Onboarding';
 import { SetupWizard } from './components/SetupWizard';
 import { ApprovalDialog } from './components/ApprovalDialog';
 import { WorkflowsModal } from './components/WorkflowsModal';
@@ -20,7 +19,6 @@ import { useChat } from './hooks/useChat';
 import { useWebSocket } from './hooks/useWebSocket';
 import { useTheme } from './hooks/useTheme';
 import { useAppearance } from './hooks/useAppearance';
-import { useFirstRun } from './hooks/useFirstRun';
 import { useApprovals } from './hooks/useApprovals';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useModal } from './context/ModalContext';
@@ -101,8 +99,6 @@ export default function App() {
   const { setDensity, setFontSize } = useAppearance();
 
   // Keyboard shortcuts moved to bottom to capture full state closures
-
-  const { showOnboarding, complete: completeOnboarding, reset: resetOnboarding } = useFirstRun();
 
   // Akıllı Kurulum Sihirbazı Durumu
   const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
@@ -412,7 +408,7 @@ export default function App() {
           await reload();
           setSelectedId(null);
           closeConfirm();
-          resetOnboarding(); // onboarding'i yeniden goster
+          setSetupRequired(true); // Kurulum ekranını yeniden göster
         } catch (err) {
           closeConfirm();
           openConfirm({
@@ -464,24 +460,11 @@ export default function App() {
   if (setupRequired === true) {
     return (
       <SetupWizard
+        theme={theme}
+        onChangeTheme={setTheme}
         onFinished={() => {
           setSetupRequired(false);
           reload();
-        }}
-      />
-    );
-  }
-
-  // --- Onboarding acikken tum uygulamanin ustunde ---
-  if (showOnboarding) {
-    return (
-      <Onboarding
-        theme={theme}
-        onChangeTheme={setTheme}
-        onFinish={completeOnboarding}
-        onCreateFirstAgent={() => {
-          completeOnboarding();
-          openCreateForm();
         }}
       />
     );
