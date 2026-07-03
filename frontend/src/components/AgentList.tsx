@@ -120,17 +120,17 @@ export function AgentList({
         {/* Arama */}
         {agents.length > 0 && (
           <div className="relative">
-            <Icon
-              name="search"
-              size={14}
-              weight={500}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-mutedSoft pointer-events-none"
-            />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Ajan ara..."
-              className="w-full h-8 bg-brand-bg border border-brand-border rounded-md pl-8 pr-7 text-[12px] text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/15 transition-all"
+              className="peer w-full h-8 bg-brand-bg border border-brand-border rounded-md pl-8 pr-7 text-[12px] text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/15 transition-all duration-200"
+            />
+            <Icon
+              name="search"
+              size={14}
+              weight={500}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-mutedSoft peer-focus:text-brand-accent pointer-events-none transition-colors duration-200"
             />
             {search && (
               <button
@@ -262,7 +262,7 @@ function AgentCard({
       onClick={onSelect}
       onContextMenu={onContextMenu}
       title="Sağ tıkla ile seçenekler"
-      className={`group w-full text-left px-3 py-2.5 rounded-md transition-colors duration-150 relative ${
+      className={`group w-full text-left px-3 py-2.5 rounded-md transition-all duration-150 relative animate-card-in ${
         active
           ? 'bg-brand-accent/8'
           : 'hover:bg-brand-panelAlt/60'

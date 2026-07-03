@@ -73,6 +73,25 @@ export function SystemPanel({
   const [showNewTask, setShowNewTask] = useState(false);
   const [runningId, setRunningId] = useState<number | null>(null);
 
+  const [isOpen, setIsOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('argus_system_panel_open');
+      return saved !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const togglePanel = () => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('argus_system_panel_open', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
   const loadAll = async () => {
     setLoading(true);
     setError(null);
@@ -143,7 +162,8 @@ export function SystemPanel({
   );
 
   return (
-    <aside className="w-80 flex-shrink-0 border-l border-brand-border bg-brand-panel flex flex-col animate-fade-in-right animate-stagger-3">
+    <aside className={`relative h-full flex-shrink-0 border-l border-brand-border bg-brand-panel flex flex-col transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'w-80' : 'w-0 !border-l-0'}`}>
+      <div className="w-80 h-full flex flex-col overflow-hidden">
       {/* ---------- Tab Bar ---------- */}
       <div className="border-b border-brand-border bg-brand-panel">
         <div className="flex items-stretch px-2 pt-2 gap-1">
@@ -228,25 +248,27 @@ export function SystemPanel({
         {/* TASKS */}
         {tab === 'tasks' && (
           <>
-            {!showNewTask ? (
-              <button
-                onClick={() => setShowNewTask(true)}
-                disabled={agents.length === 0}
-                className="w-full h-10 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-lg border border-dashed border-brand-border text-brand-mutedSoft hover:text-brand-accent hover:border-brand-accent/60 hover:bg-brand-accent/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                <Icon name="add_circle" size={15} weight={550} filled />
-                {agents.length === 0
-                  ? 'Önce bir ajan oluştur'
-                  : 'Yeni Zamanlı Görev'}
-              </button>
-            ) : (
-              <NewTaskForm
-                agents={agents}
-                defaultAgentId={selectedAgentId}
-                onCreate={handleCreateTask}
-                onCancel={() => setShowNewTask(false)}
-              />
-            )}
+            <div key={showNewTask ? 'form' : 'btn'} className="animate-step-in">
+              {!showNewTask ? (
+                <button
+                  onClick={() => setShowNewTask(true)}
+                  disabled={agents.length === 0}
+                  className="w-full h-10 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-lg border border-dashed border-brand-border text-brand-mutedSoft hover:text-brand-accent hover:border-brand-accent/60 hover:bg-brand-accent/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+                >
+                  <Icon name="add_circle" size={15} weight={550} filled />
+                  {agents.length === 0
+                    ? 'Önce bir ajan oluştur'
+                    : 'Yeni Zamanlı Görev'}
+                </button>
+              ) : (
+                <NewTaskForm
+                  agents={agents}
+                  defaultAgentId={selectedAgentId}
+                  onCreate={handleCreateTask}
+                  onCancel={() => setShowNewTask(false)}
+                />
+              )}
+            </div>
 
             {!loading && tasks.length === 0 && !showNewTask && (
               <div className="flex flex-col items-center justify-center text-center py-10 gap-2">
@@ -316,6 +338,20 @@ export function SystemPanel({
           Yenile
         </button>
       </div>
+    </div>
+
+    {/* Floating Toggle Handle Button */}
+    <button
+        onClick={togglePanel}
+        title={isOpen ? 'Paneli Kapat' : 'Paneli Aç'}
+        className="absolute top-1/2 -translate-y-1/2 -left-3 z-40 w-6 h-12 rounded-l-md border border-r-0 border-brand-border bg-brand-panel text-brand-mutedSoft hover:text-brand-accent flex items-center justify-center transition-all shadow-md group hover:bg-brand-panelAlt"
+      >
+        <Icon 
+          name={isOpen ? 'chevron_right' : 'chevron_left'} 
+          size={14} 
+          className="transition-transform duration-300 group-hover:scale-110" 
+        />
+      </button>
     </aside>
   );
 }
