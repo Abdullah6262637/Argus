@@ -65,3 +65,40 @@ servers:
   - npx
   - -y
   - '@modelcontextprotocol/server-fetch'
+- name: postgres
+  enabled: false
+  description: PostgreSQL veritabanlarına doğrudan SQL bağlantısı ve sorgulama yeteneği.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-postgres'
+  - --connection-string
+  - postgresql://user:password@localhost:5432/dbname
+- name: sentry
+  enabled: false
+  description: Canlı sistemdeki Sentry hata kayıtlarını (exceptions) listeleme ve analiz etme.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-sentry'
+  env:
+    SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
+    SENTRY_ORG: ${SENTRY_ORG}
+- name: docker
+  enabled: false
+  description: Yerel Docker daemon'ı ve konteynerleri yönetme aracı.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-docker'
+- name: aws
+  enabled: false
+  description: AWS Cloud kaynaklarını (EC2, S3, RDS vb.) yönetme yeteneği.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-aws'
+  env:
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    AWS_REGION: ${AWS_REGION}
