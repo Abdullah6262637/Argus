@@ -1273,8 +1273,20 @@ function PluginsMcpTab() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex gap-3 min-w-0">
-                    <div className="text-brand-accent mt-0.5 flex-shrink-0">
-                      <Icon name={getMcpIcon(srv.name)} size={20} />
+                    <div className="mt-0.5 flex-shrink-0 w-5 h-5 flex items-center justify-center rounded overflow-hidden">
+                      <img
+                        src={`/mcp/${srv.name}.png`}
+                        alt={srv.name}
+                        className="w-5 h-5 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const fb = document.getElementById(`mcp-fb-${srv.name}`);
+                          if (fb) fb.style.display = 'block';
+                        }}
+                      />
+                      <div id={`mcp-fb-${srv.name}`} style={{ display: 'none' }} className="text-brand-accent">
+                        <Icon name={getMcpIcon(srv.name)} size={20} />
+                      </div>
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
