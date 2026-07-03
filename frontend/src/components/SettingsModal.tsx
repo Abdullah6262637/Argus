@@ -1024,82 +1024,132 @@ function ResetTab({ onRequestReset }: { onRequestReset: () => void }) {
 // ============================================================
 
 function AboutTab() {
+  const osInfo = typeof navigator !== 'undefined' ? (navigator.userAgent.includes('Windows') ? 'Windows x64' : navigator.userAgent.includes('Mac') ? 'macOS (Darwin)' : 'Linux') : 'Windows x64';
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
       {/* Hero */}
-      <div className="text-center py-3">
+      <div className="text-center py-4 bg-brand-panelAlt/30 rounded-lg border border-brand-border/60 p-4 relative overflow-hidden shadow-inner">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-brand-accent/5 rounded-full blur-2xl pointer-events-none" />
         <div className="flex justify-center">
           <img
             src="/logo.png"
-            className="w-16 h-16 rounded-2xl object-contain shadow-lg"
+            className="w-20 h-20 rounded-2xl object-contain shadow-2xl border border-brand-border/80 p-0.5 hover:scale-105 transition-transform duration-300"
             alt="Argus Logo"
           />
         </div>
-        <h2 className="text-xl font-bold text-brand-text mt-3 tracking-tight">
+        <h2 className="text-2xl font-black text-brand-text mt-3 tracking-tight">
           Argus
         </h2>
-        <p className="text-[11px] text-brand-mutedSoft mt-1 inline-flex items-center gap-1.5">
-          <Icon name="bolt" size={11} weight={500} filled />
+        <p className="text-xs text-brand-mutedSoft mt-1.5 inline-flex items-center gap-1.5 font-mono">
+          <Icon name="bolt" size={13} weight={600} filled className="text-brand-accent animate-pulse" />
           <span>Aynı anda her şeyi gören çoklu ajan sistemi</span>
           <span className="text-brand-border">·</span>
-          <span className="font-mono">v0.4.0</span>
+          <span className="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded text-[10px] font-bold">v0.4.5-LATEST</span>
         </p>
       </div>
 
-      <AboutSection icon="description" title="Nedir bu program?">
-        <p>
-          Argus, tek bir masaüstü uygulamasından{' '}
-          <strong>birden fazla AI ajanı</strong> oluşturup yönetmenizi sağlar.
-          Her ajana farklı bir LLM sağlayıcı/model bağlayabilir, plan tabanlı
-          otonom görevler çalıştırabilirsiniz.
+      {/* Tanım */}
+      <AboutSection icon="description" title="Proje Hakkında & Vizyon">
+        <p className="leading-relaxed text-[11.5px] text-brand-textSoft">
+          Argus; geliştiriciler, veri bilimciler ve sistem mühendisleri için tasarlanmış 
+          <strong> otonom ve yarı otonom çoklu ajan (Multi-Agent) kontrol panelidir</strong>. 
+          Geleneksel chat arayüzlerinin aksine Argus, her biri farklı dil modelleriyle (LLM) 
+          güçlendirilmiş uzman ajanları tek bir çatı altında koordine edebilir, hedefleri gerçekleştirmek için 
+          çok adımlı otonom planlama, sorgulama ve araç çalıştırma (Tool Use) süreçlerini yönetebilir.
         </p>
       </AboutSection>
 
-      <AboutSection icon="auto_awesome" title="Öne Çıkan Özellikler">
+      {/* Sistem Durumu */}
+      <AboutSection icon="check_circle" title="Uygulama Çalışma Bilgileri">
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          <InfoRow icon="desktop_windows" label="Çalıştığı İşletim Sistemi" value={osInfo} />
+          <InfoRow icon="javascript" label="Runtime Motoru" value="Electron 33 · React 18" />
+          <InfoRow icon="terminal" label="Sistem Ajan Shell" value="PowerShell (Win)" />
+          <InfoRow icon="api" label="Yerel Backend API" value="FastAPI · Async Python" />
+        </div>
+      </AboutSection>
+
+      {/* Öne Çıkan Özellikler */}
+      <AboutSection icon="auto_awesome" title="Öne Çıkan Ajan Kabiliyetleri">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <Feat icon="hub" text="Hiyerarşik Çoklu Model: OpenAI, Anthropic, Gemini, DeepSeek, Mistral, xAI Grok ve yerel modellerin (Ollama/LM Studio) tek projede eş zamanlı çalışması." />
+          <Feat icon="psychology" text="Otonom Planlama Döngüsü: Hedef bazlı 1-7 adımlı dinamik planlama, yürütme, gözlem (reflection) ve planda otomatik sapma düzeltmesi (re-planning)." />
+          <Feat icon="build" text="Gelişmiş Araç Entegrasyonu: 60'tan fazla yerleşik araçla (dosya sistemi, web tarayıcısı, Git, veritabanı, e-posta, terminal yürütme, görüntü üretimi)." />
+          <Feat icon="schema" text="Bilgi Grafiği & Bellek: Ajanlar arası paylaşılan anlamsal ilişkileri gösteren interaktif Bilgi Grafiği (Knowledge Graph) ve ChromaDB tabanlı Vektör Bellek." />
+          <Feat icon="schedule" text="Zamanlanmış Otonom Görevler: Cron ifadeleriyle tetiklenen arka plan ajansal görevleri ve karmaşık iş akışı (YAML Pipeline) desteği." />
+          <Feat icon="security" text="HITL & Güvenlik: Kritik işletim sistemi ve dosya erişim işlemlerinde İnsan Onayı (Human-In-The-Loop) ve HMAC-SHA256 zincirli bütünlük kayıt sistemi." />
+        </div>
+      </AboutSection>
+
+      {/* Klavye Kısayolları */}
+      <AboutSection icon="keyboard" title="Klavye Kısayolları & Hızlı Erişim">
+        <div className="border border-brand-border rounded-lg overflow-hidden bg-brand-panelAlt/50 text-[11px] font-mono">
+          <div className="grid grid-cols-3 gap-2 p-2 border-b border-brand-border bg-brand-panel font-bold text-brand-text">
+            <div>Kısayol Kombinasyonu</div>
+            <div className="col-span-2">İşlem / Tetiklediği Aksiyon</div>
+          </div>
+          <div className="divide-y divide-brand-border">
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border text-brand-accent">Ctrl + K</kbd></div>
+              <div className="col-span-2">Komut Paletini Aç / Kapat (Fuzzy Search)</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + N</kbd></div>
+              <div className="col-span-2">Yeni Sohbet Oturumu Başlat (Ekranı Temizle)</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + Shift + N</kbd></div>
+              <div className="col-span-2">Yeni Uzman Ajan Yapılandırma Formunu Aç</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + Shift + M</kbd></div>
+              <div className="col-span-2">Mevcut Sohbet Geçmişini Markdown (.md) Olarak İndir</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + Shift + E</kbd></div>
+              <div className="col-span-2">Aktif Ajan Konfigürasyonunu Dışa Aktar (JSON)</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + Alt + L</kbd></div>
+              <div className="col-span-2">Sistem Sağlık ve Canlı Performans Log Panelini Göster/Gizle</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + Shift + U</kbd></div>
+              <div className="col-span-2">Ajanları Konfigürasyon Dosyasından (agents.yaml) Yeniden Oku</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + 1..9</kbd></div>
+              <div className="col-span-2">Sıradaki Uzman Ajan ile Sohbet Ekranına Hızlıca Geçiş Yap</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-2 items-center">
+              <div><kbd className="bg-brand-bg px-1.5 py-0.5 rounded border border-brand-border">Ctrl + Alt + 1..9</kbd></div>
+              <div className="col-span-2">Sıradaki Uzman Ajanın Ayarlarını ve Promplarını Düzenle</div>
+            </div>
+          </div>
+        </div>
+      </AboutSection>
+
+      {/* Güvenlik */}
+      <AboutSection icon="shield" title="Mimari Güvenlik Standardı">
         <div className="grid grid-cols-1 gap-1.5">
-          <Feat icon="hub" text="Çoklu LLM: OpenAI, Anthropic, Gemini, OpenAI-uyumlu proxy'ler" />
-          <Feat icon="psychology" text="Plan-driven otonomi: 1-7 step plan + reflect + replan" />
-          <Feat icon="build" text="60+ tool: dosya, sistem, browser, git, email, DB, image, …" />
-          <Feat icon="hub" text="Knowledge Graph + Vector store + auto-summarize" />
-          <Feat icon="schedule" text="Zamanlanmış görevler (cron) + workflow YAML pipeline" />
-          <Feat icon="security" text="HITL approval + HMAC-zincirli audit log + sandbox" />
-          <Feat icon="palette" text="4 tema · Yazı boyutu · UI yoğunluğu" />
-          <Feat icon="record_voice_over" text="Sesli komut (STT) ve metni okuma (TTS)" />
+          <Feat icon="lock" text="API Anahtarı Güvenliği: Tüm kimlik bilgileri yerel veritabanında Fernet (AES-128) şifreleme algoritması ile izole şekilde saklanır." />
+          <Feat icon="visibility_off" text="Sistem Seviyesinde Maskeleme: API anahtarları loglarda ve ekran çıktılarında sk-a***xyz biçiminde güvenli şekilde maskelenir." />
+          <Feat icon="receipt_long" text="Audit Bütünlük Zinciri: Ajanların gerçekleştirdiği tüm kritik eylemler, değiştirilemeyen HMAC-SHA256 zincirli audit loguna kaydedilir." />
+          <Feat icon="gavel" text="Sandboxed Execution: Terminal yürütme ve dosya silme gibi yüksek riskli işlemler, kullanıcı onayı (HITL) alınmadan kesinlikle çalıştırılmaz." />
         </div>
       </AboutSection>
 
-      <AboutSection icon="construction" title="Teknoloji Yığını">
-        <div className="grid grid-cols-2 gap-2">
-          <InfoRow icon="code" label="Backend" value="FastAPI · SQLAlchemy 2" />
-          <InfoRow icon="api" label="Async" value="aiosqlite · APScheduler" />
-          <InfoRow icon="rocket_launch" label="Frontend" value="Vite · React 18 · TS" />
-          <InfoRow icon="brush" label="Styling" value="TailwindCSS" />
-          <InfoRow icon="emoji_objects" label="İkonlar" value="Material Symbols" />
-          <InfoRow icon="desktop_windows" label="Masaüstü" value="Electron 33" />
-          <InfoRow icon="database" label="Vector" value="ChromaDB · MiniLM" />
-          <InfoRow icon="account_tree" label="Graph" value="NetworkX" />
-        </div>
-      </AboutSection>
-
-      <AboutSection icon="shield" title="Güvenlik">
-        <div className="grid grid-cols-1 gap-1.5">
-          <Feat icon="lock" text="API anahtarları yerel + Fernet ile şifreli" />
-          <Feat icon="visibility_off" text="Anahtarlar her yerde maskeli (sk-a***xyz)" />
-          <Feat icon="vpn_lock" text="CORS regex + trace-id propagation" />
-          <Feat icon="receipt_long" text="HMAC-SHA256 zincirli audit log" />
-          <Feat icon="gavel" text="Tehlikeli komutlar için HITL onay" />
-        </div>
-      </AboutSection>
-
-      <div className="text-center text-[10px] text-brand-mutedSoft pt-3 border-t border-brand-border flex items-center justify-center gap-2">
-        <Icon name="copyright" size={10} weight={500} />
-        <span>2026 Argus</span>
+      <div className="text-center text-[10px] text-brand-mutedSoft pt-4 border-t border-brand-border/60 flex items-center justify-center gap-2">
+        <Icon name="copyright" size={11} weight={500} />
+        <span>2026 Argus Project</span>
         <span className="text-brand-border">·</span>
-        <span>MIT Lisansı</span>
+        <span>MIT Lisansı (Açık Kaynak)</span>
       </div>
     </div>
   );
 }
+
 
 function AboutSection({
   icon,
