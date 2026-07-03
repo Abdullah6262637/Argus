@@ -62,8 +62,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   const [confirmState, setConfirmState] = useState<ConfirmConfig | null>(null);
 
-  const openSettings = useCallback((tab: SettingsTabId = 'agents') => {
-    setSettingsTab(tab);
+  const openSettings = useCallback((tab?: any) => {
+    const validTabs: SettingsTabId[] = ['agents', 'theme', 'apikeys', 'plugins_mcp', 'reset', 'about'];
+    const selectedTab = (typeof tab === 'string' && validTabs.includes(tab as SettingsTabId))
+      ? (tab as SettingsTabId)
+      : 'agents';
+    setSettingsTab(selectedTab);
     setSettingsOpen(true);
   }, []);
 
