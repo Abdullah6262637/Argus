@@ -293,3 +293,5 @@
 {"timestamp": "2026-07-03T09:14:29.005162Z", "level": "info", "logger": "argus", "message": "Playwright Chromium hazir.", "module": "main", "line": 76, "taskName": "Task-5"}
 {"timestamp": "2026-07-03T09:14:34.014751Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-29"}
 {"timestamp": "2026-07-03T09:14:54.431551Z", "level": "info", "logger": "httpx", "message": "HTTP Request: POST https://openrouter.ai/api/v1/chat/completions \"HTTP/1.1 400 Bad Request\"", "module": "_client", "line": 1740, "trace_id": "e55c462805284f10", "taskName": "starlette.middleware.base.BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro"}
+{"timestamp": "2026-07-03T09:16:13.119846Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-29"}
+{"timestamp": "2026-07-03T09:16:13.153198Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-86"}

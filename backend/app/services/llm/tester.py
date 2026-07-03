@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from dataclasses import dataclass
 from typing import Optional
@@ -96,19 +97,29 @@ async def test_connection(
     timeout_ms: int = 20_000,
 ) -> ConnectionTestResult:
     start = time.perf_counter()
+    provider_low = provider.lower()
 
     # 1) API anahtari kontrolu
     settings = get_settings()
-    env_key = (
-        settings.openai_api_key if provider.lower() == "openai"
-        else settings.anthropic_api_key
-    )
+    env_keys = {
+        "openai": settings.openai_api_key,
+        "anthropic": settings.anthropic_api_key,
+        "gemini": os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"),
+        "openrouter": os.environ.get("OPENROUTER_API_KEY"),
+        "groq": os.environ.get("GROQ_API_KEY"),
+        "deepseek": os.environ.get("DEEPSEEK_API_KEY"),
+        "mistral": os.environ.get("MISTRAL_API_KEY"),
+        "xai": os.environ.get("XAI_API_KEY"),
+    }
+
+    env_key = env_keys.get(provider_low)
     if _is_placeholder_key(env_key):
         env_key = None
 
     effective_key = api_key or env_key
+    is_local_provider = provider_low in ("local", "ollama")
 
-    if not effective_key:
+    if not effective_key and not is_local_provider:
         return ConnectionTestResult(
             ok=False, provider=provider, model=model, latency_ms=0,
             message=(
@@ -123,12 +134,24 @@ async def test_connection(
         # Yine de test edecegiz ama mesajla uyaracagiz
         pass
 
-    provider_low = provider.lower()
     try:
-        if provider_low == "openai":
+        openai_compatibles = {
+            "openai": base_url or "https://api.openai.com/v1",
+            "openrouter": base_url or "https://openrouter.ai/api/v1",
+            "groq": base_url or "https://api.groq.com/openai/v1",
+            "deepseek": base_url or "https://api.deepseek.com/v1",
+            "mistral": base_url or "https://api.mistral.ai/v1",
+            "xai": base_url or "https://api.x.ai/v1",
+            "local": base_url or ("http://127.0.0.1:1234/v1" if "lmstudio" in model.lower() else "http://127.0.0.1:11434/v1"),
+            "ollama": base_url or "http://127.0.0.1:11434/v1",
+        }
+
+        if provider_low in openai_compatibles:
+            effective_base_url = openai_compatibles[provider_low]
+            test_key = effective_key or "local"
             return await _test_openai(
-                model=model, api_key=effective_key,
-                base_url=base_url, timeout_ms=timeout_ms, start=start,
+                model=model, api_key=test_key,
+                base_url=effective_base_url, timeout_ms=timeout_ms, start=start,
                 mismatch_warning=mismatch,
             )
         elif provider_low == "anthropic":
@@ -136,6 +159,11 @@ async def test_connection(
                 model=model, api_key=effective_key,
                 base_url=base_url, timeout_ms=timeout_ms, start=start,
                 mismatch_warning=mismatch,
+            )
+        elif provider_low == "gemini":
+            return await _test_gemini(
+                model=model, api_key=effective_key or "",
+                timeout_ms=timeout_ms, start=start,
             )
         else:
             return ConnectionTestResult(
@@ -380,3 +408,48 @@ def _status_hint(status: int, provider: str) -> Optional[str]:
     if status == 503:
         return "Servis gecici olarak kapali (503)"
     return None
+
+
+async def _test_gemini(
+    *,
+    model: str,
+    api_key: str,
+    timeout_ms: int,
+    start: float,
+) -> ConnectionTestResult:
+    gemini_model = model or "gemini-1.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{gemini_model}:generateContent?key={api_key}"
+    payload = {
+        "contents": [{
+            "parts": [{"text": "Cevap olarak sadece 'ok' de."}]
+        }]
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=timeout_ms / 1000) as client:
+            resp = await client.post(url, json=payload)
+        elapsed = int((time.perf_counter() - start) * 1000)
+
+        if resp.status_code == 200:
+            return ConnectionTestResult(
+                ok=True, provider="gemini", model=model, latency_ms=elapsed,
+                message="Baglanti basarili! Google Gemini API yanit verdi.",
+            )
+        else:
+            error_msg = f"HTTP {resp.status_code}"
+            try:
+                err_json = resp.json()
+                if "error" in err_json:
+                    error_msg = err_json["error"].get("message", error_msg)
+            except Exception:
+                pass
+            return ConnectionTestResult(
+                ok=False, provider="gemini", model=model, latency_ms=elapsed,
+                message=f"Gemini API hatasi: {error_msg}",
+            )
+    except Exception as exc:
+        elapsed = int((time.perf_counter() - start) * 1000)
+        return ConnectionTestResult(
+            ok=False, provider="gemini", model=model, latency_ms=elapsed,
+            message=f"Gemini API baglanti hatasi: {exc}",
+        )
