@@ -11,6 +11,7 @@ import { Onboarding } from './components/Onboarding';
 import { ApprovalDialog } from './components/ApprovalDialog';
 import { WorkflowsModal } from './components/WorkflowsModal';
 import { CommandPalette } from './components/CommandPalette';
+import { AgentInspectorModal } from './components/AgentInspectorModal';
 import { api } from './api/client';
 import { useAgents } from './hooks/useAgents';
 import { useChat } from './hooks/useChat';
@@ -48,6 +49,8 @@ export default function App() {
   const [settingsInitialTab, setSettingsInitialTab] = useState<'agents' | 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about'>('agents');
   const [workflowsOpen, setWorkflowsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [inspectorAgentId, setInspectorAgentId] = useState<string | null>(null);
 
   const [agentListOpen, setAgentListOpen] = useState(() => {
     try {
@@ -67,7 +70,7 @@ export default function App() {
     }
   });
 
-  const [systemPanelTab, setSystemPanelTab] = useState<'tasks' | 'logs' | 'inspector'>('tasks');
+  const [systemPanelTab, setSystemPanelTab] = useState<'tasks' | 'logs'>('tasks');
 
   const toggleAgentList = () => {
     setAgentListOpen((prev) => {
@@ -638,9 +641,8 @@ export default function App() {
             onToggle={toggleAgentList}
             onToggleActive={handleToggleAgentActive}
             onInspect={(id) => {
-              setSelectedId(id);
-              setSystemPanelTab('inspector');
-              setSystemPanelOpen(true);
+              setInspectorAgentId(id);
+              setInspectorOpen(true);
             }}
             onTestConnection={handleTestConnection}
             onClearConversations={handleClearConversations}
@@ -754,6 +756,13 @@ export default function App() {
           onReloadAgents={reload}
         />
       )}
+
+      <AgentInspectorModal
+        open={inspectorOpen}
+        onClose={() => setInspectorOpen(false)}
+        agentId={inspectorAgentId}
+        agents={agents}
+      />
 
       {confirmState && (
         <ConfirmDialog

@@ -15,7 +15,7 @@ agents:
     web_search: true
     system_admin: true
   base_url: https://openrouter.ai/api/v1
-  api_key: enc::gAAAAABqR6sk0yByJBgzpg8oGmANNTY0dlrWYNlxPWbh4PdkkcXU8krHVFNIgT0_rRWqpwCejmcy_Rv2XerGoqaf7XS7TKXF-j6V6GMirV1IlNiG9fjnjgYs_LGje7cNHzv3h8gpq7bkVxaho2im7o5omxpSksT_WSv3_-UNKs3HVqpB6GBAzew=
+  api_key: enc::gAAAAABqR6waebJaU3WxB7Ayi-YFX-4jyjsNRedGRruYDGWIZZSybrChRQFsyZzUb2ZgqbXshgzzB7XnoxoXcOGAAGoIcR2hsuVi3gm8HfwOfzSjNq-fOpm9s6OfgCoseTFuav9NKbnPydABQJwRULbzBZddnqhdvdONnYR5Qm8mAzy6qRLfbM0=
   system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
     yerine getir, kod yaz ve terminal komutlarıyla test et.
   image:

@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '@/api/client';
 import type {
   AgentInfo,
   LogEntry,
   ScheduledTask,
   ScheduledTaskCreate} from '@/types';
-import { AgentInspector } from './AgentInspector';
 import { Icon } from './Icon';
 
 interface SystemPanelProps {
@@ -57,12 +56,11 @@ function describeCron(expr: string): string {
   return `${min} ${hour} ${dom} ${mon} ${dow}`;
 }
 
-type Tab = 'tasks' | 'logs' | 'inspector';
+type Tab = 'tasks' | 'logs';
 
 const TAB_CONFIG: Record<Tab, { icon: string; label: string }> = {
   tasks: { icon: 'event_repeat', label: 'Görevler' },
-  logs: { icon: 'receipt_long', label: 'Loglar' },
-  inspector: { icon: 'analytics', label: 'Inspector' }};
+  logs: { icon: 'receipt_long', label: 'Loglar' }};
 
 export function SystemPanel({
   agents,
@@ -149,10 +147,6 @@ export function SystemPanel({
 
   const activeCount = tasks.filter((t) => t.enabled).length;
   const errorCount = logs.filter((l) => l.level === 'error').length;
-  const selectedAgent = useMemo(
-    () => agents.find((a) => a.id === selectedAgentId) ?? null,
-    [agents, selectedAgentId],
-  );
 
   return (
     <aside className={`relative h-full flex-shrink-0 border-l bg-brand-panel flex flex-col transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'w-80 border-brand-border opacity-100' : 'w-0 border-transparent opacity-0'}`}>
@@ -217,32 +211,18 @@ export function SystemPanel({
             <Icon name="arrow_forward" size={16} />
           </button>
         </div>
-        {/* Alt accent çizgisi */}
-        <div className="h-px bg-brand-border mt-2" />
       </div>
-
       {/* ---------- İçerik ---------- */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {loading && tab !== 'inspector' && (
-          <div className="flex items-center justify-center gap-2 text-xs text-brand-muted py-6">
-            <Icon
-              name="progress_activity"
-              size={14}
-              className="animate-spin-slow"
-            />
+        {loading && (
+          <div className="flex items-center justify-center gap-2 text-xs text-brand-muted py-8 animate-pulse">
+            <Icon name="progress_activity" size={13} className="animate-spin-slow" />
             <span>Yükleniyor...</span>
           </div>
         )}
-        {error && tab !== 'inspector' && (
-          <div className="p-2.5 text-[11px] rounded-lg border border-brand-danger/40 bg-brand-danger/10 text-brand-danger flex items-start gap-2">
-            <Icon
-              name="error"
-              size={14}
-              weight={500}
-              filled
-              className="flex-shrink-0 mt-px"
-            />
-            <span className="leading-relaxed">{error}</span>
+        {error && (
+          <div className="p-3 text-xs text-brand-danger bg-brand-danger/5 rounded-md border border-brand-danger/25">
+            {error}
           </div>
         )}
 
@@ -301,7 +281,7 @@ export function SystemPanel({
           </>
         )}
 
-        {/* LOGS — filtreli liste */}
+        {/* LOGS */}
         {tab === 'logs' && (
           <>
             {logs.length === 0 && !loading && (
@@ -318,9 +298,6 @@ export function SystemPanel({
             {logs.length > 0 && <LogList logs={logs} />}
           </>
         )}
-
-        {/* INSPECTOR */}
-        {tab === 'inspector' && <AgentInspector agent={selectedAgent} />}
       </div>
 
       {/* ---------- Alt Bar: Yenile ---------- */}
