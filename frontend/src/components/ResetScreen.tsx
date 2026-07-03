@@ -5,19 +5,19 @@ interface ResetScreenProps {
 }
 
 const RESET_STEPS = [
-  { text: 'Tüm sohbet mesajları siliniyor...',   duration: 900  },
-  { text: 'Ajan profilleri temizleniyor...',       duration: 800  },
-  { text: 'Zamanlanmış görevler kaldırılıyor...', duration: 700  },
-  { text: 'Loglar ve önbellekler temizleniyor...', duration: 800  },
-  { text: 'Veritabanı sıfırlanıyor...',           duration: 700  },
-  { text: 'Sistem yeniden başlatılıyor...',       duration: 600  },
+  { text: 'Tüm sohbet mesajları siliniyor...',    duration: 900 },
+  { text: 'Ajan profilleri temizleniyor...',        duration: 800 },
+  { text: 'Zamanlanmış görevler kaldırılıyor...',  duration: 700 },
+  { text: 'Loglar ve önbellekler temizleniyor...', duration: 800 },
+  { text: 'Veritabanı sıfırlanıyor...',            duration: 700 },
+  { text: 'Sistem yeniden başlatılıyor...',        duration: 600 },
 ];
 
 export function ResetScreen({ onDone }: ResetScreenProps) {
-  const [stepIdx, setStepIdx]   = useState(0);
+  const [stepIdx, setStepIdx]     = useState(0);
   const [completed, setCompleted] = useState<number[]>([]);
-  const [exiting, setExiting]   = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [exiting, setExiting]     = useState(false);
+  const [progress, setProgress]   = useState(0);
 
   useEffect(() => {
     let current = 0;
@@ -55,32 +55,14 @@ export function ResetScreen({ onDone }: ResetScreenProps) {
         ${exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}
       `}
     >
-      {/* Red ambient glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                     w-[500px] h-[500px] rounded-full blur-[100px] opacity-8
-                     bg-brand-danger animate-pulse"
-          style={{ opacity: 0.06 }}
-        />
-      </div>
-
-      <div className="relative flex flex-col items-center gap-8 w-80">
-        {/* Logo with danger ring */}
-        <div className="relative flex flex-col items-center gap-4">
-          <div className="relative">
-            <div
-              className="absolute inset-0 rounded-2xl border border-brand-danger/30
-                         animate-ping opacity-50"
-              style={{ animationDuration: '1.5s' }}
-            />
-            <img
-              src="/logo.png"
-              alt="Argus"
-              className="w-16 h-16 rounded-2xl object-contain shadow-xl opacity-60
-                         ring-1 ring-brand-danger/20"
-            />
-          </div>
+      <div className="flex flex-col items-center gap-8 w-80">
+        {/* Logo + title */}
+        <div className="flex flex-col items-center gap-4">
+          <img
+            src="/logo.png"
+            alt="Argus"
+            className="w-16 h-16 object-contain opacity-60"
+          />
           <div className="text-center">
             <h2 className="text-base font-bold text-brand-text">Sistem Sıfırlanıyor</h2>
             <p className="text-[11px] text-brand-mutedSoft mt-0.5">
@@ -105,19 +87,18 @@ export function ResetScreen({ onDone }: ResetScreenProps) {
         {/* Step list */}
         <div className="w-full space-y-2.5">
           {RESET_STEPS.map((s, i) => {
-            const isActive    = stepIdx === i;
-            const isDone      = completed.includes(i);
-            const isPending   = !isActive && !isDone;
+            const isActive  = stepIdx === i;
+            const isDone    = completed.includes(i);
+            const isPending = !isActive && !isDone;
 
             return (
               <div
                 key={i}
                 className={`
-                  flex items-center gap-2.5 text-xs
-                  transition-all duration-400
-                  ${isDone    ? 'text-brand-danger/60'    : ''}
+                  flex items-center gap-2.5 text-xs transition-all duration-400
+                  ${isDone    ? 'text-brand-danger/60'      : ''}
                   ${isActive  ? 'text-brand-text font-medium' : ''}
-                  ${isPending ? 'text-brand-mutedSoft/30' : ''}
+                  ${isPending ? 'text-brand-mutedSoft/30'   : ''}
                 `}
               >
                 {isDone && (

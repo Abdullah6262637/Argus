@@ -17,7 +17,6 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
   const [progress, setProgress] = useState(0);
   const [exiting, setExiting]   = useState(false);
 
-  /* ── boot sequence ─────────────────────────── */
   useEffect(() => {
     const t0 = setTimeout(() => setPhase('boot'), 400);
     return () => clearTimeout(t0);
@@ -27,7 +26,6 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
     if (phase !== 'boot') return;
 
     const delays = [200, 750, 1350, 2050];
-
     const timers = delays.map((d, i) =>
       setTimeout(() => {
         setStepIdx(i);
@@ -35,7 +33,6 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
       }, d)
     );
 
-    // exit after last step
     const exitTimer = setTimeout(() => {
       setPhase('done');
       setExiting(true);
@@ -56,39 +53,21 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
         ${exiting ? 'opacity-0 pointer-events-none' : 'opacity-100'}
       `}
     >
-      {/* Ambient glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                     w-[600px] h-[600px] rounded-full blur-[120px] opacity-10
-                     bg-brand-accent animate-pulse"
-        />
-      </div>
-
       {/* Center card */}
       <div
         className={`
-          relative flex flex-col items-center gap-8
+          flex flex-col items-center gap-8
           transition-all duration-500
           ${phase === 'enter' ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'}
         `}
       >
         {/* Logo + wordmark */}
         <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            {/* Outer ring pulse */}
-            <div
-              className="absolute inset-0 rounded-2xl border border-brand-accent/20
-                         animate-ping opacity-40"
-              style={{ animationDuration: '2s' }}
-            />
-            <img
-              src="/logo.png"
-              alt="Argus"
-              className="w-20 h-20 rounded-2xl object-contain shadow-2xl
-                         ring-1 ring-brand-accent/15"
-            />
-          </div>
+          <img
+            src="/logo.png"
+            alt="Argus"
+            className="w-20 h-20 object-contain"
+          />
 
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-tight text-brand-text">
@@ -108,11 +87,9 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] text-brand-mutedSoft tabular-nums">
-              {progress}%
-            </span>
-          </div>
+          <span className="text-[10px] text-brand-mutedSoft tabular-nums">
+            {progress}%
+          </span>
         </div>
 
         {/* Step list */}
@@ -126,8 +103,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
               <div
                 key={i}
                 className={`
-                  flex items-center gap-2.5 text-xs
-                  transition-all duration-400
+                  flex items-center gap-2.5 text-xs transition-all duration-400
                   ${isCompleted ? 'text-brand-success/80' : isActive ? 'text-brand-text font-medium' : 'text-brand-mutedSoft/40'}
                 `}
               >
