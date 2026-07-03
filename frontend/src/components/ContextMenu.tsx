@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface ContextMenuItem {
   id: string;
@@ -50,10 +51,10 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
   const clampedX = Math.min(x, window.innerWidth - 220);
   const clampedY = Math.min(y, window.innerHeight - items.length * 36 - 10);
 
-  return (
+  return createPortal(
     <div
       ref={menuRef}
-      className="fixed z-[60] min-w-[200px] rounded-md border border-brand-borderStrong bg-brand-panel shadow-2xl py-1 text-brand-text"
+      className="fixed z-[9999] min-w-[200px] rounded-md border border-brand-borderStrong bg-brand-panel shadow-2xl py-1 text-brand-text animate-context-menu-in"
       style={{ left: clampedX, top: clampedY }}
       onContextMenu={(e) => e.preventDefault()}
     >
@@ -73,15 +74,17 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
             disabled={item.disabled}
             onClick={() => {
               if (item.disabled) return;
-              item.onClick();
-              onClose();
+              setTimeout(() => {
+                item.onClick();
+                onClose();
+              }, 100);
             }}
-            className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left transition ${
+            className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left transition-all duration-100 ease-out active:scale-[0.98] ${
               item.disabled
                 ? 'opacity-40 cursor-not-allowed'
                 : item.danger
-                  ? 'hover:bg-brand-danger/15 text-brand-danger'
-                  : 'hover:bg-brand-panelAlt'
+                  ? 'hover:bg-brand-danger/10 text-brand-danger active:bg-brand-danger/20'
+                  : 'hover:bg-brand-panelAlt active:bg-brand-accent/15'
             }`}
           >
             <span className="w-4 h-4 flex items-center justify-center text-brand-muted">
@@ -96,6 +99,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
           </button>
         );
       })}
-    </div>
+    </div>,
+    document.body
   );
 }

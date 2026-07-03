@@ -709,3 +709,19 @@ select option {
   transform: scale(1.2);
   box-shadow: 0 0 10px var(--brand-accent);
 }
+
+/* Context Menu premium animation */
+@keyframes context-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-context-menu-in {
+  animation: context-menu-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
