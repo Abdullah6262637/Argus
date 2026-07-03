@@ -126,6 +126,23 @@ export function Step2LLM({
   verifySsl: boolean;
   setVerifySsl: (v: boolean) => void;
 }) {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    if (!testing) {
+      setActiveStep(0);
+      return;
+    }
+    const t1 = setTimeout(() => setActiveStep(1), 350);
+    const t2 = setTimeout(() => setActiveStep(2), 750);
+    const t3 = setTimeout(() => setActiveStep(3), 1300);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [testing]);
+
   const envKey = 
     provider === 'openai' ? 'OPENAI_API_KEY' : 
     provider === 'anthropic' ? 'ANTHROPIC_API_KEY' : 
@@ -362,7 +379,7 @@ export function Step2LLM({
             )}
           </Field>
 
-          <div className="rounded border border-brand-border bg-brand-bg/50 p-3 space-y-2">
+          <div className="rounded border border-brand-border bg-brand-bg/50 p-3 space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div>
                 <div className="text-xs font-semibold text-brand-text">Baglantiyi Test Et</div>
@@ -386,7 +403,7 @@ export function Step2LLM({
                   disabled={testing || !model.trim()}
                   className="text-xs px-3 py-1.5 rounded bg-brand-accent text-brand-bg font-semibold hover:bg-brand-accentDim disabled:opacity-40 transition whitespace-nowrap"
                 >
-                  {testing ? '...' : 'Bu key ile'}
+                  {testing ? 'Test Ediliyor' : 'Bu key ile'}
                 </button>
                 {envHasKey && !apiKey.trim() && (
                   <button
@@ -402,7 +419,24 @@ export function Step2LLM({
               </div>
             </div>
 
-            {testResult && (
+            {/* Premium Connection Steps Tracer */}
+            {testing && (
+              <div className="p-3 bg-brand-panelAlt/30 border border-brand-border rounded-xl space-y-2.5 animate-step-in">
+                <div className="text-[10px] uppercase tracking-wider text-brand-accent font-bold mb-1 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-ping" />
+                  Bağlantı Sınaması Yapılıyor...
+                </div>
+                
+                <div className="space-y-2">
+                  <TracerStep index={0} activeStep={activeStep} text="API Parametreleri ve biçim doğrulaması" />
+                  <TracerStep index={1} activeStep={activeStep} text="Güvenli HTTP/HTTPS istemcisi oluşturulması" />
+                  <TracerStep index={2} activeStep={activeStep} text="Sunucuya sınama paketi gönderilmesi (max_tokens: 32)" />
+                  <TracerStep index={3} activeStep={activeStep} text="Uzak sunucu yanıtının çözümlenmesi" />
+                </div>
+              </div>
+            )}
+
+            {testResult && !testing && (
               <div
                 className={`rounded border text-[11px] p-2.5 space-y-1 ${
                   testResult.ok
@@ -422,7 +456,7 @@ export function Step2LLM({
                   </span>
                   <span className="opacity-70 font-mono">{testResult.latency_ms} ms</span>
                 </div>
-                <div className="opacity-90 break-words">{testResult.message}</div>
+                <div className="opacity-90 break-words whitespace-pre-wrap">{testResult.message}</div>
                 {testResult.sample_response && (
                   <div className="text-brand-muted border-t border-current/20 pt-1 mt-1">
                     <span className="uppercase text-[10px] tracking-wider">Orneklem:</span>{' '}
@@ -446,6 +480,31 @@ export function Step2LLM({
           />
         </Field>
       )}
+    </div>
+  );
+}
+
+function TracerStep({ index, activeStep, text }: { index: number; activeStep: number; text: string }) {
+  const isCompleted = activeStep > index;
+  const isActive = activeStep === index;
+  const isPending = activeStep < index;
+
+  return (
+    <div className={`flex items-center gap-2.5 text-xs transition-all duration-300 ${
+      isActive ? 'text-brand-text font-semibold' : isCompleted ? 'text-brand-success/90' : 'text-brand-mutedSoft'
+    }`}>
+      {isCompleted && (
+        <Icon name="check_circle" size={14} filled className="text-brand-success animate-scale-in" />
+      )}
+      {isActive && (
+        <Icon name="progress_activity" size={14} className="animate-spin text-brand-accent" />
+      )}
+      {isPending && (
+        <div className="w-3.5 h-3.5 rounded-full border border-brand-border flex items-center justify-center text-[9px] font-bold text-brand-mutedSoft">
+          {index + 1}
+        </div>
+      )}
+      <span>{text}</span>
     </div>
   );
 }

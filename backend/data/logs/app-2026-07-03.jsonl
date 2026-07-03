@@ -840,3 +840,5 @@
 {"timestamp": "2026-07-03T14:33:07.994314Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 2", "module": "manager", "line": 24, "taskName": "Task-342"}
 {"timestamp": "2026-07-03T14:33:08.002607Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 1", "module": "manager", "line": 29, "taskName": "Task-335"}
 {"timestamp": "2026-07-03T14:36:41.024733Z", "level": "info", "logger": "httpx", "message": "HTTP Request: POST https://openrouter.ai/api/v1/chat/completions \"HTTP/1.1 200 OK\"", "module": "_client", "line": 1740, "trace_id": "179764a33c054a8e", "taskName": "starlette.middleware.base.BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.coro"}
+{"timestamp": "2026-07-03T14:37:29.929046Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-342"}
+{"timestamp": "2026-07-03T14:37:29.946875Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-397"}
