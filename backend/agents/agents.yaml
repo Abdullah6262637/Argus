@@ -1,1 +1,32 @@
-agents: []
+agents:
+- id: icerik-yazari
+  name: İçerik Yazarı
+  role: Content Creator & Editor
+  description: Makaleler, raporlar ve yaratıcı metinler hazırlar.
+  provider: openrouter
+  model: google/gemini-2.5-flash
+  temperature: 0.8
+  max_tokens: 1024
+  tags: []
+  is_active: true
+  permissions:
+    file_system: true
+    terminal_cmd: true
+    web_search: true
+    system_admin: true
+  base_url: https://openrouter.ai/api/v1
+  api_key: enc::gAAAAABqR8cUcLCXXmKjb0UzLSKr26Fva7RS-6bt5EEdKefRTVip3b5gzlxRFMU9e9y-VjytBWPywDTcu2ab5YKsaN_7rjZJVk_jTh3qN0Bete75641B2FmOtudmtNS1oldi-nWSSxsykl8PhVQD_F5valY24-0lEGOFap5lV9TzTwOK_g7TbZc=
+  system_prompt: Sen profesyonel bir içerik editörü ve yazarısın. Çeşitli konularda
+    makale, blog yazısı ve raporlar hazırlar, dilleri ve tonu mükemmel kullanırsın.
+  image:
+    enabled: true
+    provider: openai
+    model: dall-e-3
+  video:
+    enabled: false
+    provider: openai
+    model: sora-1
+  audio:
+    enabled: false
+    provider: openai
+    model: whisper-1

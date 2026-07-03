@@ -128,6 +128,18 @@ async def test_connection(
             ),
         )
 
+    # API Key Format Dogrulamalari
+    if provider_low == "openai" and effective_key and not effective_key.startswith("sk-") and not is_local_provider:
+        return ConnectionTestResult(
+            ok=False, provider=provider, model=model, latency_ms=0,
+            message="Hatali OpenAI API anahtari formati. OpenAI anahtarlari genellikle 'sk-' ile baslar."
+        )
+    if provider_low == "anthropic" and effective_key and not effective_key.startswith("sk-ant-"):
+        return ConnectionTestResult(
+            ok=False, provider=provider, model=model, latency_ms=0,
+            message="Hatali Anthropic API anahtari formati. Anthropic anahtarlari genellikle 'sk-ant-' ile baslar."
+        )
+
     # 2) Provider-base_url uyumsuzluk ikazi
     mismatch = _guess_provider_mismatch(provider, base_url)
     if mismatch:
@@ -171,10 +183,13 @@ async def test_connection(
                 message=f"Desteklenmeyen saglayici: {provider}",
             )
     except httpx.ConnectError as exc:
+        msg = f"Baglanti kurulamadi: {exc}. Base URL dogru mu? Internet baglantiniz acik mi?"
+        if provider_low in ("local", "ollama"):
+            msg += " Yerel servisinizin (Ollama/LM Studio) arka planda acik oldugundan ve 'ollama serve' komutunun calistigindan emin olun."
         return ConnectionTestResult(
             ok=False, provider=provider, model=model,
             latency_ms=int((time.perf_counter() - start) * 1000),
-            message=f"Baglanti kurulamadi: {exc}. Base URL dogru mu? Internet baglantiniz acik mi?",
+            message=msg,
         )
     except httpx.ReadTimeout:
         return ConnectionTestResult(
