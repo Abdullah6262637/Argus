@@ -147,8 +147,8 @@ export function SystemPanel({
   );
 
   return (
-    <aside className={`relative h-full flex-shrink-0 border-l border-brand-border bg-brand-panel flex flex-col transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'w-80' : 'w-0 !border-l-0'}`}>
-      <div className="w-80 h-full flex flex-col overflow-hidden">
+    <aside className={`relative h-full flex-shrink-0 border-l bg-brand-panel flex flex-col transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'w-80 border-brand-border opacity-100' : 'w-0 border-transparent opacity-0'}`}>
+      <div className={`w-80 h-full flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-8'}`}>
       {/* ---------- Tab Bar ---------- */}
       <div className="border-b border-brand-border bg-brand-panel">
         <div className="flex items-stretch px-2 pt-2 gap-1">

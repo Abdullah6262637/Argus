@@ -92,8 +92,8 @@ export function AgentList({
       onClick: () => onDelete(agentId)}];
 
   return (
-    <aside className={`relative h-full flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'w-72' : 'w-0 !border-r-0'}`}>
-      <div className="w-72 h-full flex flex-col overflow-hidden">
+    <aside className={`relative h-full flex-shrink-0 border-r bg-brand-panel flex flex-col transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'w-72 border-brand-border opacity-100' : 'w-0 border-transparent opacity-0'}`}>
+      <div className={`w-72 h-full flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : '-translate-x-8'}`}>
       {/* ============ Üst Başlık ============ */}
       <header className="px-3 py-3 border-b border-brand-border space-y-2.5">
         <div className="flex items-center justify-between">

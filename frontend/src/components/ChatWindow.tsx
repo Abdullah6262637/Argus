@@ -613,10 +613,20 @@ export function ChatWindow({
         </div>
       </header>
 
-      {/* Plan paneli (collapsible) */}
-      {planActive && showPlan && (
-        <div className="px-3 pt-3">
-          <TaskTimeline plan={plan} />
+      {/* Plan paneli (smooth height slide) */}
+      {planActive && (
+        <div
+          className={`grid transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            showPlan ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className={`px-3 pt-3 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              showPlan ? 'translate-y-0' : '-translate-y-4'
+            }`}>
+              <TaskTimeline plan={plan} />
+            </div>
+          </div>
         </div>
       )}
 
