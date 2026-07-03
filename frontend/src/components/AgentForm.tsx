@@ -999,14 +999,14 @@ function StepLLM({
           placeholder="— Manuel yapılandırma —"
           options={PROXY_PRESETS.map((p) => {
             const providerImg = 
-              p.id === 'openai-official' ? 'openai' :
+              p.id === 'openai-official' ? 'openai-official' :
               p.id === 'frostai' ? 'frostai' :
               p.id === 'openrouter' ? 'openrouter' :
               p.id === 'groq' ? 'groq' :
               p.id === 'together' ? 'together' :
               p.id === 'lmstudio' ? 'lmstudio' :
               p.id === 'ollama' ? 'local' :
-              p.id === 'anthropic-official' ? 'anthropic' : 'openai';
+              p.id === 'anthropic-official' ? 'anthropic' : 'openai-official';
             return {
               value: p.id,
               label: (
@@ -1030,7 +1030,7 @@ function StepLLM({
                 value: 'openai',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/openai.png?v=3" alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/openai-official.png?v=3" alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>OpenAI (ve uyumlu)</span>
                   </span>
                 )

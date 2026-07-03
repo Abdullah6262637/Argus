@@ -512,7 +512,7 @@ export function ChatWindow({
             <div className="flex items-center gap-1.5 mt-0.5 text-[10.5px] text-brand-mutedSoft min-w-0">
               {/* Provider adı ve logosu */}
               <span className="font-mono truncate flex items-center gap-1" title={`${agent.provider} sağlayıcısı`}>
-                <img src={`/providers/${agent.provider}.png?v=3`} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
+                <img src={`/providers/${agent.provider === 'openai' ? 'openai-official' : agent.provider}.png?v=3`} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
                 <span className="capitalize">{agent.provider}</span>
               </span>
 

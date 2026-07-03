@@ -8,7 +8,7 @@ export function getModelLogo(model: string, provider: string): string {
 
   // 1. Check model family keywords
   if (m.includes('gpt') || m.includes('o1') || m.includes('o3')) {
-    return '/providers/openai.png?v=3';
+    return '/providers/openai-official.png?v=3';
   }
   if (m.includes('claude')) {
     return '/providers/anthropic.png?v=3';
@@ -39,7 +39,7 @@ export function getModelLogo(model: string, provider: string): string {
   }
 
   // 2. Fallback to provider logo if model name doesn't match a specific family
-  if (p === 'openai') return '/providers/openai.png?v=3';
+  if (p === 'openai') return '/providers/openai-official.png?v=3';
   if (p === 'anthropic') return '/providers/anthropic.png?v=3';
   if (p === 'gemini') return '/providers/gemini.png?v=3';
   if (p === 'openrouter') return '/providers/openrouter.png?v=3';
