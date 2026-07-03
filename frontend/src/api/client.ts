@@ -369,13 +369,15 @@ export const api = {
     http(`/skills/${id}`, { method: 'DELETE' }),
 
   // Sprint F.3: MCP Servers
-  listMcpServers: (): Promise<Array<{
-    name: string;
-    enabled: boolean;
-    command: string[];
-    args?: string[];
-    env?: Record<string, string>;
-  }>> => http('/mcp/servers'),
+  listMcpServers: (): Promise<{
+    servers: Array<{
+      name: string;
+      enabled: boolean;
+      command: string[];
+      args?: string[];
+      env?: Record<string, string>;
+    }>;
+  }> => http('/mcp/servers'),
   toggleMcpServer: (name: string, enabled: boolean): Promise<{
     name: string;
     enabled: boolean;

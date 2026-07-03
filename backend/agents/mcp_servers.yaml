@@ -1,120 +1,67 @@
-# MCP (Model Context Protocol) Server Konfigürasyonu
-# ============================================================
-# Burada tanımlanan her server için backend başlangıçta stdio
-# üzerinden bağlanır ve sunduğu tool'ları "mcp_<server>_<tool>"
-# adıyla ToolRegistry'ye kayıt eder.
-#
-# Çalıştırmak için:
-#   pip install mcp        (Python SDK)
-#   npm i -g npx           (npm-tabanlı server'lar için)
-#
-# Kullanmak istediğiniz server için `enabled: true` yapıp,
-# gerekli env değişkenlerini doldurun. Hassas bilgileri yaml'a
-# yazmak yerine OS ortam değişkenlerinden okutmak için
-# "${ENV_VAR}" söz dizimini kullanın.
-# ============================================================
-
 servers:
-  # ---------------------------------------------------------
-  # Filesystem MCP — belirli bir klasöre okuma/yazma erişimi
-  # En çok kullanılan, kurulumu kolay MCP server'ı.
-  # ---------------------------------------------------------
-  - name: filesystem
-    enabled: false
-    description: "Yerel dosya sistemine güvenli erişim (sandboxed klasör)."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-filesystem"
-      - "${HOME}/Documents"
-    # Ek klasörler eklemek için yukarıdaki path'in altına satır ekleyebilirsiniz:
-    #   - "${HOME}/Downloads"
-
-  # ---------------------------------------------------------
-  # GitHub MCP — issue / PR / repo işlemleri
-  # GITHUB_PERSONAL_ACCESS_TOKEN gerekli (repo + read:org scope)
-  # ---------------------------------------------------------
-  - name: github
-    enabled: false
-    description: "GitHub repo, issue, PR yönetimi."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-github"
-    env:
-      GITHUB_PERSONAL_ACCESS_TOKEN: "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-
-  # ---------------------------------------------------------
-  # SQLite MCP — yerel SQLite veritabanını sorgula
-  # ---------------------------------------------------------
-  - name: sqlite
-    enabled: false
-    description: "Yerel SQLite veritabanı sorgulama."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-sqlite"
-      - "--db-path"
-      - "./backend/data/umtalagent.db"
-
-  # ---------------------------------------------------------
-  # Brave Search MCP — web arama (BRAVE_API_KEY gerekli)
-  # https://api.search.brave.com/app/keys
-  # ---------------------------------------------------------
-  - name: brave-search
-    enabled: false
-    description: "Brave Search API ile web arama."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-brave-search"
-    env:
-      BRAVE_API_KEY: "${BRAVE_API_KEY}"
-
-  # ---------------------------------------------------------
-  # Puppeteer MCP — browser otomasyonu (built-in browser tool'larına ek)
-  # ---------------------------------------------------------
-  - name: puppeteer
-    enabled: false
-    description: "Headless Chromium ile sayfa otomasyonu."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-puppeteer"
-
-  # ---------------------------------------------------------
-  # Slack MCP — kanal/mesaj okuma & gönderme
-  # ---------------------------------------------------------
-  - name: slack
-    enabled: false
-    description: "Slack workspace ile entegrasyon."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-slack"
-    env:
-      SLACK_BOT_TOKEN: "${SLACK_BOT_TOKEN}"
-      SLACK_TEAM_ID: "${SLACK_TEAM_ID}"
-
-  # ---------------------------------------------------------
-  # Memory MCP — uzun süreli not / hafıza
-  # (UmtalAgent'ın kendi vector store'una alternatif olarak)
-  # ---------------------------------------------------------
-  - name: memory
-    enabled: false
-    description: "MCP standardı uzun süreli hafıza tool'ları."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-memory"
-
-  # ---------------------------------------------------------
-  # Fetch MCP — HTTP fetch + HTML→Markdown dönüşümü
-  # ---------------------------------------------------------
-  - name: fetch
-    enabled: false
-    description: "Web sayfası fetch + içerik temizleme."
-    command:
-      - npx
-      - "-y"
-      - "@modelcontextprotocol/server-fetch"
+- name: filesystem
+  enabled: false
+  description: Yerel dosya sistemine güvenli erişim (sandboxed klasör).
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-filesystem'
+  - ${HOME}/Documents
+- name: github
+  enabled: false
+  description: GitHub repo, issue, PR yönetimi.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-github'
+  env:
+    GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+- name: sqlite
+  enabled: false
+  description: Yerel SQLite veritabanı sorgulama.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-sqlite'
+  - --db-path
+  - ./backend/data/umtalagent.db
+- name: brave-search
+  enabled: false
+  description: Brave Search API ile web arama.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-brave-search'
+  env:
+    BRAVE_API_KEY: ${BRAVE_API_KEY}
+- name: puppeteer
+  enabled: false
+  description: Headless Chromium ile sayfa otomasyonu.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-puppeteer'
+- name: slack
+  enabled: false
+  description: Slack workspace ile entegrasyon.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-slack'
+  env:
+    SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
+    SLACK_TEAM_ID: ${SLACK_TEAM_ID}
+- name: memory
+  enabled: false
+  description: MCP standardı uzun süreli hafıza tool'ları.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-memory'
+- name: fetch
+  enabled: false
+  description: Web sayfası fetch + içerik temizleme.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-fetch'

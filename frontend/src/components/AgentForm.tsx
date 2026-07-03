@@ -1901,8 +1901,11 @@ function StepPlugins() {
 
   useEffect(() => {
     Promise.all([api.listMcpServers(), api.listPlugins()])
-      .then(([servers, plugs]) => {
-        setMcpServers(servers.filter((s) => s.enabled));
+      .then(([serversResp, plugs]) => {
+        const mcpList = Array.isArray(serversResp)
+          ? serversResp
+          : (serversResp && Array.isArray(serversResp.servers) ? serversResp.servers : []);
+        setMcpServers(mcpList.filter((s: any) => s.enabled));
         setPlugins(plugs);
       })
       .catch(() => {})

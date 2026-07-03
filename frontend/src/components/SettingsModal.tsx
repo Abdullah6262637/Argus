@@ -1178,7 +1178,10 @@ function PluginsMcpTab() {
         api.listMcpServers(),
         api.listPlugins()
       ]);
-      setMcpServers(serversResp);
+      const mcpList = Array.isArray(serversResp)
+        ? serversResp
+        : (serversResp && Array.isArray(serversResp.servers) ? serversResp.servers : []);
+      setMcpServers(mcpList);
       setPlugins(pluginsResp);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
