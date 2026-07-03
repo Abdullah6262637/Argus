@@ -160,6 +160,7 @@ async def run_agent_loop(
     max_steps: int = 8,
     on_event: Optional[ToolEventCallback] = None,
     memory_context: Optional[str] = None,
+    parent_context: Optional[ToolContext] = None,
 ) -> AgentLoopResult:
     """Bir kullanici mesajini ajanin tool'lariyla cok-turlu olarak isler.
 
@@ -193,7 +194,15 @@ async def run_agent_loop(
     messages.extend(history)
     messages.append(ChatMessage(role="user", content=user_message))
 
-    context = ToolContext(agent_id=agent.id, agent_name=agent.name)
+    if parent_context:
+        context = ToolContext(
+            agent_id=agent.id,
+            agent_name=agent.name,
+            workspace_dir=parent_context.workspace_dir,
+            extra=parent_context.extra,
+        )
+    else:
+        context = ToolContext(agent_id=agent.id, agent_name=agent.name)
     result = AgentLoopResult(final_content="", provider=provider_name, model=agent.model)
 
     for step in range(1, max_steps + 1):

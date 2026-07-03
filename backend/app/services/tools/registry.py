@@ -73,7 +73,7 @@ from app.services.tools.window_tools import (
     MinimizeWindowTool,
 )
 # v2: yeni tool'lar (FAZ 2/3/4)
-from app.services.tools.agent_tools import DelegateToAgentTool, AgentWaitForApprovalTool
+from app.services.tools.agent_tools import DelegateToAgentTool, AgentWaitForApprovalTool, BlackboardSetTool, BlackboardGetTool
 from app.services.tools.browser_auto import (
     BrowserClickTool,
     BrowserFillTool,
@@ -908,6 +908,9 @@ class ToolRegistry:
             WeatherTool(),
             # Explicit HITL Approval
             AgentWaitForApprovalTool(),
+            # Blackboard State Shared Memory
+            BlackboardSetTool(),
+            BlackboardGetTool(),
         ]
         for t in defaults:
             self.register(t)

@@ -66,7 +66,18 @@ class DelegateToAgentTool(BaseTool):
         # Yeni context, chain'i guncelle
         new_extra = dict(context.extra)
         new_extra["delegation_chain"] = chain + [context.agent_id]
-        target_ctx = _Ctx(  # noqa: F841 (run_agent_loop kendi context'ini olusturuyor)
+        
+        # Blackboard nesnesini hazirla (yoksa olustur ve aktar)
+        blackboard = new_extra.setdefault("blackboard", {})
+        bb_summary = ", ".join(blackboard.keys()) if blackboard else "bos"
+        prompt_with_bb = (
+            f"{prompt}\n\n"
+            f"[Bilgi: Ortak hafizada (Blackboard) su anahtarlar mevcut: {bb_summary}. "
+            f"Gerekirse 'blackboard_get' veya 'blackboard_set' tool'larini kullanarak "
+            f"diger ajanlarla veri paylasabilirsin.]"
+        )
+        
+        target_ctx = _Ctx(
             agent_id=target_agent.id,
             agent_name=target_agent.name,
             workspace_dir=context.workspace_dir,
@@ -77,8 +88,9 @@ class DelegateToAgentTool(BaseTool):
             result = await run_agent_loop(
                 target_agent,
                 history=[],
-                user_message=prompt,
+                user_message=prompt_with_bb,
                 max_steps=max_steps,
+                parent_context=target_ctx,
             )
         except Exception as exc:
             logger.exception("delegate_to_agent run hatasi")
@@ -120,4 +132,70 @@ class AgentWaitForApprovalTool(BaseTool):
             ok=True,
             output=f"Kullanici onay verdi. Detaylar: {reason}",
             data={"reason": reason}
+        )
+
+
+class BlackboardSetTool(BaseTool):
+    name = "blackboard_set"
+    description = (
+        "Paylasilan ortak hafizaya (Blackboard) bir veri yazar veya gunceller. "
+        "Diger delege edilen ajanlar bu veriye blackboard_get ile erisebilir."
+    )
+    permission = "none"
+    parameters = {
+        "type": "object",
+        "properties": {
+            "key": {"type": "string", "description": "Kaydedilecek veri anahtari."},
+            "value": {"type": "string", "description": "Kaydedilecek veri degeri (metin veya JSON)."}
+        },
+        "required": ["key", "value"]
+    }
+
+    async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        key = (args.get("key") or "").strip()
+        value = args.get("value") or ""
+        if not key:
+            return ToolResult(ok=False, error="key bos olamaz")
+            
+        blackboard = context.extra.setdefault("blackboard", {})
+        blackboard[key] = value
+        
+        return ToolResult(
+            ok=True,
+            output=f"Blackboard'a kaydedildi: '{key}'",
+            data={"key": key, "value": value}
+        )
+
+
+class BlackboardGetTool(BaseTool):
+    name = "blackboard_get"
+    description = (
+        "Paylasilan ortak hafizadan (Blackboard) belirtilen anahtardaki veriyi okur."
+    )
+    permission = "none"
+    parameters = {
+        "type": "object",
+        "properties": {
+            "key": {"type": "string", "description": "Okunacak veri anahtari."}
+        },
+        "required": ["key"]
+    }
+
+    async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        key = (args.get("key") or "").strip()
+        if not key:
+            return ToolResult(ok=False, error="key bos olamaz")
+            
+        blackboard = context.extra.setdefault("blackboard", {})
+        if key not in blackboard:
+            return ToolResult(
+                ok=False, 
+                error=f"Blackboard'da '{key}' anahtari bulunamadi. Mevcut anahtarlar: {list(blackboard.keys())}"
+            )
+            
+        value = blackboard[key]
+        return ToolResult(
+            ok=True,
+            output=f"Blackboard['{key}'] = {value}",
+            data={"key": key, "value": value}
         )
