@@ -2080,39 +2080,50 @@ function StepPermissions({
       />
 
       {/* Preset secici */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {PERMISSION_PRESETS.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => applyPreset(p.id)}
-            className={`text-left rounded border p-2.5 transition-all duration-200 active:scale-[0.98] flex items-start gap-2 ${
-              selectedPresetId === p.id
-                ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/30 font-semibold'
-                : 'border-brand-border bg-brand-bg/30 hover:border-brand-borderStrong'
-            }`}
-            title={p.desc}
-          >
-            <Icon name={p.icon} size={18} className={selectedPresetId === p.id ? 'text-brand-accent' : 'text-brand-muted'} />
-            <div className="min-w-0">
-              <div className="text-xs font-semibold text-brand-text">{p.label}</div>
-              <div className="text-[10px] text-brand-mutedSoft truncate">{p.desc}</div>
-            </div>
-          </button>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {PERMISSION_PRESETS.map((p) => {
+          const isActive = selectedPresetId === p.id;
+          return (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => applyPreset(p.id)}
+              className={`text-left rounded-xl border p-3.5 transition-all duration-300 active:scale-[0.97] flex items-start gap-3 shadow-sm ${
+                isActive
+                  ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
+                  : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
+              }`}
+              title={p.desc}
+            >
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+                isActive ? 'bg-brand-accent/10 border border-brand-accent/20 text-brand-accent' : 'bg-brand-panel border border-brand-border/40 text-brand-textSoft'
+              }`}>
+                <Icon name={p.icon} size={16} weight={550} />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[12px] font-bold text-brand-text leading-tight">{p.label}</div>
+                <div className="text-[10px] text-brand-textSoft mt-1 leading-normal">{p.desc}</div>
+              </div>
+            </button>
+          );
+        })}
         <button
           type="button"
           onClick={() => applyPreset('custom')}
-          className={`text-left rounded border p-2.5 transition-all duration-200 active:scale-[0.98] flex items-start gap-2 ${
+          className={`text-left rounded-xl border p-3.5 transition-all duration-300 active:scale-[0.97] flex items-start gap-3 shadow-sm ${
             selectedPresetId === 'custom'
-              ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/30 font-semibold'
-              : 'border-brand-border bg-brand-bg/30 hover:border-brand-borderStrong'
+              ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
+              : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
           }`}
         >
-          <Icon name="tune" size={18} className={selectedPresetId === 'custom' ? 'text-brand-accent' : 'text-brand-muted'} />
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+            selectedPresetId === 'custom' ? 'bg-brand-accent/10 border border-brand-accent/20 text-brand-accent' : 'bg-brand-panel border border-brand-border/40 text-brand-textSoft'
+          }`}>
+            <Icon name="tune" size={16} weight={550} />
+          </div>
           <div className="min-w-0">
-            <div className="text-xs font-semibold text-brand-text">Ozel</div>
-            <div className="text-[10px] text-brand-mutedSoft truncate">Detayli ayarla</div>
+            <div className="text-[12px] font-bold text-brand-text leading-tight">Ozel Yapılandırma</div>
+            <div className="text-[10px] text-brand-textSoft mt-1 leading-normal">İzinleri tek tek elle belirleyin</div>
           </div>
         </button>
       </div>
