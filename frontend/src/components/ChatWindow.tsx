@@ -180,65 +180,85 @@ function ToolCallCard({ tc, index }: { tc: ToolCallInfo; index: number }) {
   const finished = tc.duration_ms > 0 || !!tc.output || !!tc.error;
   const meta = getToolMeta(tc.name);
 
-  const colorClass = !finished
-    ? 'text-brand-accent'
-    : tc.ok
-      ? 'text-brand-success'
-      : 'text-brand-danger';
-
   return (
     <div
-      className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-brand-panel/60 border border-brand-border hover:bg-brand-panelAlt transition-colors animate-slide-in-right"
-      style={{ animationDelay: `${index * 40}ms` }}
+      className="animate-tool-card-enter relative group/tc flex items-center gap-2.5 px-3 py-2 rounded-lg bg-brand-panel/80 backdrop-blur-sm border border-brand-border/70 hover:border-brand-borderStrong hover:bg-brand-panelAlt/90 transition-all duration-200"
+      style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Sol: durum ikonu */}
-      <Icon
-        name={
+      {/* Sol kenar: animated progress bar veya static durum çizgisi */}
+      <div
+        className={`absolute left-0 top-[6px] bottom-[6px] w-[2.5px] rounded-full ${
           !finished
-            ? 'progress_activity'
+            ? 'bg-gradient-to-b from-brand-accent via-brand-accent/30 to-brand-accent bg-[length:100%_200%]'
             : tc.ok
-              ? 'check_circle'
-              : 'cancel'
-        }
-        size={13}
-        weight={550}
-        filled={finished}
-        className={`${colorClass} flex-shrink-0 ${!finished ? 'animate-spin-slow' : ''}`}
+              ? 'bg-brand-success/70'
+              : 'bg-brand-danger/70'
+        }`}
+        style={!finished ? { animation: 'tool-progress-glow 1.4s ease-in-out infinite' } : undefined}
       />
 
-      {/* Tool ikonu (sade muted) */}
-      <Icon
-        name={meta.icon}
-        size={12}
-        weight={500}
-        className="text-brand-mutedSoft flex-shrink-0"
-      />
+      {/* Tool ikonu — ince daire arka plan */}
+      <div className={`flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg ${
+        !finished
+          ? 'bg-brand-accent/10 text-brand-accent'
+          : tc.ok
+            ? 'bg-brand-success/10 text-brand-success'
+            : 'bg-brand-danger/10 text-brand-danger'
+      }`}>
+        <Icon name={meta.icon} size={15} weight={500} />
+      </div>
 
-      {/* Tool etiketi (Türkçe) */}
-      <span className="text-[11.5px] font-medium text-brand-text truncate flex-1">
-        {meta.label}
-      </span>
+      {/* Tool etiketi (Türkçe) + tool adı subtitle */}
+      <div className="flex-1 min-w-0">
+        <span className="block text-[11.5px] font-semibold text-brand-text truncate leading-tight">
+          {meta.label}
+        </span>
+        <span className="block text-[9.5px] font-mono text-brand-mutedSoft truncate leading-tight mt-0.5">
+          {tc.name}
+        </span>
+      </div>
 
-      {/* Sağ: süre veya hata özeti */}
-      {finished ? (
-        <span
-          className={`text-[10px] font-mono font-semibold tabular-nums flex-shrink-0 ${
-            tc.ok ? 'text-brand-mutedSoft' : 'text-brand-danger'
-          }`}
-        >
-          {tc.duration_ms > 0
-            ? tc.duration_ms < 1000
-              ? `${tc.duration_ms}ms`
-              : `${(tc.duration_ms / 1000).toFixed(1)}s`
-            : tc.ok
-              ? 'ok'
-              : 'hata'}
-        </span>
-      ) : (
-        <span className="text-[9.5px] uppercase tracking-wider font-bold text-brand-accent flex-shrink-0">
-          çalışıyor
-        </span>
-      )}
+      {/* Sağ: durum göstergesi */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {finished ? (
+          <>
+            <span
+              className={`text-[10px] font-mono font-semibold tabular-nums ${
+                tc.ok ? 'text-brand-mutedSoft' : 'text-brand-danger'
+              }`}
+            >
+              {tc.duration_ms > 0
+                ? tc.duration_ms < 1000
+                  ? `${tc.duration_ms}ms`
+                  : `${(tc.duration_ms / 1000).toFixed(1)}s`
+                : tc.ok
+                  ? 'ok'
+                  : 'hata'}
+            </span>
+            <div className="animate-tool-status-pop">
+              <Icon
+                name={tc.ok ? 'check_circle' : 'cancel'}
+                size={15}
+                weight={500}
+                filled
+                className={tc.ok ? 'text-brand-success' : 'text-brand-danger'}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <Icon
+              name="progress_activity"
+              size={14}
+              weight={550}
+              className="text-brand-accent animate-spin-slow"
+            />
+            <span className="text-[9.5px] uppercase tracking-wider font-bold text-brand-accent">
+              çalışıyor
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -634,30 +654,34 @@ export function ChatWindow({
           <MessageBubble key={m.id} message={m} agentName={agent.name} />
         ))}
 
-        {/* Canlı tool akışı — kompakt kurumsal */}
+        {/* Canlı tool akışı — premium glassmorphic kart */}
         {sending && liveToolCalls.length > 0 && (
-          <div className="flex justify-start">
-            <div className="max-w-[78%] w-full">
-              {/* Kompakt başlık */}
-              <div className="flex items-center gap-1.5 px-1 mb-1.5">
-                <Icon
-                  name="build"
-                  size={10}
-                  weight={550}
-                  className="text-brand-mutedSoft"
-                />
-                <span className="text-[9.5px] uppercase tracking-wider font-bold text-brand-mutedSoft">
-                  Araçlar
-                </span>
-                <span className="text-[9.5px] font-mono text-brand-mutedSoft tabular-nums">
-                  {liveToolCalls.length}
-                </span>
-              </div>
-              {/* Tool satırları */}
-              <div className="space-y-1">
-                {liveToolCalls.map((tc, i) => (
-                  <ToolCallCard key={tc.id} tc={tc} index={i} />
-                ))}
+          <div className="flex justify-start animate-fade-in-up">
+            <div className="max-w-[82%] w-full">
+              <div className="rounded-xl bg-brand-panel/50 backdrop-blur-md border border-brand-border/50 shadow-lg shadow-black/10 overflow-hidden">
+                {/* Kompakt başlık */}
+                <div className="flex items-center gap-2 px-3.5 py-2 border-b border-brand-border/40">
+                  <div className="flex items-center justify-center w-5 h-5 rounded-md bg-brand-accent/10">
+                    <Icon
+                      name="build"
+                      size={11}
+                      weight={600}
+                      className="text-brand-accent"
+                    />
+                  </div>
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-brand-mutedSoft">
+                    Araçlar
+                  </span>
+                  <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-md bg-brand-accent/10 text-[9.5px] font-mono font-bold text-brand-accent tabular-nums">
+                    {liveToolCalls.length}
+                  </span>
+                </div>
+                {/* Tool satırları */}
+                <div className="p-2 space-y-1.5">
+                  {liveToolCalls.map((tc, i) => (
+                    <ToolCallCard key={tc.id} tc={tc} index={i} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

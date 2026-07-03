@@ -63,35 +63,49 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
 
   return (
     <div
-      className={`mt-2 rounded border text-[11px] ${
+      className={`relative rounded-lg overflow-hidden border text-[11px] transition-all duration-200 ${
         tc.ok
-          ? 'border-brand-success/40 bg-brand-success/5'
-          : 'border-brand-danger/40 bg-brand-danger/5'
+          ? 'border-brand-success/30 bg-brand-success/[0.03] hover:border-brand-success/50'
+          : 'border-brand-danger/30 bg-brand-danger/[0.03] hover:border-brand-danger/50'
       }`}
       role="region"
       aria-label={`Tool call: ${tc.name}`}
     >
+      {/* Sol kenar durum çizgisi */}
+      <div
+        className={`absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full ${
+          tc.ok ? 'bg-brand-success/60' : 'bg-brand-danger/60'
+        }`}
+      />
+
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={handleKeyDown}
-        className="w-full flex items-center gap-2 px-2.5 py-1.5 text-left hover:bg-black/10 transition rounded"
+        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-black/5 transition-all duration-150 rounded-lg"
         aria-expanded={open}
         aria-label={`${tc.name} tool call details, ${tc.ok ? 'successful' : 'failed'}`}
       >
-        <span
-          className={`flex items-center gap-1.5 ${
+        {/* Tool ikonu */}
+        <div className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-md ${
+          tc.ok ? 'bg-brand-success/10 text-brand-success' : 'bg-brand-danger/10 text-brand-danger'
+        }`}>
+          <Icon name={icon} size={13} aria-hidden="true" />
+        </div>
+
+        {/* Tool adı + argüman özeti */}
+        <div className="flex-1 min-w-0">
+          <span className={`block font-mono font-semibold text-[11px] leading-tight ${
             tc.ok ? 'text-brand-success' : 'text-brand-danger'
-          }`}
-        >
-          <Icon name={icon} size={14} aria-hidden="true" />
-          <span className="font-mono font-semibold">{tc.name}</span>
-        </span>
-        {argSummary && (
-          <span className="text-brand-muted truncate font-mono">{argSummary}</span>
-        )}
-        <span className="ml-auto flex items-center gap-2 text-brand-mutedSoft">
-          <span className="font-mono">{tc.duration_ms}ms</span>
+          }`}>{tc.name}</span>
+          {argSummary && (
+            <span className="block text-brand-muted truncate font-mono text-[9.5px] leading-tight mt-0.5">{argSummary}</span>
+          )}
+        </div>
+
+        {/* Sağ: süre + durum ikonu + expand */}
+        <span className="ml-auto flex items-center gap-2 text-brand-mutedSoft flex-shrink-0">
+          <span className="font-mono tabular-nums text-[10px]">{tc.duration_ms}ms</span>
           <Icon
             name={tc.ok ? 'check_circle' : 'cancel'}
             size={14}
@@ -101,9 +115,10 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
             aria-hidden="true"
           />
           <Icon
-            name={open ? 'expand_more' : 'chevron_right'}
+            name={open ? 'expand_less' : 'expand_more'}
             size={14}
             weight={500}
+            className="transition-transform duration-200"
             aria-hidden="true"
           />
         </span>
@@ -111,39 +126,46 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
 
       {/* Sprint 1.5: Inline ekran goruntusu thumbnail (collapsed durumda bile gozuksun) */}
       {hasImage && !open && (
-        <div className="px-2.5 pb-2">
+        <div className="px-3 pb-2">
           <ScreenshotViewer imageB64={imageB64} imagePath={imagePath} alt={tc.name} />
         </div>
       )}
 
-      {open && (
-        <div className="px-2.5 pb-2 pt-1 space-y-1.5 border-t border-current/10">
-          {hasImage && (
-            <div>
-              <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider">
-                Goruntu
+      {/* Detay paneli: smooth CSS grid height transition */}
+      <div
+        className={`grid transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-3 pb-2.5 pt-1.5 space-y-2 border-t border-current/10">
+            {hasImage && (
+              <div>
+                <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider font-semibold mb-1">
+                  Görüntü
+                </div>
+                <ScreenshotViewer imageB64={imageB64} imagePath={imagePath} alt={tc.name} />
               </div>
-              <ScreenshotViewer imageB64={imageB64} imagePath={imagePath} alt={tc.name} />
+            )}
+            <div>
+              <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider font-semibold mb-1">
+                Argümanlar
+              </div>
+              <pre className="font-mono text-[10px] bg-black/20 rounded-md p-2 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
+                {JSON.stringify(tc.arguments, null, 2)}
+              </pre>
             </div>
-          )}
-          <div>
-            <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider">
-              Arguments
+            <div>
+              <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider font-semibold mb-1">
+                Çıktı
+              </div>
+              <pre className="font-mono text-[10px] bg-black/20 rounded-md p-2 overflow-x-auto whitespace-pre-wrap break-words max-h-48 leading-relaxed">
+                {tc.error ? `HATA: ${tc.error}` : tc.output || '(boş)'}
+              </pre>
             </div>
-            <pre className="font-mono text-[10px] bg-black/20 rounded p-1.5 overflow-x-auto whitespace-pre-wrap break-all">
-              {JSON.stringify(tc.arguments, null, 2)}
-            </pre>
-          </div>
-          <div>
-            <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider">
-              Output
-            </div>
-            <pre className="font-mono text-[10px] bg-black/20 rounded p-1.5 overflow-x-auto whitespace-pre-wrap break-words max-h-48">
-              {tc.error ? `HATA: ${tc.error}` : tc.output || '(bos)'}
-            </pre>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
