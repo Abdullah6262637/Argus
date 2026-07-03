@@ -74,6 +74,27 @@ from app.services.tools.window_tools import (
 )
 # v2: yeni tool'lar (FAZ 2/3/4)
 from app.services.tools.agent_tools import DelegateToAgentTool, AgentWaitForApprovalTool, BlackboardSetTool, BlackboardGetTool
+from app.services.tools.new_twenty_tools import (
+    InteractiveBrowserClickTool,
+    InteractiveBrowserTypeTool,
+    InteractiveBrowserScrollTool,
+    WebPDFGeneratorTool,
+    SandboxExecutePythonTool,
+    SandboxExecuteJSTool,
+    SandboxInstallPackageTool,
+    GenericAPIRequestTool,
+    GoogleCalendarManageTool,
+    GoogleSheetsSyncTool,
+    NotionPagesManageTool,
+    JiraTicketCreateTool,
+    GitHubPullRequestManageTool,
+    SpeechToTextFileTool,
+    ImageOCRReadTool,
+    VectorDatabaseSearchTool,
+    DocumentSummarizerHeavyTool,
+    AgentAskUserQuestionTool,
+    AgentSleepTool,
+)
 from app.services.tools.browser_auto import (
     BrowserClickTool,
     BrowserFillTool,
@@ -911,6 +932,26 @@ class ToolRegistry:
             # Blackboard State Shared Memory
             BlackboardSetTool(),
             BlackboardGetTool(),
+            # 20 New Critical Integration Tools
+            InteractiveBrowserClickTool(),
+            InteractiveBrowserTypeTool(),
+            InteractiveBrowserScrollTool(),
+            WebPDFGeneratorTool(),
+            SandboxExecutePythonTool(),
+            SandboxExecuteJSTool(),
+            SandboxInstallPackageTool(),
+            GenericAPIRequestTool(),
+            GoogleCalendarManageTool(),
+            GoogleSheetsSyncTool(),
+            NotionPagesManageTool(),
+            JiraTicketCreateTool(),
+            GitHubPullRequestManageTool(),
+            SpeechToTextFileTool(),
+            ImageOCRReadTool(),
+            VectorDatabaseSearchTool(),
+            DocumentSummarizerHeavyTool(),
+            AgentAskUserQuestionTool(),
+            AgentSleepTool(),
         ]
         for t in defaults:
             self.register(t)
