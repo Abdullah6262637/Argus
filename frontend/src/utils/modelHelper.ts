@@ -51,3 +51,24 @@ export function getModelLogo(model: string, provider: string): string {
   
   return '/providers/local.png?v=3';
 }
+
+/**
+ * Dynamic helper to determine the logo for an MCP server name.
+ */
+export function getMcpLogo(serverName: string): string {
+  const name = serverName.toLowerCase();
+  if (name.includes('github')) return '/mcp/github.png';
+  if (name.includes('fetch')) return '/mcp/fetch.png';
+  if (name.includes('sqlite')) return '/mcp/sqlite.png';
+  if (name.includes('file') || name.includes('fs') || name.includes('dir')) return '/mcp/filesystem.png';
+  if (name.includes('docker')) return '/mcp/docker.png';
+  if (name.includes('postgres') || name.includes('pg')) return '/mcp/postgres.png';
+  if (name.includes('slack')) return '/mcp/slack.png';
+  if (name.includes('sentry')) return '/mcp/sentry.png';
+  if (name.includes('aws')) return '/mcp/aws.png';
+  if (name.includes('brave')) return '/mcp/brave-search.png';
+  if (name.includes('puppeteer') || name.includes('playwright')) return '/mcp/puppeteer.png';
+  if (name.includes('memory')) return '/mcp/memory.png';
+  
+  return '';
+}

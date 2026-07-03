@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
-import { getModelLogo } from '../utils/modelHelper';
+import { getModelLogo, getMcpLogo } from '../utils/modelHelper';
 import type {
   AgentCreate,
   AgentDetail,
@@ -2308,13 +2308,20 @@ function StepPlugins() {
           {mcpServers.length === 0 ? (
             <div className="text-[11px] text-brand-mutedSoft italic">Aktif MCP sunucusu bulunmamaktadir.</div>
           ) : (
-            <div className="flex flex-wrap gap-1.5">
-              {mcpServers.map((s) => (
-                <span key={s.name} className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-mono border border-brand-border bg-brand-panel text-brand-text">
-                  <Icon name="dns" size={11} className="text-brand-accent" />
-                  {s.name}
-                </span>
-              ))}
+            <div className="flex flex-wrap gap-2">
+              {mcpServers.map((s) => {
+                const logo = getMcpLogo(s.name);
+                return (
+                  <span key={s.name} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono border border-brand-border bg-brand-panel text-brand-text shadow-sm transition-all hover:border-brand-accent/20">
+                    {logo ? (
+                      <img src={logo} alt={s.name} className="w-3.5 h-3.5 object-contain" />
+                    ) : (
+                      <Icon name="dns" size={11} className="text-brand-accent" />
+                    )}
+                    {s.name}
+                  </span>
+                );
+              })}
             </div>
           )}
         </div>

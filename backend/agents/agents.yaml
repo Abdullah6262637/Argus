@@ -4,7 +4,7 @@ agents:
   role: Senior Software Engineer
   description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
   provider: openrouter
-  model: openai/gpt-oss-20b
+  model: qwen/qwen3-32b
   temperature: 0.5
   max_tokens: 1024
   tags: []
@@ -15,7 +15,7 @@ agents:
     web_search: true
     system_admin: true
   base_url: https://openrouter.ai/api/v1
-  api_key: enc::gAAAAABqR6waebJaU3WxB7Ayi-YFX-4jyjsNRedGRruYDGWIZZSybrChRQFsyZzUb2ZgqbXshgzzB7XnoxoXcOGAAGoIcR2hsuVi3gm8HfwOfzSjNq-fOpm9s6OfgCoseTFuav9NKbnPydABQJwRULbzBZddnqhdvdONnYR5Qm8mAzy6qRLfbM0=
+  api_key: enc::gAAAAABqR7IPV5zMjB3VP_lTkyf9VFYgBmcTdLOxA-60YQcvV4Z7LINlZlGLs8GW4IMJNnEn6e2vKOwhA6QJ3P0UOLnFpNUNXZSRj4oY_lFjpxXZR4Pg-m3JF_Ep6DHK_asFmg_r6QYW7znKxSz_WDQ4lRIrinUmNpRMv-uqxukqQPiR3Tz09o4=
   system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
     yerine getir, kod yaz ve terminal komutlarıyla test et.
   image:
