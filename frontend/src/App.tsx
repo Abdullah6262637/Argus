@@ -21,39 +21,40 @@ import { useTheme } from './hooks/useTheme';
 import { useAppearance } from './hooks/useAppearance';
 import { useFirstRun } from './hooks/useFirstRun';
 import { useApprovals } from './hooks/useApprovals';
-import type { AgentCreate, AgentDetail, WSMessage } from './types';
-
-// --------- Confirm state (imperatif kullanim icin) ---------
-
-interface ConfirmState {
-  open: boolean;
-  title: string;
-  message: React.ReactNode;
-  details?: React.ReactNode;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  variant?: 'default' | 'danger';
-  requireTypeText?: string;
-  onConfirm: () => void | Promise<void>;
-  onCancel?: () => void;
-  hideCancel?: boolean;
-}
+import { useModal } from './context/ModalContext';
+import type { AgentCreate, WSMessage } from './types';
 
 export default function App() {
+  const {
+    settingsOpen,
+    settingsTab,
+    openSettings,
+    closeSettings,
+    workflowsOpen,
+    openWorkflows,
+    closeWorkflows,
+    paletteOpen,
+    setPaletteOpen,
+    openPalette,
+    closePalette,
+    inspectorOpen,
+    inspectorAgentId,
+    openInspector,
+    closeInspector,
+    formOpen,
+    editingAgent,
+    openForm,
+    closeForm,
+    confirmState,
+    openConfirm,
+    closeConfirm
+  } = useModal();
+
   const { agents, loading, error, reload } = useAgents();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [systemRefresh, setSystemRefresh] = useState(0);
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [editingAgent, setEditingAgent] = useState<AgentDetail | null>(null);
   const [formSubmitting, setFormSubmitting] = useState(false);
-
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsInitialTab, setSettingsInitialTab] = useState<'agents' | 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about'>('agents');
-  const [workflowsOpen, setWorkflowsOpen] = useState(false);
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [inspectorOpen, setInspectorOpen] = useState(false);
-  const [inspectorAgentId, setInspectorAgentId] = useState<string | null>(null);
 
   const [agentListOpen, setAgentListOpen] = useState(() => {
     try {
@@ -103,17 +104,7 @@ export default function App() {
   const { showOnboarding, complete: completeOnboarding, reset: resetOnboarding } = useFirstRun();
 
   // Confirm state
-  const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
   const [typedText, setTypedText] = useState('');
-
-  const openConfirm = (state: Omit<ConfirmState, 'open'>) => {
-    setTypedText('');
-    setConfirmState({ ...state, open: true });
-  };
-  const closeConfirm = () => {
-    setConfirmState(null);
-    setTypedText('');
-  };
 
   const selectedAgent = useMemo(
     () => agents.find((a) => a.id === selectedId) ?? null,
@@ -152,22 +143,20 @@ export default function App() {
 
   // --- Form ---
   const openCreateForm = () => {
-    setEditingAgent(null);
-    setFormOpen(true);
+    openForm(null);
   };
 
   const openEditForm = async (id: string) => {
     try {
       const detail = await api.getAgent(id);
-      setEditingAgent(detail);
-      setFormOpen(true);
+      openForm(detail);
     } catch (err) {
       openConfirm({
         title: 'Hata',
         message: 'Ajan detayi alinamadi.',
         details: err instanceof Error ? err.message : String(err),
         confirmLabel: 'Tamam',
-        cancelLabel: '',
+        hideCancel: true,
         onConfirm: closeConfirm});
     }
   };
@@ -182,8 +171,7 @@ export default function App() {
         setSelectedId(created.id);
       }
       await reload();
-      setFormOpen(false);
-      setEditingAgent(null);
+      closeForm();
     } finally {
       setFormSubmitting(false);
     }
@@ -384,9 +372,8 @@ export default function App() {
     chat.newConversation();
   };
 
-  // --- Sistemi sifirla ---
   const handleRequestReset = () => {
-    setSettingsOpen(false);
+    closeSettings();
     openConfirm({
       title: 'Sistemi sifirla',
       message: (
@@ -480,8 +467,7 @@ export default function App() {
       // Ctrl+Alt+M -> Ajan Havuzu/Yönetim Panelini Aç
       else if (isMod && isAlt && key === 'm') {
         e.preventDefault();
-        setSettingsInitialTab('agents');
-        setSettingsOpen(true);
+        openSettings('agents');
       }
       // Ctrl+Shift+D -> API Dokümantasyonu
       else if (isMod && isShift && key === 'd') {
@@ -496,43 +482,37 @@ export default function App() {
       // Ctrl+Shift+H -> Kılavuz (About)
       else if (isMod && isShift && key === 'h') {
         e.preventDefault();
-        setSettingsInitialTab('about');
-        setSettingsOpen(true);
+        openSettings('about');
       }
       // Ctrl+Alt+A -> API Anahtarları
       else if (isMod && isAlt && key === 'a') {
         e.preventDefault();
-        setSettingsInitialTab('apikeys');
-        setSettingsOpen(true);
+        openSettings('apikeys');
       }
       // Ctrl+Alt+P -> Eklentiler & MCP
       else if (isMod && isAlt && key === 'p') {
         e.preventDefault();
-        setSettingsInitialTab('plugins_mcp');
-        setSettingsOpen(true);
+        openSettings('plugins_mcp');
       }
       // Ctrl+Alt+R -> Reset
       else if (isMod && isAlt && key === 'r') {
         e.preventDefault();
-        setSettingsInitialTab('reset');
-        setSettingsOpen(true);
+        openSettings('reset');
       }
       // Ctrl+Alt+I -> Sürüm & Hakkında
       else if (isMod && isAlt && key === 'i') {
         e.preventDefault();
-        setSettingsInitialTab('about');
-        setSettingsOpen(true);
+        openSettings('about');
       }
       // Ctrl+Alt+W -> Workflow Panel
       else if (isMod && isAlt && key === 'w') {
         e.preventDefault();
-        setWorkflowsOpen(true);
+        openWorkflows();
       }
       // Ctrl+, -> Ayarlar (Görünüm)
       else if (isMod && key === ',') {
         e.preventDefault();
-        setSettingsInitialTab('theme');
-        setSettingsOpen(true);
+        openSettings('theme');
       }
       // Temalar: Ctrl+Shift+1 - Ctrl+Shift+4
       else if (isMod && isShift && key === '1') {
@@ -597,7 +577,7 @@ export default function App() {
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [agents, selectedAgent, chat, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize]);
+  }, [agents, selectedAgent, chat, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize, openSettings, openWorkflows]);
 
   const hasAgents = agents.length > 0;
 
@@ -622,12 +602,9 @@ export default function App() {
         wsConnected={ws.connected}
         onReloadAgents={reload}
         onCreateAgent={openCreateForm}
-        onOpenSettings={() => {
-          setSettingsInitialTab('theme');
-          setSettingsOpen(true);
-        }}
-        onOpenWorkflows={() => setWorkflowsOpen(true)}
-        onOpenCommandPalette={() => setPaletteOpen(true)}
+        onOpenSettings={openSettings}
+        onOpenWorkflows={openWorkflows}
+        onOpenCommandPalette={openPalette}
       />
 
       {!hasAgents && !loading ? (
@@ -649,10 +626,7 @@ export default function App() {
             isOpen={agentListOpen}
             onToggle={toggleAgentList}
             onToggleActive={handleToggleAgentActive}
-            onInspect={(id) => {
-              setInspectorAgentId(id);
-              setInspectorOpen(true);
-            }}
+            onInspect={openInspector}
             onTestConnection={handleTestConnection}
             onClearConversations={handleClearConversations}
             onExportChatMD={handleExportChatMD}
@@ -694,22 +668,19 @@ export default function App() {
       {/* Sprint A: Workflow Modal (Header'dan kolay erisim) */}
       <WorkflowsModal
         open={workflowsOpen}
-        onClose={() => setWorkflowsOpen(false)}
+        onClose={closeWorkflows}
       />
 
       {/* Sprint E.7: Komut Paleti (Ctrl+K) */}
       <CommandPalette
         open={paletteOpen}
-        onClose={() => setPaletteOpen(false)}
+        onClose={closePalette}
         agents={agents}
         onSelectAgent={setSelectedId}
         onCreateAgent={openCreateForm}
         onNewConversation={() => chat.newConversation()}
-        onOpenSettings={(tab = 'theme') => {
-          setSettingsInitialTab(tab);
-          setSettingsOpen(true);
-        }}
-        onOpenWorkflows={() => setWorkflowsOpen(true)}
+        onOpenSettings={openSettings}
+        onOpenWorkflows={openWorkflows}
         onReloadAgents={reload}
         onChangeTheme={setTheme}
         onChangeDensity={setDensity}
@@ -730,8 +701,7 @@ export default function App() {
         onToggleSystemPanel={toggleSystemPanel}
         onExportChatMD={handleExportChatMD}
         onShowShortcuts={() => {
-          setSettingsInitialTab('about');
-          setSettingsOpen(true);
+          openSettings('about');
         }}
       />
 
@@ -739,15 +709,11 @@ export default function App() {
         <AgentForm
           initial={editingAgent}
           onSubmit={handleSubmit}
-          onCancel={() => {
-            setFormOpen(false);
-            setEditingAgent(null);
-          }}
+          onCancel={closeForm}
           submitting={formSubmitting}
           onOpenEnvSettings={() => {
-            setFormOpen(false);
-            setSettingsInitialTab('apikeys');
-            setSettingsOpen(true);
+            closeForm();
+            openSettings('apikeys');
           }}
         />
       )}
@@ -756,9 +722,9 @@ export default function App() {
         <SettingsModal
           theme={theme}
           onChangeTheme={setTheme}
-          onClose={() => setSettingsOpen(false)}
+          onClose={closeSettings}
           onRequestReset={handleRequestReset}
-          initialTab={settingsInitialTab}
+          initialTab={settingsTab}
           onEditAgent={openEditForm}
           onDeleteAgent={handleDelete}
           onDuplicateAgent={handleDuplicate}
@@ -768,14 +734,14 @@ export default function App() {
 
       <AgentInspectorModal
         open={inspectorOpen}
-        onClose={() => setInspectorOpen(false)}
+        onClose={closeInspector}
         agentId={inspectorAgentId}
         agents={agents}
       />
 
       {confirmState && (
         <ConfirmDialog
-          open={confirmState.open}
+          open={!!confirmState}
           title={confirmState.title}
           message={confirmState.message}
           details={confirmState.details}
