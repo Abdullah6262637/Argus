@@ -20,7 +20,7 @@ class McpServerInfo(BaseModel):
     """MCP server bilgisi."""
     name: str
     enabled: bool
-    command: str
+    command: List[str] = Field(default_factory=list)
     args: List[str] = Field(default_factory=list)
     env: Dict[str, str] = Field(default_factory=dict)
 

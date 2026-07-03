@@ -125,7 +125,7 @@ export function SettingsModal({
 
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto p-5">
-            <div key={tab} className="animate-step-in">
+            <div key={tab} className="animate-step-in min-h-[420px]">
               {tab === 'theme' && (
                 <ThemeTab
                   theme={pendingTheme}
@@ -1200,8 +1200,8 @@ function PluginsMcpTab() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-48 text-brand-muted">
-        <Icon name="progress_activity" size={24} className="animate-spin mr-2" />
+      <div className="flex items-center justify-center gap-2 text-xs text-brand-muted min-h-[420px]">
+        <Icon name="progress_activity" size={14} className="animate-spin" />
         <span>Yükleniyor...</span>
       </div>
     );
