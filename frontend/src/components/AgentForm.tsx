@@ -1004,14 +1004,14 @@ function StepLLM({
               p.id === 'openrouter' ? 'openrouter' :
               p.id === 'groq' ? 'groq' :
               p.id === 'together' ? 'together' :
-              p.id === 'lmstudio' ? 'local' :
+              p.id === 'lmstudio' ? 'lmstudio' :
               p.id === 'ollama' ? 'local' :
               p.id === 'anthropic-official' ? 'anthropic' : 'openai';
             return {
               value: p.id,
               label: (
                 <span className="flex items-center gap-2">
-                  <img src={`/providers/${providerImg}.png`} alt={p.label} className="w-4 h-4 object-contain rounded-sm" />
+                  <img src={`/providers/${providerImg}.png?v=3`} alt={p.label} className="w-4 h-4 object-contain rounded-sm" />
                   <span>{p.label}{p.base_url ? ` — ${p.base_url}` : ''}</span>
                 </span>
               )
@@ -1030,7 +1030,7 @@ function StepLLM({
                 value: 'openai',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/openai.png" alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/openai.png?v=3" alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>OpenAI (ve uyumlu)</span>
                   </span>
                 )
@@ -1039,7 +1039,7 @@ function StepLLM({
                 value: 'anthropic',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/anthropic.png" alt="Anthropic" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/anthropic.png?v=3" alt="Anthropic" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Anthropic (Claude)</span>
                   </span>
                 )
@@ -1048,7 +1048,7 @@ function StepLLM({
                 value: 'gemini',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/gemini.png" alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/gemini.png?v=3" alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Google Gemini</span>
                   </span>
                 )
@@ -1057,7 +1057,7 @@ function StepLLM({
                 value: 'openrouter',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/openrouter.png" alt="OpenRouter" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/openrouter.png?v=3" alt="OpenRouter" className="w-4 h-4 object-contain rounded-sm" />
                     <span>OpenRouter</span>
                   </span>
                 )
@@ -1066,7 +1066,7 @@ function StepLLM({
                 value: 'groq',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/groq.png" alt="Groq" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/groq.png?v=3" alt="Groq" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Groq Cloud</span>
                   </span>
                 )
@@ -1075,7 +1075,7 @@ function StepLLM({
                 value: 'deepseek',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/deepseek.png" alt="DeepSeek" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/deepseek.png?v=3" alt="DeepSeek" className="w-4 h-4 object-contain rounded-sm" />
                     <span>DeepSeek</span>
                   </span>
                 )
@@ -1084,7 +1084,7 @@ function StepLLM({
                 value: 'mistral',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/mistral.png" alt="Mistral AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/mistral.png?v=3" alt="Mistral AI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Mistral AI</span>
                   </span>
                 )
@@ -1093,7 +1093,7 @@ function StepLLM({
                 value: 'xai',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/xai.png" alt="xAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/xai.png?v=3" alt="xAI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>xAI (Grok)</span>
                   </span>
                 )
@@ -1102,7 +1102,7 @@ function StepLLM({
                 value: 'local',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/local.png" alt="Yerel" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src="/providers/local.png?v=3" alt="Yerel" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Yerel (Ollama, LM Studio vb.)</span>
                   </span>
                 )
