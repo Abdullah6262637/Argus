@@ -429,7 +429,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                       key={t.id}
                       type="button"
                       onClick={() => onChangeTheme(t.id)}
-                      className={`rounded-xl border p-4 text-left transition-all duration-300 shadow-sm active:scale-[0.97] flex flex-col justify-between ${
+                      className={`rounded-xl border p-4 text-left transition-all duration-300 shadow-sm active:scale-[0.97] flex flex-col gap-2.5 ${
                         active
                           ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
                           : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong'
@@ -443,7 +443,9 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                           </span>
                         )}
                       </div>
-                      <div className="text-[10.5px] text-brand-textSoft mt-1.5 leading-relaxed">{t.description}</div>
+                      <div className="text-[10.5px] text-brand-textSoft leading-relaxed">{t.description}</div>
+                      {/* Color palette preview strip */}
+                      <ThemePalette themeId={t.id} />
                     </button>
                   );
                 })}
@@ -487,6 +489,53 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Theme Palette: 4-swatch color strip
+// ─────────────────────────────────────────────
+function ThemePalette({ themeId }: { themeId: ThemeId }) {
+  const palettes: Record<ThemeId, { color: string; label: string }[]> = {
+    mono: [
+      { color: '#000000', label: 'Arka plan' },
+      { color: '#0a0a0a', label: 'Panel' },
+      { color: '#ffffff', label: 'Vurgu' },
+      { color: '#737373', label: 'İkincil' },
+    ],
+    midnight: [
+      { color: '#0b1220', label: 'Arka plan' },
+      { color: '#162238', label: 'Panel' },
+      { color: '#60a5fa', label: 'Vurgu' },
+      { color: '#94a3b8', label: 'İkincil' },
+    ],
+    sunset: [
+      { color: '#1a0f0a', label: 'Arka plan' },
+      { color: '#2d1b14', label: 'Panel' },
+      { color: '#fb923c', label: 'Vurgu' },
+      { color: '#d4b5a0', label: 'İkincil' },
+    ],
+    forest: [
+      { color: '#0a1410', label: 'Arka plan' },
+      { color: '#14261f', label: 'Panel' },
+      { color: '#34d399', label: 'Vurgu' },
+      { color: '#a3c4b3', label: 'İkincil' },
+    ],
+  };
+
+  const swatches = palettes[themeId];
+
+  return (
+    <div className="flex gap-1.5 items-center">
+      {swatches.map((s, i) => (
+        <div
+          key={i}
+          title={s.label}
+          className="w-5 h-5 rounded-full border border-white/10 shadow-sm flex-shrink-0 transition-transform hover:scale-110"
+          style={{ background: s.color }}
+        />
+      ))}
     </div>
   );
 }
