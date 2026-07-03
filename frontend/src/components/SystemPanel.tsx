@@ -12,6 +12,8 @@ interface SystemPanelProps {
   agents: AgentInfo[];
   selectedAgentId: string | null;
   refreshSignal?: number;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 // --------- Cron çözümleyici ---------
@@ -64,7 +66,9 @@ const TAB_CONFIG: Record<Tab, { icon: string; label: string }> = {
 export function SystemPanel({
   agents,
   selectedAgentId,
-  refreshSignal = 0}: SystemPanelProps) {
+  refreshSignal = 0,
+  isOpen,
+  onToggle}: SystemPanelProps) {
   const [tab, setTab] = useState<Tab>('tasks');
   const [tasks, setTasks] = useState<ScheduledTask[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -72,25 +76,6 @@ export function SystemPanel({
   const [error, setError] = useState<string | null>(null);
   const [showNewTask, setShowNewTask] = useState(false);
   const [runningId, setRunningId] = useState<number | null>(null);
-
-  const [isOpen, setIsOpen] = useState(() => {
-    try {
-      const saved = localStorage.getItem('argus_system_panel_open');
-      return saved !== 'false';
-    } catch {
-      return true;
-    }
-  });
-
-  const togglePanel = () => {
-    setIsOpen((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem('argus_system_panel_open', String(next));
-      } catch {}
-      return next;
-    });
-  };
 
   const loadAll = async () => {
     setLoading(true);
@@ -215,6 +200,14 @@ export function SystemPanel({
               </button>
             );
           })}
+          {/* Collapse Button */}
+          <button
+            onClick={onToggle}
+            title="Sistem Panelini Kapat"
+            className="w-9 h-9 inline-flex items-center justify-center text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt rounded-md transition-all duration-200 active:scale-95 flex-shrink-0"
+          >
+            <Icon name="arrow_forward" size={16} />
+          </button>
         </div>
         {/* Alt accent çizgisi */}
         <div className="h-px bg-brand-border mt-2" />
@@ -339,21 +332,8 @@ export function SystemPanel({
         </button>
       </div>
     </div>
-
-    {/* Floating Toggle Handle Button */}
-    <button
-        onClick={togglePanel}
-        title={isOpen ? 'Paneli Kapat' : 'Paneli Aç'}
-        className="absolute top-1/2 -translate-y-1/2 -left-3 z-40 w-6 h-12 rounded-l-md border border-r-0 border-brand-border bg-brand-panel text-brand-mutedSoft hover:text-brand-accent flex items-center justify-center transition-all shadow-md group hover:bg-brand-panelAlt"
-      >
-        <Icon 
-          name={isOpen ? 'chevron_right' : 'chevron_left'} 
-          size={14} 
-          className="transition-transform duration-300 group-hover:scale-110" 
-        />
-      </button>
-    </aside>
-  );
+  </aside>
+);
 }
 
 // ============================================================

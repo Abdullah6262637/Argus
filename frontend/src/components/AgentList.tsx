@@ -15,6 +15,8 @@ interface AgentListProps {
   onNewConversation: (id: string) => void;
   loading: boolean;
   error: string | null;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 interface ContextState {
@@ -34,28 +36,11 @@ export function AgentList({
   onExport,
   onNewConversation,
   loading,
-  error}: AgentListProps) {
+  error,
+  isOpen,
+  onToggle}: AgentListProps) {
   const [ctx, setCtx] = useState<ContextState | null>(null);
   const [search, setSearch] = useState('');
-
-  const [isOpen, setIsOpen] = useState(() => {
-    try {
-      const saved = localStorage.getItem('argus_agent_list_open');
-      return saved !== 'false';
-    } catch {
-      return true;
-    }
-  });
-
-  const togglePanel = () => {
-    setIsOpen((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem('argus_agent_list_open', String(next));
-      } catch {}
-      return next;
-    });
-  };
 
   const filteredAgents = useMemo(() => {
     if (!search.trim()) return agents;
@@ -128,13 +113,22 @@ export function AgentList({
               </span>
             </p>
           </div>
-          <button
-            onClick={onCreate}
-            title="Yeni ajan oluştur"
-            className="w-7 h-7 rounded-md inline-flex items-center justify-center text-brand-textSoft hover:text-brand-accent hover:bg-brand-accent/10 transition-all active:scale-90"
-          >
-            <Icon name="add" size={17} weight={650} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onCreate}
+              title="Yeni ajan oluştur"
+              className="w-7 h-7 rounded-md inline-flex items-center justify-center text-brand-textSoft hover:text-brand-accent hover:bg-brand-accent/10 transition-all active:scale-90"
+            >
+              <Icon name="add" size={17} weight={650} />
+            </button>
+            <button
+              onClick={onToggle}
+              title="Ajanlar Panelini Kapat"
+              className="w-7 h-7 rounded-md inline-flex items-center justify-center text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all"
+            >
+              <Icon name="menu_open" size={16} />
+            </button>
+          </div>
         </div>
 
         {/* Arama */}
@@ -256,19 +250,6 @@ export function AgentList({
         />
       )}
       </div>
-
-      {/* Floating Toggle Handle Button */}
-      <button
-        onClick={togglePanel}
-        title={isOpen ? 'Ajanları Gizle' : 'Ajanları Göster'}
-        className="absolute top-1/2 -translate-y-1/2 -right-3 z-40 w-6 h-12 rounded-r-md border border-l-0 border-brand-border bg-brand-panel text-brand-mutedSoft hover:text-brand-accent flex items-center justify-center transition-all shadow-md group hover:bg-brand-panelAlt"
-      >
-        <Icon 
-          name={isOpen ? 'chevron_left' : 'chevron_right'} 
-          size={14} 
-          className="transition-transform duration-300 group-hover:scale-110" 
-        />
-      </button>
     </aside>
   );
 }

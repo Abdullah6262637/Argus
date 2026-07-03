@@ -48,6 +48,44 @@ export default function App() {
   const [settingsInitialTab, setSettingsInitialTab] = useState<'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about'>('theme');
   const [workflowsOpen, setWorkflowsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+
+  const [agentListOpen, setAgentListOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('argus_agent_list_open');
+      return saved !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const [systemPanelOpen, setSystemPanelOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('argus_system_panel_open');
+      return saved !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const toggleAgentList = () => {
+    setAgentListOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('argus_agent_list_open', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const toggleSystemPanel = () => {
+    setSystemPanelOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('argus_system_panel_open', String(next));
+      } catch {}
+      return next;
+    });
+  };
   const { theme, setTheme } = useTheme();
   // Sprint E.6: density + font size
   const { setDensity, setFontSize } = useAppearance();
@@ -461,6 +499,8 @@ export default function App() {
             onNewConversation={handleNewConversation}
             loading={loading}
             error={error}
+            isOpen={agentListOpen}
+            onToggle={toggleAgentList}
           />
           <ChatWindow
             agent={selectedAgent}
@@ -474,11 +514,17 @@ export default function App() {
             onSend={chat.send}
             onCancel={chat.cancel}
             onNewConversation={chat.newConversation}
+            agentListOpen={agentListOpen}
+            onToggleAgentList={toggleAgentList}
+            systemPanelOpen={systemPanelOpen}
+            onToggleSystemPanel={toggleSystemPanel}
           />
           <SystemPanel
             agents={agents}
             selectedAgentId={selectedId}
             refreshSignal={systemRefresh}
+            isOpen={systemPanelOpen}
+            onToggle={toggleSystemPanel}
           />
         </div>
       )}

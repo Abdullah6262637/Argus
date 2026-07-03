@@ -21,6 +21,10 @@ interface ChatWindowProps {
   onSend: (content: string) => void;
   onNewConversation: () => void;
   onCancel?: () => void;
+  agentListOpen: boolean;
+  onToggleAgentList: () => void;
+  systemPanelOpen: boolean;
+  onToggleSystemPanel: () => void;
 }
 
 /**
@@ -401,7 +405,11 @@ export function ChatWindow({
   lastReflection = null,
   onSend,
   onNewConversation,
-  onCancel}: ChatWindowProps) {
+  onCancel,
+  agentListOpen,
+  onToggleAgentList,
+  systemPanelOpen,
+  onToggleSystemPanel}: ChatWindowProps) {
   const [draft, setDraft] = useState('');
   const [showPlan, setShowPlan] = useState(true);
   const [showFileDrop, setShowFileDrop] = useState(false);
@@ -449,6 +457,16 @@ export function ChatWindow({
       <header className="h-14 px-4 border-b border-brand-border flex items-center justify-between bg-brand-panel">
         {/* Sol: Ajan kimliği */}
         <div className="min-w-0 flex items-center gap-2 flex-1">
+          {!agentListOpen && (
+            <button
+              onClick={onToggleAgentList}
+              title="Ajanlar Listesini Göster"
+              className="w-8 h-8 rounded-md inline-flex items-center justify-center text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all mr-1 flex-shrink-0 animate-fade-in"
+            >
+              <Icon name="menu" size={18} />
+            </button>
+          )}
+
           {/* Online status dot — tek başına, ikon kutusu yok */}
           <span
             className="w-2 h-2 rounded-full bg-brand-success flex-shrink-0"
@@ -562,6 +580,16 @@ export function ChatWindow({
             <Icon name="add" size={16} weight={650} />
             <span className="hidden md:inline">Yeni Sohbet</span>
           </button>
+
+          {!systemPanelOpen && (
+            <button
+              onClick={onToggleSystemPanel}
+              title="Görevler & Loglar Panelini Göster"
+              className="w-8 h-8 rounded-md inline-flex items-center justify-center text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all ml-1 flex-shrink-0 animate-fade-in"
+            >
+              <Icon name="assignment" size={18} />
+            </button>
+          )}
         </div>
       </header>
 
