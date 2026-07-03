@@ -21,6 +21,7 @@ import { useTheme } from './hooks/useTheme';
 import { useAppearance } from './hooks/useAppearance';
 import { useFirstRun } from './hooks/useFirstRun';
 import { useApprovals } from './hooks/useApprovals';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useModal } from './context/ModalContext';
 import type { AgentCreate, WSMessage } from './types';
 
@@ -74,7 +75,6 @@ export default function App() {
     }
   });
 
-  const [systemPanelTab, setSystemPanelTab] = useState<'tasks' | 'logs'>('tasks');
 
   const toggleAgentList = () => {
     setAgentListOpen((prev) => {
@@ -411,172 +411,38 @@ export default function App() {
       }});
   };
 
-  // Global Keyboard Shortcuts (Ctrl+K, Ctrl+N, Ctrl+Shift+N, API/MCP Tabs, Themes, Sizing, Agent Select & Edit)
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const isMod = e.ctrlKey || e.metaKey;
-      const isAlt = e.altKey;
-      const isShift = e.shiftKey;
-      const key = e.key.toLowerCase();
-
-      // Ctrl+K -> Komut paleti
-      if (isMod && key === 'k') {
-        e.preventDefault();
-        setPaletteOpen((v) => !v);
+  useKeyboardShortcuts({
+    togglePalette: () => setPaletteOpen((v) => !v),
+    openCreateForm,
+    newConversation: chat.newConversation,
+    reloadAgents: reload,
+    exportAgentJson: () => {
+      if (selectedAgent) {
+        handleExport(selectedAgent.id);
       }
-      // Ctrl+Shift+N -> Yeni Ajan
-      else if (isMod && isShift && key === 'n') {
-        e.preventDefault();
-        openCreateForm();
+    },
+    exportChatMd: () => {
+      if (selectedAgent) {
+        handleExportChatMD(selectedAgent.id);
       }
-      // Ctrl+N -> Yeni sohbet
-      else if (isMod && !isShift && key === 'n') {
-        e.preventDefault();
-        chat.newConversation();
+    },
+    deleteConversation: handleDeleteConversation,
+    toggleSystemPanel,
+    openSettings,
+    openWorkflows,
+    setTheme,
+    setDensity,
+    setFontSize,
+    selectAgentByIndex: (idx) => {
+      if (agents[idx]) {
+        setSelectedId(agents[idx].id);
       }
-      // Ctrl+Shift+U -> Ajanları yeniden yükle
-      else if (isMod && isShift && key === 'u') {
-        e.preventDefault();
-        reload();
+    },
+    editAgentByIndex: (idx) => {
+      if (agents[idx]) {
+        openEditForm(agents[idx].id);
       }
-      // Ctrl+Shift+E -> Dışa aktar
-      else if (isMod && isShift && key === 'e') {
-        e.preventDefault();
-        if (selectedAgent) {
-          handleExport(selectedAgent.id);
-        }
-      }
-      // Ctrl+Shift+M -> Markdown Dışa Aktar
-      else if (isMod && isShift && key === 'm') {
-        e.preventDefault();
-        if (selectedAgent) {
-          handleExportChatMD(selectedAgent.id);
-        }
-      }
-      // Ctrl+Shift+Backspace -> Sohbeti Temizle
-      else if (isMod && isShift && key === 'backspace') {
-        e.preventDefault();
-        handleDeleteConversation();
-      }
-      // Ctrl+Alt+L -> Sistem/Log Panelini Göster/Gizle
-      else if (isMod && isAlt && key === 'l') {
-        e.preventDefault();
-        setSystemPanelTab('tasks');
-        toggleSystemPanel();
-      }
-      // Ctrl+Alt+M -> Ajan Havuzu/Yönetim Panelini Aç
-      else if (isMod && isAlt && key === 'm') {
-        e.preventDefault();
-        openSettings('agents');
-      }
-      // Ctrl+Shift+D -> API Dokümantasyonu
-      else if (isMod && isShift && key === 'd') {
-        e.preventDefault();
-        window.open('http://127.0.0.1:8000/docs', '_blank');
-      }
-      // Ctrl+Shift+G -> GitHub
-      else if (isMod && isShift && key === 'g') {
-        e.preventDefault();
-        window.open('https://github.com/Abdullah6262637/Argus', '_blank');
-      }
-      // Ctrl+Shift+H -> Kılavuz (About)
-      else if (isMod && isShift && key === 'h') {
-        e.preventDefault();
-        openSettings('about');
-      }
-      // Ctrl+Alt+A -> API Anahtarları
-      else if (isMod && isAlt && key === 'a') {
-        e.preventDefault();
-        openSettings('apikeys');
-      }
-      // Ctrl+Alt+P -> Eklentiler & MCP
-      else if (isMod && isAlt && key === 'p') {
-        e.preventDefault();
-        openSettings('plugins_mcp');
-      }
-      // Ctrl+Alt+R -> Reset
-      else if (isMod && isAlt && key === 'r') {
-        e.preventDefault();
-        openSettings('reset');
-      }
-      // Ctrl+Alt+I -> Sürüm & Hakkında
-      else if (isMod && isAlt && key === 'i') {
-        e.preventDefault();
-        openSettings('about');
-      }
-      // Ctrl+Alt+W -> Workflow Panel
-      else if (isMod && isAlt && key === 'w') {
-        e.preventDefault();
-        openWorkflows();
-      }
-      // Ctrl+, -> Ayarlar (Görünüm)
-      else if (isMod && key === ',') {
-        e.preventDefault();
-        openSettings('theme');
-      }
-      // Temalar: Ctrl+Shift+1 - Ctrl+Shift+4
-      else if (isMod && isShift && key === '1') {
-        e.preventDefault();
-        setTheme('midnight');
-      }
-      else if (isMod && isShift && key === '2') {
-        e.preventDefault();
-        setTheme('sunset');
-      }
-      else if (isMod && isShift && key === '3') {
-        e.preventDefault();
-        setTheme('forest');
-      }
-      else if (isMod && isShift && key === '4') {
-        e.preventDefault();
-        setTheme('mono');
-      }
-      // Density: Ctrl+Shift+5 - Ctrl+Shift+7
-      else if (isMod && isShift && key === '5') {
-        e.preventDefault();
-        setDensity('cozy');
-      }
-      else if (isMod && isShift && key === '6') {
-        e.preventDefault();
-        setDensity('compact');
-      }
-      else if (isMod && isShift && key === '7') {
-        e.preventDefault();
-        setDensity('comfortable');
-      }
-      // Font sizes: Ctrl+Shift+8 - Ctrl+Shift+0
-      else if (isMod && isShift && key === '8') {
-        e.preventDefault();
-        setFontSize('sm');
-      }
-      else if (isMod && isShift && key === '9') {
-        e.preventDefault();
-        setFontSize('md');
-      }
-      else if (isMod && isShift && key === '0') {
-        e.preventDefault();
-        setFontSize('lg');
-      }
-      // Ajan Seçimi: Ctrl+1 - Ctrl+9
-      else if (isMod && !isAlt && /^[1-9]$/.test(e.key)) {
-        e.preventDefault();
-        const idx = Number(e.key) - 1;
-        if (agents[idx]) {
-          setSelectedId(agents[idx].id);
-        }
-      }
-      // Ajan Düzenleme: Ctrl+Alt+1 - Ctrl+Alt+9
-      else if (isMod && isAlt && /^[1-9]$/.test(e.key)) {
-        e.preventDefault();
-        const idx = Number(e.key) - 1;
-        if (agents[idx]) {
-          openEditForm(agents[idx].id);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    }
   }, [agents, selectedAgent, chat, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize, openSettings, openWorkflows]);
 
   const hasAgents = agents.length > 0;
@@ -654,7 +520,6 @@ export default function App() {
             refreshSignal={systemRefresh}
             isOpen={systemPanelOpen}
             onToggle={toggleSystemPanel}
-            defaultTab={systemPanelTab}
           />
         </div>
       )}
