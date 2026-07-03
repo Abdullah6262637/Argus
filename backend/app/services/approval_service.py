@@ -42,7 +42,9 @@ HIGH_RISK_TOOLS = {
     "docker_build",
     "kubectl_apply",
     # Sprint D.7 — Aktif tarama
-    "port_scan"}
+    "port_scan",
+    # Ajan onay bekleme
+    "agent_wait_for_approval"}
 
 MEDIUM_RISK_TOOLS = {
     "write_file",

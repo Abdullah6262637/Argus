@@ -93,3 +93,31 @@ class DelegateToAgentTool(BaseTool):
                 "steps": result.steps,
                 "tokens": result.total_tokens},
         )
+
+
+class AgentWaitForApprovalTool(BaseTool):
+    name = "agent_wait_for_approval"
+    description = (
+        "Bir gorevi veya kritik bir asamayi tamamladiginda kullanicidan onay ve geri bildirim talep eder. "
+        "Kullanici onay verene kadar ajan loop'u duraklar. Kullanici onay verirse islem basariyla devam eder, "
+        "reddedilirse veya geri bildirim yazarsa o geri bildirimi dondurur."
+    )
+    permission = "none"
+    parameters = {
+        "type": "object",
+        "properties": {
+            "reason": {
+                "type": "string",
+                "description": "Kullaniciya gosterilecek onay mesaji veya tamamlanan isin ozeti."
+            }
+        },
+        "required": ["reason"]
+    }
+
+    async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        reason = (args.get("reason") or "").strip()
+        return ToolResult(
+            ok=True,
+            output=f"Kullanici onay verdi. Detaylar: {reason}",
+            data={"reason": reason}
+        )
