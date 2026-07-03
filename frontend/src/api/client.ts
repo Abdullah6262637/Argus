@@ -372,8 +372,8 @@ export const api = {
   listMcpServers: (): Promise<Array<{
     name: string;
     enabled: boolean;
-    command: string;
-    args: string[];
+    command: string[];
+    args?: string[];
     env?: Record<string, string>;
   }>> => http('/mcp/servers'),
   toggleMcpServer: (name: string, enabled: boolean): Promise<{
@@ -383,6 +383,12 @@ export const api = {
   }> => http(`/mcp/servers/${encodeURIComponent(name)}/toggle`, {
     method: 'POST',
     body: JSON.stringify({ enabled })}),
+
+  listPlugins: (): Promise<Array<{
+    name: string;
+    loaded_tools: string[];
+    ok: boolean;
+  }>> => http('/system/plugins'),
 
   // v2: SSE Stream URL (FAZ 1.4)
   chatStreamUrl: (): string => `${API_BASE}/chat/stream`};

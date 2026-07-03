@@ -1861,40 +1861,77 @@ function PermissionBlock({
 // ============================================================
 
 function StepPlugins() {
+  const [mcpServers, setMcpServers] = useState<any[]>([]);
+  const [plugins, setPlugins] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([api.listMcpServers(), api.listPlugins()])
+      .then(([servers, plugs]) => {
+        setMcpServers(servers.filter((s) => s.enabled));
+        setPlugins(plugs);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-32 text-brand-muted">
+        <Icon name="progress_activity" size={20} className="animate-spin mr-2" />
+        <span>Yükleniyor...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 max-w-xl mx-auto">
       <StepHeading
-        title="Plugins ve MCP"
-        desc="Bu ajana ek tool kaynaklari (plugin'ler / MCP sunuculari) atayabilirsin. Hepsi opsiyonel."
+        title="Plugins ve MCP Yetenekleri"
+        desc="Bu ajanin kullanabilecegi eklenti (plugin) ve MCP sunucu listesi."
       />
 
-      <div className="rounded border border-brand-accent/30 bg-brand-accent/5 p-3 text-xs flex items-start gap-2">
-        <Icon name="hourglass_empty" size={16} className="text-brand-accent flex-shrink-0 mt-0.5" />
+      <div className="rounded border border-brand-accent/20 bg-brand-accent/5 p-3 text-xs flex items-start gap-2">
+        <Icon name="info" size={16} className="text-brand-accent flex-shrink-0 mt-0.5" />
         <div>
-          <strong className="text-brand-accent">Yakinda:</strong> Bu adim ileride buradaki plugin
-          kayitlarini (<code className="font-mono">plugins/</code>) ve MCP sunucularini
-          (<code className="font-mono">backend/agents/mcp_servers.yaml</code>) ajan-bazli secebilmeni
-          saglayacak. Su an icin geri/ileri butonlariyla atlayabilirsin.
+          <strong className="text-brand-accent">Bilgi:</strong> Eklentiler ve MCP sunucuları globaldir. Bunları etkinleştirmek veya devre dışı bırakmak için üst menüdeki <strong>Ayarlar &gt; Eklentiler &amp; MCP</strong> sekmesini kullanabilirsiniz.
         </div>
       </div>
 
-      <div className="rounded border border-brand-border bg-brand-bg/30 p-3 space-y-2">
-        <div className="text-[11px] text-brand-mutedSoft">
-          <strong>Bilgi:</strong> Plugin'ler ve MCP sunuculari su an{' '}
-          <strong>tum ajanlar tarafindan ortak</strong> kullanilir; ayrica ajan-bazli
-          aktiflestirme henuz desteklenmiyor.
+      <div className="space-y-3">
+        {/* MCP Ozet */}
+        <div className="rounded border border-brand-border bg-brand-bg/30 p-3 space-y-2">
+          <div className="text-[11px] font-bold text-brand-text uppercase tracking-wider">Aktif MCP Sunuculari</div>
+          {mcpServers.length === 0 ? (
+            <div className="text-[11px] text-brand-mutedSoft italic">Aktif MCP sunucusu bulunmamaktadir.</div>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {mcpServers.map((s) => (
+                <span key={s.name} className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-mono border border-brand-border bg-brand-panel text-brand-text">
+                  <Icon name="dns" size={11} className="text-brand-accent" />
+                  {s.name}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <ul className="space-y-1 text-[11px] text-brand-textSoft list-none pl-0">
-          <li className="flex items-start gap-1.5">
-            <Icon name="info" size={12} className="text-brand-accent flex-shrink-0 mt-0.5" />
-            Plugin ekleme: <code className="font-mono">plugins/</code> klasorune Python paketi
-          </li>
-          <li className="flex items-start gap-1.5">
-            <Icon name="info" size={12} className="text-brand-accent flex-shrink-0 mt-0.5" />
-            MCP server ekleme: <code className="font-mono">backend/agents/mcp_servers.yaml</code>'a
-            yeni giris ekleyip <code>enabled: true</code> yap
-          </li>
-        </ul>
+
+        {/* Plugins Ozet */}
+        <div className="rounded border border-brand-border bg-brand-bg/30 p-3 space-y-2">
+          <div className="text-[11px] font-bold text-brand-text uppercase tracking-wider">Sistem Eklentileri (Python Plugins)</div>
+          {plugins.length === 0 ? (
+            <div className="text-[11px] text-brand-mutedSoft italic">Eklenti bulunmamaktadir.</div>
+          ) : (
+            <div className="space-y-1.5">
+              {plugins.map((p) => (
+                <div key={p.name} className="text-[11px] flex items-center justify-between text-brand-textSoft font-mono">
+                  <span>{p.name}</span>
+                  <span className="text-[10px] text-brand-mutedSoft font-sans">({p.loaded_tools.length} tool)</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

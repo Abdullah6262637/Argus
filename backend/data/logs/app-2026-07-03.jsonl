@@ -1,0 +1,21 @@
+{"timestamp": "2026-07-03T07:27:56.010480Z", "level": "info", "logger": "argus", "message": "Uygulama baslatiliyor...", "module": "main", "line": 49, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:27:56.463170Z", "level": "info", "logger": "app.services.agent_manager", "message": "AgentManager: 3 ajan yuklendi", "module": "agent_manager", "line": 202, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:27:56.515396Z", "level": "info", "logger": "apscheduler.scheduler", "message": "Scheduler started", "module": "base", "line": 214, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:27:56.515845Z", "level": "info", "logger": "app.services.scheduler", "message": "Scheduler basladi, 0 aktif gorev var", "module": "scheduler", "line": 126, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:27:57.776434Z", "level": "info", "logger": "app.services.mcp.bridge", "message": "MCP konfigurasyonu bos veya yok", "module": "bridge", "line": 206, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:27:57.776692Z", "level": "info", "logger": "argus", "message": "Uygulama hazir.", "module": "main", "line": 86, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:27:57.792129Z", "level": "info", "logger": "argus", "message": "Playwright Chromium hazir.", "module": "main", "line": 76, "taskName": "Task-5"}
+{"timestamp": "2026-07-03T07:28:00.716503Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-17"}
+{"timestamp": "2026-07-03T07:28:00.907473Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-17"}
+{"timestamp": "2026-07-03T07:28:01.256801Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-32"}
+{"timestamp": "2026-07-03T07:28:16.064352Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-32"}
+{"timestamp": "2026-07-03T07:28:25.301776Z", "level": "info", "logger": "argus", "message": "Uygulama baslatiliyor...", "module": "main", "line": 49, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:28:25.593148Z", "level": "info", "logger": "app.services.agent_manager", "message": "AgentManager: 3 ajan yuklendi", "module": "agent_manager", "line": 202, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:28:25.627705Z", "level": "info", "logger": "apscheduler.scheduler", "message": "Scheduler started", "module": "base", "line": 214, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:28:25.628049Z", "level": "info", "logger": "app.services.scheduler", "message": "Scheduler basladi, 0 aktif gorev var", "module": "scheduler", "line": 126, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:28:26.432900Z", "level": "info", "logger": "app.services.mcp.bridge", "message": "MCP konfigurasyonu bos veya yok", "module": "bridge", "line": 206, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:28:26.433192Z", "level": "info", "logger": "argus", "message": "Uygulama hazir.", "module": "main", "line": 86, "taskName": "Task-2"}
+{"timestamp": "2026-07-03T07:28:26.442938Z", "level": "info", "logger": "argus", "message": "Playwright Chromium hazir.", "module": "main", "line": 76, "taskName": "Task-5"}
+{"timestamp": "2026-07-03T07:28:28.726218Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-15"}
+{"timestamp": "2026-07-03T07:28:28.728152Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-15"}
+{"timestamp": "2026-07-03T07:28:28.962771Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-29"}

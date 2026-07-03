@@ -13,11 +13,12 @@ interface SettingsModalProps {
   initialTab?: TabId;
 }
 
-export type TabId = 'theme' | 'apikeys' | 'reset' | 'about';
+export type TabId = 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about';
 
 const TAB_CONFIG: Record<TabId, { icon: string; label: string }> = {
   theme: { icon: 'palette', label: 'Görünüm' },
   apikeys: { icon: 'vpn_key', label: 'API Anahtarları' },
+  plugins_mcp: { icon: 'extension', label: 'Eklentiler & MCP' },
   reset: { icon: 'restart_alt', label: 'Sıfırla' },
   about: { icon: 'info', label: 'Hakkında' }};
 
@@ -132,6 +133,7 @@ export function SettingsModal({
               />
             )}
             {tab === 'apikeys' && <ApiKeysTab />}
+            {tab === 'plugins_mcp' && <PluginsMcpTab />}
             {tab === 'reset' && <ResetTab onRequestReset={onRequestReset} />}
             {tab === 'about' && <AboutTab />}
           </div>
@@ -1131,6 +1133,245 @@ function InfoRow({
       </div>
       <div className="text-[11px] text-brand-text mt-0.5 font-mono truncate">
         {value}
+      </div>
+    </div>
+  );
+}
+
+function PluginsMcpTab() {
+  const [mcpServers, setMcpServers] = useState<any[]>([]);
+  const [plugins, setPlugins] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [togglingServer, setTogglingServer] = useState<string | null>(null);
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
+
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [serversResp, pluginsResp] = await Promise.all([
+        api.listMcpServers(),
+        api.listPlugins()
+      ]);
+      setMcpServers(serversResp);
+      setPlugins(pluginsResp);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleToggleServer = async (name: string, enabled: boolean) => {
+    setTogglingServer(name);
+    setError(null);
+    setWarningMessage(null);
+    try {
+      const resp = await api.toggleMcpServer(name, enabled);
+      setMcpServers((prev) =>
+        prev.map((s) => (s.name === name ? { ...s, enabled } : s))
+      );
+      setWarningMessage(resp.message || 'Değişiklik kaydedildi. Etkinleşmesi için backend servisini yeniden başlatın.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setTogglingServer(null);
+    }
+  };
+
+  const getMcpIcon = (name: string) => {
+    if (name === 'filesystem') return 'folder';
+    if (name === 'github') return 'code';
+    if (name === 'sqlite') return 'database';
+    if (name === 'brave-search') return 'search';
+    if (name === 'puppeteer') return 'open_in_browser';
+    if (name === 'slack') return 'chat';
+    if (name === 'memory') return 'memory';
+    if (name === 'fetch') return 'download';
+    return 'dns';
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-48 text-brand-muted">
+        <Icon name="progress_activity" size={24} className="animate-spin mr-2" />
+        <span>Yükleniyor...</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Warning/Success Banner */}
+      {warningMessage && (
+        <div className="p-3 text-xs text-brand-accent bg-brand-accent/10 border border-brand-accent/40 rounded flex items-start gap-2 animate-fade-in-down">
+          <Icon name="warning" size={16} className="text-brand-accent flex-shrink-0 mt-0.5" />
+          <span>{warningMessage}</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-3 text-xs text-brand-danger bg-brand-danger/10 border border-brand-danger/40 rounded flex items-start gap-2 animate-fade-in-down">
+          <Icon name="error" size={16} className="text-brand-danger flex-shrink-0 mt-0.5" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* SECTION 1: MCP Servers */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <Icon name="dns" size={18} className="text-brand-accent" />
+          <h4 className="text-sm font-semibold text-brand-text">Model Context Protocol (MCP) Sunucuları</h4>
+        </div>
+        <p className="text-xs text-brand-mutedSoft mb-3">
+          MCP sunucuları, yapay zeka modellerine ek araçlar (dosya okuma, GitHub erişimi, internet araması vb.) kazandırır.
+        </p>
+
+        <div className="space-y-3">
+          {mcpServers.map((srv) => {
+            const isToggling = togglingServer === srv.name;
+            return (
+              <div
+                key={srv.name}
+                className={`rounded border p-3.5 transition-all duration-300 ${
+                  srv.enabled
+                    ? 'border-brand-accent/40 bg-brand-panelAlt shadow-sm shadow-brand-accent/5'
+                    : 'border-brand-border bg-brand-bg/30'
+                } hover:border-brand-borderStrong`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3 min-w-0">
+                    <div className="text-brand-accent mt-0.5 flex-shrink-0">
+                      <Icon name={getMcpIcon(srv.name)} size={20} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-bold text-brand-text capitalize">{srv.name}</span>
+                        <span
+                          className={`text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider font-bold ${
+                            srv.enabled
+                              ? 'bg-brand-accent/15 text-brand-accent'
+                              : 'bg-brand-borderStrong/40 text-brand-mutedSoft'
+                          }`}
+                        >
+                          {srv.enabled ? 'Etkin' : 'Pasif'}
+                        </span>
+                      </div>
+                      <div className="text-xs text-brand-muted mt-1 leading-snug">{srv.description}</div>
+                      
+                      {srv.command && srv.command.length > 0 && (
+                        <div className="mt-2 text-[10px] font-mono bg-brand-bg/60 border border-brand-border p-1.5 rounded text-brand-mutedSoft overflow-x-auto whitespace-nowrap">
+                          {srv.command.join(' ')}
+                        </div>
+                      )}
+
+                      {srv.env && Object.keys(srv.env).length > 0 && (
+                        <div className="mt-2 space-y-1">
+                          <div className="text-[10px] font-semibold text-brand-textSoft">Ortam Değişkenleri:</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {Object.keys(srv.env).map((k) => (
+                              <span key={k} className="text-[10px] font-mono bg-brand-panelAlt px-1.5 py-0.5 border border-brand-border rounded text-brand-mutedSoft">
+                                {k}: <span className="text-brand-text">{srv.env[k] ? '***' : 'tanımlı değil'}</span>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="relative flex items-center mt-1 flex-shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={!!srv.enabled}
+                      disabled={isToggling}
+                      onChange={(e) => handleToggleServer(srv.name, e.target.checked)}
+                      className="sr-only"
+                      id={`mcp-toggle-${srv.name}`}
+                    />
+                    <div
+                      onClick={() => !isToggling && handleToggleServer(srv.name, !srv.enabled)}
+                      className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-300 cursor-pointer ${
+                        srv.enabled ? 'bg-brand-accent' : 'bg-brand-borderStrong'
+                      } ${isToggling ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-full bg-brand-bg shadow-md transform transition-transform duration-300 ${
+                          srv.enabled ? 'translate-x-4' : 'translate-x-0'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="h-px bg-brand-border" />
+
+      {/* SECTION 2: System Plugins */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <Icon name="extension" size={18} className="text-brand-accent" />
+          <h4 className="text-sm font-semibold text-brand-text">Sistem Eklentileri (Plugins)</h4>
+        </div>
+        <p className="text-xs text-brand-mutedSoft mb-3">
+          Eklentiler, sistem klasöründeki (<code className="font-mono">plugins/</code>) Python betikleridir ve backend tarafından otomatik olarak taranıp sisteme tool olarak dahil edilir.
+        </p>
+
+        {plugins.length === 0 ? (
+          <div className="p-4 rounded border border-brand-border bg-brand-bg/10 text-center text-xs text-brand-muted">
+            <Icon name="hourglass_empty" size={24} className="mx-auto mb-2 text-brand-mutedSoft" />
+            <span>plugins/ klasöründe henüz aktif bir Python eklentisi bulunamadı.</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3">
+            {plugins.map((plug) => (
+              <div
+                key={plug.name}
+                className="rounded border border-brand-border bg-brand-bg/30 p-3.5 hover:border-brand-borderStrong transition-all"
+              >
+                <div className="flex items-start gap-3">
+                  <Icon name="description" size={20} className="text-brand-accent mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-bold text-brand-text font-mono">{plug.name}</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider font-bold bg-brand-success/15 text-brand-success">
+                        Yüklendi
+                      </span>
+                    </div>
+
+                    {plug.loaded_tools && plug.loaded_tools.length > 0 ? (
+                      <div className="mt-2.5 space-y-1.5">
+                        <div className="text-[10px] font-semibold text-brand-textSoft uppercase tracking-wider">Kayıt Edilen Araçlar (Tools):</div>
+                        <div className="flex flex-wrap gap-1">
+                          {plug.loaded_tools.map((tool: string) => (
+                            <span
+                              key={tool}
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border border-brand-border bg-brand-panel text-brand-textSoft"
+                            >
+                              <Icon name="bolt" size={10} className="text-brand-accent" />
+                              {tool}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-2 text-xs text-brand-mutedSoft italic">Bu eklenti herhangi bir tool kaydetmedi.</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

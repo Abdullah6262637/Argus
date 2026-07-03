@@ -195,3 +195,36 @@ async def reset_system() -> ResetResponse:
         removed_agents=agents_count,
         message=f"Sistem sifirlandi. {agents_count} ajan ve tum veriler silindi.",
     )
+
+
+class PluginInfo(BaseModel):
+    """Eklenti bilgisi."""
+    name: str
+    loaded_tools: list[str]
+    ok: bool
+
+
+@router.get("/plugins", response_model=list[PluginInfo])
+async def list_plugins() -> list[PluginInfo]:
+    """Sistemdeki Python eklentilerini (plugins/ klasöründeki) listele."""
+    try:
+        from app.services.plugins.loader import plugin_loader
+        plugins_dir = Path(get_settings().plugins_dir)
+        if not plugins_dir.exists():
+            return []
+
+        loaded_tools = plugin_loader.loaded_tools
+        results = []
+        for py_file in plugins_dir.glob("*.py"):
+            if py_file.name.startswith("_"):
+                continue
+
+            results.append(PluginInfo(
+                name=py_file.name,
+                loaded_tools=loaded_tools,
+                ok=True
+            ))
+        return results
+    except Exception as exc:
+        logger.exception("Plugin listesi okuma hatasi")
+        raise HTTPException(500, f"Plugin listesi okuma hatasi: {exc}")
