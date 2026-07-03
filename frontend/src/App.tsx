@@ -8,6 +8,7 @@ import { EmptyState } from './components/EmptyState';
 import { SettingsModal } from './components/SettingsModal';
 import { ConfirmDialog } from './components/ConfirmDialog';
 import { Onboarding } from './components/Onboarding';
+import { SetupWizard } from './components/SetupWizard';
 import { ApprovalDialog } from './components/ApprovalDialog';
 import { WorkflowsModal } from './components/WorkflowsModal';
 import { CommandPalette } from './components/CommandPalette';
@@ -102,6 +103,18 @@ export default function App() {
   // Keyboard shortcuts moved to bottom to capture full state closures
 
   const { showOnboarding, complete: completeOnboarding, reset: resetOnboarding } = useFirstRun();
+
+  // Akıllı Kurulum Sihirbazı Durumu
+  const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
+  useEffect(() => {
+    api.getSetupStatus()
+      .then((status) => {
+        setSetupRequired(!status.initialized);
+      })
+      .catch(() => {
+        setSetupRequired(false);
+      });
+  }, []);
 
   // Confirm state
   const [typedText, setTypedText] = useState('');
@@ -446,6 +459,18 @@ export default function App() {
   }, [agents, selectedAgent, chat, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize, openSettings, openWorkflows]);
 
   const hasAgents = agents.length > 0;
+
+  // --- Akıllı Kurulum Sihirbazı ---
+  if (setupRequired === true) {
+    return (
+      <SetupWizard
+        onFinished={() => {
+          setSetupRequired(false);
+          reload();
+        }}
+      />
+    );
+  }
 
   // --- Onboarding acikken tum uygulamanin ustunde ---
   if (showOnboarding) {

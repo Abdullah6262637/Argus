@@ -202,6 +202,17 @@ export const api = {
     has: Record<string, boolean>;
   }> => http('/system/env', { method: 'POST', body: JSON.stringify({ values }) }),
 
+  // Setup Wizard
+  getSetupStatus: (): Promise<{ initialized: boolean; env_keys_present: Record<string, boolean> }> =>
+    http('/system/setup-status'),
+  saveSetupSettings: (payload: {
+    openai_key?: string;
+    anthropic_key?: string;
+    gemini_key?: string;
+    openrouter_key?: string;
+  }): Promise<{ ok: boolean }> =>
+    http('/system/setup-save', { method: 'POST', body: JSON.stringify(payload) }),
+
   // ============================================================
   // v2: Approvals (FAZ 1.5)
   // ============================================================

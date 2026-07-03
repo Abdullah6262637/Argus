@@ -216,15 +216,77 @@ async def list_plugins() -> list[PluginInfo]:
         loaded_tools = plugin_loader.loaded_tools
         results = []
         for py_file in plugins_dir.glob("*.py"):
-            if py_file.name.startswith("_"):
-                continue
+          if py_file.name.startswith("_"):
+            continue
 
-            results.append(PluginInfo(
-                name=py_file.name,
-                loaded_tools=loaded_tools,
-                ok=True
-            ))
+          results.append(PluginInfo(
+            name=py_file.name,
+            loaded_tools=loaded_tools,
+            ok=True
+          ))
         return results
     except Exception as exc:
         logger.exception("Plugin listesi okuma hatasi")
         raise HTTPException(500, f"Plugin listesi okuma hatasi: {exc}")
+
+
+# ---- setup wizard --------------------------------------------------
+
+class SetupStatusResponse(BaseModel):
+    initialized: bool
+    env_keys_present: Dict[str, bool]
+
+
+class SetupSaveRequest(BaseModel):
+    openai_key: Optional[str] = None
+    anthropic_key: Optional[str] = None
+    gemini_key: Optional[str] = None
+    openrouter_key: Optional[str] = None
+
+
+@router.get("/setup-status", response_model=SetupStatusResponse)
+async def setup_status() -> SetupStatusResponse:
+    """Sistemin ilk kurulum durumunu sorgular."""
+    settings = get_settings()
+    env_path = Path(settings.backend_dir) / ".env"
+    raw = _read_env_file(env_path)
+    
+    env_keys_present = {
+        "OPENAI_API_KEY": bool(raw.get("OPENAI_API_KEY")),
+        "ANTHROPIC_API_KEY": bool(raw.get("ANTHROPIC_API_KEY")),
+        "GEMINI_API_KEY": bool(raw.get("GEMINI_API_KEY")),
+        "OPENROUTER_API_KEY": bool(raw.get("OPENROUTER_API_KEY")),
+    }
+    
+    # Eger en az bir anahtar girilmis ya da kurulum tamamlandiysa true don
+    initialized = raw.get("ARGUS_INITIALIZED") == "true" or any(env_keys_present.values())
+    return SetupStatusResponse(initialized=initialized, env_keys_present=env_keys_present)
+
+
+@router.post("/setup-save")
+async def setup_save(payload: SetupSaveRequest):
+    """Kurulum anahtarlarini .env'e yazar ve kurulumu tamamlar."""
+    settings = get_settings()
+    env_path = Path(settings.backend_dir) / ".env"
+    raw = _read_env_file(env_path)
+    
+    if payload.openai_key:
+        raw["OPENAI_API_KEY"] = payload.openai_key.strip()
+    if payload.anthropic_key:
+        raw["ANTHROPIC_API_KEY"] = payload.anthropic_key.strip()
+    if payload.gemini_key:
+        raw["GEMINI_API_KEY"] = payload.gemini_key.strip()
+    if payload.openrouter_key:
+        raw["OPENROUTER_API_KEY"] = payload.openrouter_key.strip()
+        
+    raw["ARGUS_INITIALIZED"] = "true"
+    _write_env_file(env_path, raw)
+    
+    try:
+        from app import config as _cfg
+        _cfg.get_settings.cache_clear()  # type: ignore[attr-defined]
+    except Exception:
+        pass
+        
+    logger.info("Argus ilk kurulum basariyla tamamlandi.")
+    return {"ok": True}
