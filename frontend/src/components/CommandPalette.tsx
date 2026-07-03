@@ -94,6 +94,7 @@ export function CommandPalette({
       {
         id: 'reload-agents',
         label: 'Aksiyon: Ajanları config dosyasından yeniden yükle',
+        shortcut: 'Ctrl+Shift+U',
         icon: 'refresh',
         group: 'Aksiyon',
         run: onReloadAgents
@@ -101,6 +102,7 @@ export function CommandPalette({
       {
         id: 'export-chat',
         label: 'Aksiyon: Sohbet geçmişini dışa aktar (JSON)',
+        shortcut: 'Ctrl+Shift+E',
         icon: 'download',
         group: 'Aksiyon',
         run: () => onExportChat?.()
@@ -108,6 +110,7 @@ export function CommandPalette({
       {
         id: 'docs-api',
         label: 'Aksiyon: FastAPI API Dokümantasyonunu Aç (Docs)',
+        shortcut: 'Ctrl+Shift+D',
         icon: 'api',
         group: 'Aksiyon',
         run: () => window.open('http://127.0.0.1:8000/docs', '_blank')
@@ -115,6 +118,7 @@ export function CommandPalette({
       {
         id: 'github-repo',
         label: 'Aksiyon: Argus GitHub Kod Deposunu Ziyaret Et',
+        shortcut: 'Ctrl+Shift+G',
         icon: 'code',
         group: 'Aksiyon',
         run: () => window.open('https://github.com/Abdullah6262637/Argus', '_blank')
@@ -122,6 +126,7 @@ export function CommandPalette({
       {
         id: 'help-guide',
         label: 'Aksiyon: Kullanım kılavuzunu görüntüle (Hakkında)',
+        shortcut: 'Ctrl+Shift+H',
         icon: 'help',
         group: 'Aksiyon',
         run: () => onOpenSettings('about')
@@ -139,6 +144,7 @@ export function CommandPalette({
       {
         id: 'settings-apikeys',
         label: 'Navigasyon: API Anahtarları ayarlarını aç',
+        shortcut: 'Ctrl+Alt+A',
         icon: 'vpn_key',
         group: 'Sayfa',
         run: () => onOpenSettings('apikeys')
@@ -146,6 +152,7 @@ export function CommandPalette({
       {
         id: 'settings-plugins',
         label: 'Navigasyon: Eklentiler & MCP sunucu yönetimini aç',
+        shortcut: 'Ctrl+Alt+P',
         icon: 'extension',
         group: 'Sayfa',
         run: () => onOpenSettings('plugins_mcp')
@@ -153,6 +160,7 @@ export function CommandPalette({
       {
         id: 'settings-reset',
         label: 'Navigasyon: Sistem sıfırlama panelini aç',
+        shortcut: 'Ctrl+Alt+R',
         icon: 'restart_alt',
         group: 'Sayfa',
         run: () => onOpenSettings('reset')
@@ -160,6 +168,7 @@ export function CommandPalette({
       {
         id: 'settings-about',
         label: 'Navigasyon: Sürüm & Hakkında sayfasını aç',
+        shortcut: 'Ctrl+Alt+I',
         icon: 'info',
         group: 'Sayfa',
         run: () => onOpenSettings('about')
@@ -169,6 +178,7 @@ export function CommandPalette({
       {
         id: 'theme-midnight',
         label: 'Tema: Koyu Midnight temasını seç',
+        shortcut: 'Ctrl+Shift+1',
         icon: 'dark_mode',
         group: 'Sayfa',
         run: () => onChangeTheme?.('midnight')
@@ -176,6 +186,7 @@ export function CommandPalette({
       {
         id: 'theme-sunset',
         label: 'Tema: Sunset (Turuncu) temasını seç',
+        shortcut: 'Ctrl+Shift+2',
         icon: 'light_mode',
         group: 'Sayfa',
         run: () => onChangeTheme?.('sunset')
@@ -183,6 +194,7 @@ export function CommandPalette({
       {
         id: 'theme-forest',
         label: 'Tema: Forest (Yeşil) temasını seç',
+        shortcut: 'Ctrl+Shift+3',
         icon: 'forest',
         group: 'Sayfa',
         run: () => onChangeTheme?.('forest')
@@ -190,6 +202,7 @@ export function CommandPalette({
       {
         id: 'theme-mono',
         label: 'Tema: Klasik Mono (Renksiz) temayı seç',
+        shortcut: 'Ctrl+Shift+4',
         icon: 'contrast',
         group: 'Sayfa',
         run: () => onChangeTheme?.('mono')
@@ -199,6 +212,7 @@ export function CommandPalette({
       {
         id: 'density-normal',
         label: 'Görünüm: Normal arayüz yerleşimi (Cozy)',
+        shortcut: 'Ctrl+Shift+5',
         icon: 'view_cozy',
         group: 'Sayfa',
         run: () => onChangeDensity?.('cozy')
@@ -206,6 +220,7 @@ export function CommandPalette({
       {
         id: 'density-compact',
         label: 'Görünüm: Sıkışık/Yoğun arayüz yerleşimi (Compact)',
+        shortcut: 'Ctrl+Shift+6',
         icon: 'view_comfy',
         group: 'Sayfa',
         run: () => onChangeDensity?.('compact')
@@ -213,6 +228,7 @@ export function CommandPalette({
       {
         id: 'density-comfortable',
         label: 'Görünüm: Geniş arayüz yerleşimi (Comfortable)',
+        shortcut: 'Ctrl+Shift+7',
         icon: 'table_rows',
         group: 'Sayfa',
         run: () => onChangeDensity?.('comfortable')
@@ -220,6 +236,7 @@ export function CommandPalette({
       {
         id: 'font-sm',
         label: 'Görünüm: Küçük yazı boyutu (Small)',
+        shortcut: 'Ctrl+Shift+8',
         icon: 'text_fields',
         group: 'Sayfa',
         run: () => onChangeFontSize?.('sm')
@@ -227,6 +244,7 @@ export function CommandPalette({
       {
         id: 'font-md',
         label: 'Görünüm: Normal yazı boyutu (Medium)',
+        shortcut: 'Ctrl+Shift+9',
         icon: 'format_size',
         group: 'Sayfa',
         run: () => onChangeFontSize?.('md')
@@ -234,6 +252,7 @@ export function CommandPalette({
       {
         id: 'font-lg',
         label: 'Görünüm: Büyük yazı boyutu (Large)',
+        shortcut: 'Ctrl+Shift+0',
         icon: 'text_increase',
         group: 'Sayfa',
         run: () => onChangeFontSize?.('lg')
@@ -244,6 +263,7 @@ export function CommandPalette({
       list.push({
         id: 'workflows',
         label: "Navigasyon: Workflow YAML Akış Panelini Aç",
+        shortcut: 'Ctrl+Alt+W',
         icon: 'bolt',
         group: 'Sayfa',
         run: onOpenWorkflows
@@ -251,10 +271,15 @@ export function CommandPalette({
     }
 
     // Ajanlar - Sohbet et
-    for (const a of agents) {
+    agents.forEach((a, idx) => {
+      const num = idx + 1;
+      const selectShortcut = num <= 9 ? `Ctrl+${num}` : undefined;
+      const editShortcut = num <= 9 ? `Ctrl+Alt+${num}` : undefined;
+
       list.push({
         id: `agent-select:${a.id}`,
         label: `Ajan: ${a.name} ile sohbet et (${a.role || 'Uzman'})`,
+        shortcut: selectShortcut,
         icon: 'smart_toy',
         group: 'Ajan',
         run: () => onSelectAgent(a.id)
@@ -262,11 +287,12 @@ export function CommandPalette({
       list.push({
         id: `agent-edit:${a.id}`,
         label: `Ajan: ${a.name} yetenek ve ayarlarını düzenle`,
+        shortcut: editShortcut,
         icon: 'edit',
         group: 'Ajan',
         run: () => onEditAgent?.(a.id)
       });
-    }
+    });
 
     return list;
   }, [

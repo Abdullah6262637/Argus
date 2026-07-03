@@ -52,31 +52,7 @@ export default function App() {
   // Sprint E.6: density + font size
   const { setDensity, setFontSize } = useAppearance();
 
-  // Sprint E.7: Klavye kisayollari
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const isMod = e.ctrlKey || e.metaKey;
-      // Ctrl+K -> Komut paleti
-      if (isMod && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setPaletteOpen((v) => !v);
-      }
-      // Ctrl+N -> Yeni sohbet
-      else if (isMod && !e.shiftKey && e.key.toLowerCase() === 'n') {
-        e.preventDefault();
-        chat.newConversation();
-      }
-      // Ctrl+, -> Ayarlar
-      else if (isMod && e.key === ',') {
-        e.preventDefault();
-        setSettingsInitialTab('theme');
-        setSettingsOpen(true);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Keyboard shortcuts moved to bottom to capture full state closures
 
   const { showOnboarding, complete: completeOnboarding, reset: resetOnboarding } = useFirstRun();
 
@@ -286,6 +262,157 @@ export default function App() {
         }
       }});
   };
+
+  // Global Keyboard Shortcuts (Ctrl+K, Ctrl+N, Ctrl+Shift+N, API/MCP Tabs, Themes, Sizing, Agent Select & Edit)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const isMod = e.ctrlKey || e.metaKey;
+      const isAlt = e.altKey;
+      const isShift = e.shiftKey;
+      const key = e.key.toLowerCase();
+
+      // Ctrl+K -> Komut paleti
+      if (isMod && key === 'k') {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+      // Ctrl+Shift+N -> Yeni Ajan
+      else if (isMod && isShift && key === 'n') {
+        e.preventDefault();
+        openCreateForm();
+      }
+      // Ctrl+N -> Yeni sohbet
+      else if (isMod && !isShift && key === 'n') {
+        e.preventDefault();
+        chat.newConversation();
+      }
+      // Ctrl+Shift+U -> Ajanları yeniden yükle
+      else if (isMod && isShift && key === 'u') {
+        e.preventDefault();
+        reload();
+      }
+      // Ctrl+Shift+E -> Dışa aktar
+      else if (isMod && isShift && key === 'e') {
+        e.preventDefault();
+        if (selectedAgent) {
+          handleExport('json');
+        }
+      }
+      // Ctrl+Shift+D -> API Dokümantasyonu
+      else if (isMod && isShift && key === 'd') {
+        e.preventDefault();
+        window.open('http://127.0.0.1:8000/docs', '_blank');
+      }
+      // Ctrl+Shift+G -> GitHub
+      else if (isMod && isShift && key === 'g') {
+        e.preventDefault();
+        window.open('https://github.com/Abdullah6262637/Argus', '_blank');
+      }
+      // Ctrl+Shift+H -> Kılavuz (About)
+      else if (isMod && isShift && key === 'h') {
+        e.preventDefault();
+        setSettingsInitialTab('about');
+        setSettingsOpen(true);
+      }
+      // Ctrl+Alt+A -> API Anahtarları
+      else if (isMod && isAlt && key === 'a') {
+        e.preventDefault();
+        setSettingsInitialTab('apikeys');
+        setSettingsOpen(true);
+      }
+      // Ctrl+Alt+P -> Eklentiler & MCP
+      else if (isMod && isAlt && key === 'p') {
+        e.preventDefault();
+        setSettingsInitialTab('plugins_mcp');
+        setSettingsOpen(true);
+      }
+      // Ctrl+Alt+R -> Reset
+      else if (isMod && isAlt && key === 'r') {
+        e.preventDefault();
+        setSettingsInitialTab('reset');
+        setSettingsOpen(true);
+      }
+      // Ctrl+Alt+I -> Sürüm & Hakkında
+      else if (isMod && isAlt && key === 'i') {
+        e.preventDefault();
+        setSettingsInitialTab('about');
+        setSettingsOpen(true);
+      }
+      // Ctrl+Alt+W -> Workflow Panel
+      else if (isMod && isAlt && key === 'w') {
+        e.preventDefault();
+        setWorkflowsOpen(true);
+      }
+      // Ctrl+, -> Ayarlar (Görünüm)
+      else if (isMod && key === ',') {
+        e.preventDefault();
+        setSettingsInitialTab('theme');
+        setSettingsOpen(true);
+      }
+      // Temalar: Ctrl+Shift+1 - Ctrl+Shift+4
+      else if (isMod && isShift && key === '1') {
+        e.preventDefault();
+        setTheme('midnight');
+      }
+      else if (isMod && isShift && key === '2') {
+        e.preventDefault();
+        setTheme('sunset');
+      }
+      else if (isMod && isShift && key === '3') {
+        e.preventDefault();
+        setTheme('forest');
+      }
+      else if (isMod && isShift && key === '4') {
+        e.preventDefault();
+        setTheme('mono');
+      }
+      // Density: Ctrl+Shift+5 - Ctrl+Shift+7
+      else if (isMod && isShift && key === '5') {
+        e.preventDefault();
+        setDensity('cozy');
+      }
+      else if (isMod && isShift && key === '6') {
+        e.preventDefault();
+        setDensity('compact');
+      }
+      else if (isMod && isShift && key === '7') {
+        e.preventDefault();
+        setDensity('comfortable');
+      }
+      // Font sizes: Ctrl+Shift+8 - Ctrl+Shift+0
+      else if (isMod && isShift && key === '8') {
+        e.preventDefault();
+        setFontSize('sm');
+      }
+      else if (isMod && isShift && key === '9') {
+        e.preventDefault();
+        setFontSize('md');
+      }
+      else if (isMod && isShift && key === '0') {
+        e.preventDefault();
+        setFontSize('lg');
+      }
+      // Ajan Seçimi: Ctrl+1 - Ctrl+9
+      else if (isMod && !isAlt && /^[1-9]$/.test(e.key)) {
+        e.preventDefault();
+        const idx = Number(e.key) - 1;
+        if (agents[idx]) {
+          setSelectedId(agents[idx].id);
+        }
+      }
+      // Ajan Düzenleme: Ctrl+Alt+1 - Ctrl+Alt+9
+      else if (isMod && isAlt && /^[1-9]$/.test(e.key)) {
+        e.preventDefault();
+        const idx = Number(e.key) - 1;
+        if (agents[idx]) {
+          openEditForm(agents[idx].id);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [agents, selectedAgent, chat, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize]);
 
   const hasAgents = agents.length > 0;
 
