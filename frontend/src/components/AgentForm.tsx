@@ -845,29 +845,46 @@ function StepBasic({
             </button>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {AGENT_TEMPLATES.map((tpl) => {
             const isSelected = selectedTemplateId === tpl.id;
+            const templateIcons: Record<string, string> = {
+              developer: 'code',
+              researcher: 'search',
+              writer: 'edit_note',
+              devops: 'terminal',
+            };
+            const iconName = templateIcons[tpl.id] || 'smart_toy';
+
             return (
               <button
                 key={tpl.id}
                 type="button"
                 onClick={() => onApplyTemplate(tpl)}
-                className={`p-2.5 text-left text-xs rounded border transition flex flex-col gap-1 active:scale-[0.98] ${
+                className={`p-3.5 text-left text-xs rounded-xl border flex items-start gap-3 transition-all duration-300 active:scale-[0.97] shadow-sm ${
                   isSelected
-                    ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/30 font-semibold'
-                    : 'border-brand-border bg-brand-panelAlt hover:border-brand-accent hover:bg-brand-panel'
+                    ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
+                    : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
                 }`}
               >
-                <div className="flex items-center justify-between w-full">
-                  <span className="font-semibold text-brand-text">{tpl.label}</span>
-                  {isSelected && (
-                    <span className="text-brand-accent flex items-center">
-                      <Icon name="check_circle" size={13} filled />
-                    </span>
-                  )}
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+                  isSelected ? 'bg-brand-accent/10 border border-brand-accent/20 text-brand-accent' : 'bg-brand-panel border border-brand-border/40 text-brand-textSoft'
+                }`}>
+                  <Icon name={iconName} size={16} weight={550} />
                 </div>
-                <span className="text-[10px] text-brand-muted line-clamp-1">{tpl.description}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between w-full">
+                    <span className="font-bold text-[12px] text-brand-text leading-tight">{tpl.name}</span>
+                    {isSelected && (
+                      <span className="text-brand-accent flex items-center flex-shrink-0">
+                        <Icon name="check_circle" size={13} filled />
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-brand-textSoft mt-1 leading-normal block">
+                    {tpl.description}
+                  </span>
+                </div>
               </button>
             );
           })}
