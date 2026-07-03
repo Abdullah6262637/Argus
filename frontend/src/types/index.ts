@@ -123,6 +123,7 @@ export interface ConnectionTestRequest {
   api_key?: string | null;
   base_url?: string | null;
   agent_id?: string | null;
+  verify_ssl?: boolean | null;
 }
 
 export interface ConnectionTestResponse {

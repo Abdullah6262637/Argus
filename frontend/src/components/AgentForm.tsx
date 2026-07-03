@@ -394,6 +394,7 @@ export function AgentForm({
 
   // Baglanti testi
   const [testing, setTesting] = useState(false);
+  const [verifySsl, setVerifySsl] = useState(true);
   const [testResult, setTestResult] = useState<ConnectionTestResponse | null>(null);
   useEffect(() => setTestResult(null), [provider, model, baseUrl, apiKey]);
 
@@ -405,7 +406,8 @@ export function AgentForm({
         provider,
         model: model.trim(),
         api_key: useEnvKey ? null : (apiKey.trim() || null),
-        base_url: baseUrl.trim() || null
+        base_url: baseUrl.trim() || null,
+        verify_ssl: verifySsl
       });
       setTestResult(resp);
     } catch (err) {
@@ -580,7 +582,8 @@ export function AgentForm({
                 testing={testing}
                 testResult={testResult}
                 envStatus={envStatus}
-                onOpenEnvSettings={onOpenEnvSettings}
+                verifySsl={verifySsl}
+                setVerifySsl={setVerifySsl}
               />
             )}
 

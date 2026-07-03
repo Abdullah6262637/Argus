@@ -95,6 +95,7 @@ async def test_connection(
     api_key: Optional[str] = None,
     base_url: Optional[str] = None,
     timeout_ms: int = 20_000,
+    verify_ssl: bool = True,
 ) -> ConnectionTestResult:
     start = time.perf_counter()
     provider_low = provider.lower()
@@ -164,18 +165,18 @@ async def test_connection(
             return await _test_openai(
                 model=model, api_key=test_key,
                 base_url=effective_base_url, timeout_ms=timeout_ms, start=start,
-                mismatch_warning=mismatch,
+                mismatch_warning=mismatch, verify_ssl=verify_ssl,
             )
         elif provider_low == "anthropic":
             return await _test_anthropic(
                 model=model, api_key=effective_key,
                 base_url=base_url, timeout_ms=timeout_ms, start=start,
-                mismatch_warning=mismatch,
+                mismatch_warning=mismatch, verify_ssl=verify_ssl,
             )
         elif provider_low == "gemini":
             return await _test_gemini(
                 model=model, api_key=effective_key or "",
-                timeout_ms=timeout_ms, start=start,
+                timeout_ms=timeout_ms, start=start, verify_ssl=verify_ssl,
             )
         else:
             return ConnectionTestResult(
@@ -218,6 +219,7 @@ async def _test_openai(
     timeout_ms: int,
     start: float,
     mismatch_warning: Optional[str],
+    verify_ssl: bool = True,
 ) -> ConnectionTestResult:
     url_root = _normalize_url(base_url) if base_url else "https://api.openai.com/v1"
     url = f"{url_root}/chat/completions"
@@ -233,7 +235,7 @@ async def _test_openai(
         "Content-Type": "application/json",
     }
 
-    async with httpx.AsyncClient(timeout=timeout_ms / 1000) as client:
+    async with httpx.AsyncClient(timeout=timeout_ms / 1000, verify=verify_ssl) as client:
         resp = await client.post(url, json=payload, headers=headers)
     elapsed = int((time.perf_counter() - start) * 1000)
 
@@ -311,6 +313,7 @@ async def _test_anthropic(
     timeout_ms: int,
     start: float,
     mismatch_warning: Optional[str],
+    verify_ssl: bool = True,
 ) -> ConnectionTestResult:
     url_root = _normalize_url(base_url) if base_url else "https://api.anthropic.com"
     # Anthropic resmi: POST /v1/messages
@@ -332,7 +335,7 @@ async def _test_anthropic(
         "Content-Type": "application/json",
     }
 
-    async with httpx.AsyncClient(timeout=timeout_ms / 1000) as client:
+    async with httpx.AsyncClient(timeout=timeout_ms / 1000, verify=verify_ssl) as client:
         resp = await client.post(url, json=payload, headers=headers)
     elapsed = int((time.perf_counter() - start) * 1000)
 
@@ -431,6 +434,7 @@ async def _test_gemini(
     api_key: str,
     timeout_ms: int,
     start: float,
+    verify_ssl: bool = True,
 ) -> ConnectionTestResult:
     gemini_model = model or "gemini-1.5-flash"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{gemini_model}:generateContent?key={api_key}"
@@ -441,7 +445,7 @@ async def _test_gemini(
     }
 
     try:
-        async with httpx.AsyncClient(timeout=timeout_ms / 1000) as client:
+        async with httpx.AsyncClient(timeout=timeout_ms / 1000, verify=verify_ssl) as client:
             resp = await client.post(url, json=payload)
         elapsed = int((time.perf_counter() - start) * 1000)
 

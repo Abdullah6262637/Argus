@@ -98,7 +98,9 @@ export function Step2LLM({
   testResult,
   onTest,
   isEditing,
-  initial
+  initial,
+  verifySsl,
+  setVerifySsl
 }: {
   provider: ProviderName;
   setProvider: (v: ProviderName) => void;
@@ -121,7 +123,8 @@ export function Step2LLM({
   onTest: (useEnv: boolean) => void;
   isEditing: boolean;
   initial?: any;
-  onOpenEnvSettings?: () => void;
+  verifySsl: boolean;
+  setVerifySsl: (v: boolean) => void;
 }) {
   const envKey = 
     provider === 'openai' ? 'OPENAI_API_KEY' : 
@@ -366,6 +369,15 @@ export function Step2LLM({
                 <div className="text-[11px] text-brand-muted mt-0.5">
                   Provider'a kucuk bir istek atip dogrula.
                 </div>
+                <label className="flex items-center gap-1.5 cursor-pointer mt-1.5 select-none">
+                  <input
+                    type="checkbox"
+                    checked={verifySsl}
+                    onChange={(e) => setVerifySsl(e.target.checked)}
+                    className="rounded bg-brand-bg/50 border-brand-border text-brand-accent focus:ring-brand-accent/50 w-3.5 h-3.5"
+                  />
+                  <span className="text-[10px] text-brand-mutedSoft font-medium">SSL Sertifikasını Doğrula</span>
+                </label>
               </div>
               <div className="flex items-center gap-1">
                 <button

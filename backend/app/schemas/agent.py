@@ -141,6 +141,7 @@ class ConnectionTestRequest(BaseModel):
     api_key: Optional[str] = None
     base_url: Optional[str] = None
     agent_id: Optional[str] = None
+    verify_ssl: Optional[bool] = True
 
 
 class ConnectionTestResponse(BaseModel):

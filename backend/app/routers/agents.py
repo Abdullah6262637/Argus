@@ -298,6 +298,7 @@ async def test_agent_connection(
         model=model,
         api_key=api_key,
         base_url=base_url,
+        verify_ssl=payload.verify_ssl if payload.verify_ssl is not None else True,
     )
     return ConnectionTestResponse(
         ok=result.ok,
