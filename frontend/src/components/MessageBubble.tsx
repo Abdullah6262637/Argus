@@ -405,7 +405,7 @@ function ToolCallsCollapsible({
 
   return (
     <div
-      className={`${hasContent ? 'mt-2.5 pt-2.5 border-t' : ''} ${
+      className={`${hasContent ? 'mt-3 pt-3 border-t' : ''} ${
         isUser ? 'border-brand-bg/15' : 'border-brand-border'
       }`}
       role="region"
@@ -416,52 +416,55 @@ function ToolCallsCollapsible({
         type="button"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={handleKeyDown}
-        className={`group/btn w-full flex items-center gap-1.5 px-2 py-1 rounded-md text-[10.5px] font-medium transition-colors ${
+        className={`group/btn w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10.5px] font-semibold transition-all duration-200 ${
           isUser
-            ? 'text-brand-bg/70 hover:bg-brand-bg/10 hover:text-brand-bg'
-            : 'text-brand-mutedSoft hover:bg-brand-panelAlt hover:text-brand-text'
+            ? 'text-brand-bg/85 hover:bg-brand-bg/10 hover:text-brand-bg'
+            : 'text-brand-textSoft hover:bg-brand-panelAlt hover:text-brand-text border border-brand-border/60 hover:border-brand-borderStrong'
         }`}
         aria-expanded={open}
         aria-label={`${toolCalls.length} araç kullanıldı${errCount > 0 ? `, ${errCount} hata` : ''}`}
       >
-        <Icon
-          name="build"
-          size={11}
-          weight={550}
-          className={isUser ? 'text-brand-bg/70' : 'text-brand-accent'}
-          aria-hidden="true"
-        />
-        <span className="font-mono tabular-nums">
-          {toolCalls.length}
-        </span>
-        <span>{toolCalls.length === 1 ? 'araç' : 'araç'}</span>
-        {errCount > 0 && (
-          <span
-            className={`font-mono tabular-nums ${
-              isUser ? 'text-brand-bg/60' : 'text-brand-danger'
-            }`}
-            title={`${errCount} araç hata verdi`}
-          >
-            · {errCount} hata
+        <div className="flex items-center gap-1.5">
+          <span className={`flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-mono font-bold ${
+            isUser ? 'bg-brand-bg/15 text-brand-bg' : 'bg-brand-accent/10 text-brand-accent'
+          }`}>
+            {toolCalls.length}
           </span>
-        )}
+          <span className="tracking-wide">
+            {open ? 'Kullanılan Araçları Gizle' : 'Kullanılan Araçları Görüntüle'}
+          </span>
+          {errCount > 0 && (
+            <span
+              className={`font-mono text-[9px] px-1.5 py-0.5 rounded ${
+                isUser ? 'bg-brand-bg/15 text-brand-bg/80' : 'bg-brand-danger/10 text-brand-danger'
+              }`}
+              title={`${errCount} araç hata verdi`}
+            >
+              {errCount} Hata
+            </span>
+          )}
+        </div>
         <Icon
           name={open ? 'expand_less' : 'expand_more'}
-          size={13}
-          weight={550}
+          size={14}
+          weight={600}
           className="ml-auto"
           aria-hidden="true"
         />
       </button>
 
-      {/* Tool kartları (open ise) */}
-      {open && (
-        <div className="mt-1 space-y-1 animate-fade-in-up">
+      {/* Tool kartları (smooth height slide transition) */}
+      <div 
+        className={`grid transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          open ? 'grid-rows-[1fr] opacity-100 mt-2.5' : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
+        }`}
+      >
+        <div className="overflow-hidden space-y-1.5">
           {toolCalls.map((tc) => (
             <ToolCallCard key={tc.id} tc={tc} />
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }
