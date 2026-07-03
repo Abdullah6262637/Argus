@@ -40,7 +40,6 @@ interface AgentFormProps {
   onSubmit: (payload: AgentCreate) => Promise<void>;
   onCancel: () => void;
   submitting?: boolean;
-  onOpenEnvSettings?: () => void;
 }
 
 const FALLBACK_MODELS: Record<string, ModelInfoOut[]> = {
@@ -211,8 +210,7 @@ export function AgentForm({
   initial,
   onSubmit,
   onCancel,
-  submitting = false,
-  onOpenEnvSettings
+  submitting = false
 }: AgentFormProps) {
   const isEditing = !!initial;
 
