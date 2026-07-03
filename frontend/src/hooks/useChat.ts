@@ -279,6 +279,9 @@ export function useChat(agentId: string | null, mode: ChatMode = 'sse') {
             conversation_id: convId,
             role: 'assistant',
             content,
+            tokens: typeof data.tokens === 'number' ? data.tokens : undefined,
+            provider: typeof data.provider === 'string' ? data.provider : undefined,
+            model: typeof data.model === 'string' ? data.model : undefined,
             created_at: new Date().toISOString(),
             tool_calls: aggregatedTools.length > 0 ? aggregatedTools : undefined};
           setMessages((prev) => [

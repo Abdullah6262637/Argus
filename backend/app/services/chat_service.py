@@ -348,6 +348,7 @@ async def send_message_streaming(
     )
 
     final_content = ""
+    plan_tokens = 0
     plan: Optional[Plan] = None
     all_tool_calls: List[dict] = []
 
@@ -392,6 +393,8 @@ async def send_message_streaming(
                 yield evt
                 if evt.type == "tool_call_completed":
                     all_tool_calls.append(evt.data)
+                elif evt.type in ("plan_completed", "plan_failed"):
+                    plan_tokens = evt.data.get("total_tokens", 0)
 
             final_content = plan.final_summary or "(Plan tamamlandi.)"
 
@@ -404,12 +407,14 @@ async def send_message_streaming(
                 memory_context=memory_context,
             )
             final_content = loop_result.final_content or ""
+            plan_tokens = loop_result.total_tokens or 0
             for tc in loop_result.tool_calls:
                 all_tool_calls.append(tc.to_dict())
             yield PlanEvent("plan_completed", {
                 "conversation_id": conv.id,
                 "final_summary": final_content,
-                "total_tool_calls": len(loop_result.tool_calls)})
+                "total_tool_calls": len(loop_result.tool_calls),
+                "total_tokens": plan_tokens})
 
     except LLMError as exc:
         await _write_log(
@@ -434,6 +439,7 @@ async def send_message_streaming(
         conversation_id=conv.id,
         role=MessageRole.ASSISTANT,
         content=final_content,
+        tokens=plan_tokens or None,
         provider=agent.provider,
         model=agent.model,
     )
@@ -505,4 +511,7 @@ async def send_message_streaming(
         "conversation_id": conv.id,
         "assistant_message_id": assistant_msg.id,
         "user_message_id": user_msg.id,
-        "content": final_content})
+        "content": final_content,
+        "tokens": assistant_msg.tokens,
+        "provider": assistant_msg.provider,
+        "model": assistant_msg.model})

@@ -98,6 +98,7 @@ class PlanExecutor:
         replan_count = 0
         total_tool_calls = 0
         total_steps_run = 0
+        total_tokens = 0
         # Onceki adimlarin sonuclarini sonraki adimlara baglam olarak iletelim
         accumulated_context: List[str] = []
 
@@ -189,6 +190,8 @@ class PlanExecutor:
 
             try:
                 loop_result = await loop_task
+                if loop_result and loop_result.total_tokens:
+                    total_tokens += loop_result.total_tokens
             except Exception as exc:
                 logger.exception("Step %d agent_loop hatasi", step.id)
                 step.status = StepStatus.FAILED
@@ -354,7 +357,8 @@ class PlanExecutor:
             "plan": plan.to_dict(),
             "final_summary": plan.final_summary,
             "total_tool_calls": total_tool_calls,
-            "total_steps_run": total_steps_run})
+            "total_steps_run": total_steps_run,
+            "total_tokens": total_tokens})
 
     async def execute(
         self,
@@ -458,6 +462,8 @@ class PlanExecutor:
         for step in group:
             try:
                 loop_result: AgentLoopResult = await tasks[step.id]
+                if loop_result and loop_result.total_tokens:
+                    total_tokens += loop_result.total_tokens
                 step.result = loop_result.final_content
                 step.tool_calls = [tc.to_dict() for tc in loop_result.tool_calls]
                 step.status = StepStatus.COMPLETED
