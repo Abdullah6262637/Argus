@@ -170,6 +170,14 @@ export function AgentForm({
 
   // --- Durum ---
   const [step, setStep] = useState<StepIdx>(0);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onCancel();
+    }, 240);
+  };
 
   const [name, setName] = useState(initial?.name ?? '');
   const [role, setRole] = useState(initial?.role ?? '');
@@ -424,8 +432,15 @@ export function AgentForm({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-backdrop-in">
-      <div className="w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl animate-modal-in relative overflow-hidden">
+    <div 
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleClose();
+        }
+      }}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
+    >
+      <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
         {/* Ambient Glow Background Effect */}
         <div className="absolute inset-0 pointer-events-none z-0">
           <div 
@@ -448,7 +463,7 @@ export function AgentForm({
               </p>
             </div>
             <button
-              onClick={onCancel}
+              onClick={handleClose}
               className="text-brand-muted hover:text-brand-text text-2xl leading-none px-2"
               aria-label="Kapat"
             >
@@ -550,7 +565,7 @@ export function AgentForm({
         {/* Aksiyonlar */}
         <div className="relative z-10 flex items-center justify-between gap-2 px-6 py-4 bg-brand-panelAlt/90 backdrop-blur-[2px]">
           <button
-            onClick={onCancel}
+            onClick={handleClose}
             className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text hover:border-brand-borderStrong transition"
           >
             Iptal

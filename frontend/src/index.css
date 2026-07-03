@@ -763,3 +763,34 @@ select option {
 .animate-context-menu-in {
   animation: context-menu-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Modal exit animations */
+@keyframes backdrop-out {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes modal-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+}
+
+.animate-backdrop-out {
+  animation: backdrop-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-out {
+  animation: modal-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
