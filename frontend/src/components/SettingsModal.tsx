@@ -125,17 +125,19 @@ export function SettingsModal({
 
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto p-5">
-            {tab === 'theme' && (
-              <ThemeTab
-                theme={pendingTheme}
-                onChangeTheme={setPendingTheme}
-                initialTheme={initialTheme}
-              />
-            )}
-            {tab === 'apikeys' && <ApiKeysTab />}
-            {tab === 'plugins_mcp' && <PluginsMcpTab />}
-            {tab === 'reset' && <ResetTab onRequestReset={onRequestReset} />}
-            {tab === 'about' && <AboutTab />}
+            <div key={tab} className="animate-step-in">
+              {tab === 'theme' && (
+                <ThemeTab
+                  theme={pendingTheme}
+                  onChangeTheme={setPendingTheme}
+                  initialTheme={initialTheme}
+                />
+              )}
+              {tab === 'apikeys' && <ApiKeysTab />}
+              {tab === 'plugins_mcp' && <PluginsMcpTab />}
+              {tab === 'reset' && <ResetTab onRequestReset={onRequestReset} />}
+              {tab === 'about' && <AboutTab />}
+            </div>
           </div>
 
           {/* Alt bar */}
