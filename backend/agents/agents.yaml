@@ -1,20 +1,21 @@
 agents:
-- id: yazilim-gelistirici
+- id: yazilim-gelistirici-2
   name: Yazılım Geliştirici
   role: Senior Software Engineer
   description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
-  provider: local
-  model: qwen2.5:0.5b
+  provider: openrouter
+  model: openai/gpt-oss-20b
   temperature: 0.5
   max_tokens: 1024
   tags: []
-  is_active: false
+  is_active: true
   permissions:
     file_system: true
     terminal_cmd: true
     web_search: true
     system_admin: true
-  base_url: http://127.0.0.1:11434/v1
+  base_url: https://openrouter.ai/api/v1
+  api_key: enc::gAAAAABqR6TvshM_FUOzgVH9Hm7YCjMxy2s5imw5eiz8XdWxtihePju572N4t-QEkMdGIkYc7aBkn6G79kDdUHeBA2qQeE7ui6_s1C6Vw2QSAHKsh0LwpyDf8Trw_xbmA5wliRey26-gt6ap402LEasERMm89t05BSCsi63Bl_uJK1DXjKAd9D8=
   system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
     yerine getir, kod yaz ve terminal komutlarıyla test et.
   image:
@@ -29,23 +30,22 @@ agents:
     enabled: true
     provider: openai
     model: whisper-1
-- id: yazilim-gelistirici-2
-  name: Yazılım Geliştirici
+- id: yazilim-gelistirici-kopya
+  name: Yazılım Geliştirici (Kopya)
   role: Senior Software Engineer
   description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
-  provider: openrouter
-  model: openai/gpt-oss-20b
+  provider: local
+  model: qwen2.5:0.5b
   temperature: 0.5
   max_tokens: 1024
   tags: []
-  is_active: false
+  is_active: true
   permissions:
     file_system: true
     terminal_cmd: true
     web_search: true
     system_admin: true
-  base_url: https://openrouter.ai/api/v1
-  api_key: enc::gAAAAABqR6M4E44Rk7rlkQO3iW_2mtWe4-t5tqgkw9WryZXOOd70oZAkhZH9g3u3q3kgy34icY3IPbWvBJh-fiiwm2g7np9Bsmfdwi_N-PuQLTVFupptdD_JQFvREjGTL0ziMjP6kKq3NXriHuD2F9Trw6q74QIbTs7NneCSQ8KAnYkn8hI3JMc=
+  base_url: http://127.0.0.1:11434/v1
   system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
     yerine getir, kod yaz ve terminal komutlarıyla test et.
   image:

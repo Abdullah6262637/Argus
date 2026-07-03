@@ -1505,15 +1505,15 @@ function AgentsManagerTab({
   const [allAgents, setAllAgents] = useState<AgentInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadAgents = async () => {
-    setLoading(true);
+  const loadAgents = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const list = await api.listAgents(true); // includeInactive = true
       setAllAgents(list);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -1522,12 +1522,21 @@ function AgentsManagerTab({
   }, []);
 
   const handleToggleActive = async (id: string, currentStatus: boolean) => {
+    // 1. Optimistic UI update: Toggle state instantly in the UI with no flash
+    setAllAgents((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, is_active: !currentStatus } : a))
+    );
+
     try {
       await api.updateAgent(id, { is_active: !currentStatus });
-      await loadAgents();
-      onReloadAgents?.(); // reload App.tsx active agents list
+      await loadAgents(true); // Silent reload behind the scenes
+      onReloadAgents?.(); // Notify App.tsx to reload active agents list
     } catch (err) {
       console.error(err);
+      // Rollback to the previous state on error
+      setAllAgents((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, is_active: currentStatus } : a))
+      );
     }
   };
 
@@ -1553,24 +1562,28 @@ function AgentsManagerTab({
           {allAgents.map((agent) => (
             <div
               key={agent.id}
-              className={`flex items-center justify-between p-3 rounded-lg border transition ${
+              className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 ease-in-out ${
                 agent.is_active
-                  ? 'bg-brand-panelAlt/40 border-brand-border hover:border-brand-borderStrong'
-                  : 'bg-brand-bg/25 border-brand-border/40 opacity-70'
+                  ? 'bg-brand-panelAlt/40 border-brand-border hover:border-brand-borderStrong shadow-[0_2px_8px_rgba(0,0,0,0.12)]'
+                  : 'bg-brand-bg/15 border-brand-border/30 opacity-60 hover:opacity-80'
               }`}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <img
                   src={getModelLogo(agent.model, agent.provider)}
                   alt=""
-                  className="w-8 h-8 object-contain rounded-md bg-brand-bg/50 p-1 flex-shrink-0"
+                  className={`w-8 h-8 object-contain rounded-md p-1 flex-shrink-0 transition-all duration-300 ${
+                    agent.is_active ? 'bg-brand-bg/50 scale-100' : 'bg-brand-bg/20 scale-95 filter grayscale opacity-75'
+                  }`}
                 />
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-xs truncate text-brand-text">{agent.name}</span>
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wide font-mono uppercase ${
+                    <span className={`font-semibold text-xs truncate transition-colors duration-300 ${
+                      agent.is_active ? 'text-brand-text' : 'text-brand-mutedSoft'
+                    }`}>{agent.name}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wide font-mono uppercase transition-all duration-300 ${
                       agent.is_active 
-                        ? 'bg-brand-accent/10 text-brand-accent' 
+                        ? 'bg-brand-accent/15 text-brand-accent shadow-[0_0_8px_rgba(var(--brand-accent-rgb,var(--color-brand-accent-rgb,0,166,126)),0.1)]' 
                         : 'bg-brand-muted/15 text-brand-mutedSoft'
                     }`}>
                       {agent.is_active ? 'Aktif' : 'Pasif'}
@@ -1587,13 +1600,15 @@ function AgentsManagerTab({
                 <button
                   type="button"
                   onClick={() => handleToggleActive(agent.id, agent.is_active)}
-                  className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${
-                    agent.is_active ? 'bg-brand-accent' : 'bg-brand-muted/20'
+                  className={`w-9 h-5 rounded-full p-0.5 transition-all duration-300 ease-in-out focus:outline-none border ${
+                    agent.is_active 
+                      ? 'bg-brand-accent border-brand-accent/30 shadow-[0_0_10px_rgba(20,163,127,0.25)]' 
+                      : 'bg-brand-bg/40 border-brand-border/40'
                   }`}
                 >
                   <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
-                      agent.is_active ? 'translate-x-4' : 'translate-x-0'
+                    className={`bg-white w-3.5 h-3.5 rounded-full shadow-lg transform transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                      agent.is_active ? 'translate-x-4 bg-white' : 'translate-x-0 bg-brand-mutedSoft/65'
                     }`}
                   />
                 </button>
@@ -1603,7 +1618,7 @@ function AgentsManagerTab({
                   type="button"
                   onClick={() => onEditAgent?.(agent.id)}
                   title="Düzenle"
-                  className="p-1 rounded hover:bg-brand-panelAlt text-brand-muted hover:text-brand-text transition"
+                  className="p-1 rounded hover:bg-brand-panelAlt text-brand-muted hover:text-brand-text transition-all duration-200"
                 >
                   <Icon name="edit" size={14} />
                 </button>
@@ -1613,10 +1628,10 @@ function AgentsManagerTab({
                   type="button"
                   onClick={() => {
                     onDuplicateAgent?.(agent.id);
-                    setTimeout(() => loadAgents(), 1200); // refresh list
+                    setTimeout(() => loadAgents(true), 1200); // refresh list silently
                   }}
                   title="Kopyala"
-                  className="p-1 rounded hover:bg-brand-panelAlt text-brand-muted hover:text-brand-text transition"
+                  className="p-1 rounded hover:bg-brand-panelAlt text-brand-muted hover:text-brand-text transition-all duration-200"
                 >
                   <Icon name="content_copy" size={14} />
                 </button>
@@ -1626,10 +1641,10 @@ function AgentsManagerTab({
                   type="button"
                   onClick={() => {
                     onDeleteAgent?.(agent.id);
-                    setTimeout(() => loadAgents(), 1200); // refresh list
+                    setTimeout(() => loadAgents(true), 1200); // refresh list silently
                   }}
                   title="Sil"
-                  className="p-1 rounded hover:bg-brand-danger/10 text-brand-muted hover:text-brand-danger transition"
+                  className="p-1 rounded hover:bg-brand-danger/10 text-brand-muted hover:text-brand-danger transition-all duration-200"
                 >
                   <Icon name="delete" size={14} />
                 </button>
