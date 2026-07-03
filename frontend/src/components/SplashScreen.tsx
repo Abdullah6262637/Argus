@@ -25,7 +25,8 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
   useEffect(() => {
     if (phase !== 'boot') return;
 
-    const delays = [200, 750, 1350, 2050];
+    // Each step is spaced ~1-1.5 seconds apart so they're clearly readable
+    const delays = [500, 1700, 3100, 4500];
     const timers = delays.map((d, i) =>
       setTimeout(() => {
         setStepIdx(i);
@@ -37,7 +38,7 @@ export function SplashScreen({ onDone }: SplashScreenProps) {
       setPhase('done');
       setExiting(true);
       setTimeout(onDone, 700);
-    }, 3200);
+    }, 6200);
 
     return () => {
       timers.forEach(clearTimeout);
