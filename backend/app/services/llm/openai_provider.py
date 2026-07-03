@@ -102,12 +102,19 @@ class OpenAIProvider(BaseLLMProvider):
             if self.base_url and ("127.0.0.1" in self.base_url or "localhost" in self.base_url):
                 is_local = True
 
-            if is_local and ("connection error" in exc_str or "connecterror" in exc_str or "api connection" in exc_str or "clienterror" in exc_str):
-                raise LLMError(
-                    f"Yerel model sunucusuna ({self.base_url}) bağlanılamadı. "
-                    f"Lütfen yerel yapay zeka sunucunuzun (Ollama / LM Studio) arka planda "
-                    f"çalıştığından ve '{self.model}' modelinin indirildiğinden emin olun."
-                ) from exc
+            if is_local:
+                if ("connection error" in exc_str or "connecterror" in exc_str or "api connection" in exc_str or "clienterror" in exc_str):
+                    raise LLMError(
+                        f"Yerel model sunucusuna ({self.base_url}) bağlanılamadı. "
+                        f"Lütfen yerel yapay zeka sunucunuzun (Ollama / LM Studio) arka planda "
+                        f"çalıştığından emin olun."
+                    ) from exc
+                elif "not found" in exc_str or "404" in exc_str:
+                    raise LLMError(
+                        f"Yerel model sunucusunda '{self.model}' modeli bulunamadı. "
+                        f"Lütfen ajan ayarlarından indirdiğiniz modeli (örn. 'qwen2.5:0.5b') seçtiğinizden "
+                        f"veya terminalden indirdiğinizden emin olun."
+                    ) from exc
             raise LLMError(f"OpenAI cagrisi basarisiz: {exc}") from exc
 
         choice = completion.choices[0]
