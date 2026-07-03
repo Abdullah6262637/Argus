@@ -8,6 +8,8 @@ import { EmptyState } from './components/EmptyState';
 import { SettingsModal } from './components/SettingsModal';
 import { ConfirmDialog } from './components/ConfirmDialog';
 import { SetupWizard } from './components/SetupWizard';
+import { SplashScreen } from './components/SplashScreen';
+import { ResetScreen } from './components/ResetScreen';
 import { ApprovalDialog } from './components/ApprovalDialog';
 import { WorkflowsModal } from './components/WorkflowsModal';
 import { CommandPalette } from './components/CommandPalette';
@@ -102,6 +104,8 @@ export default function App() {
 
   // Akıllı Kurulum Sihirbazı Durumu
   const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
+  const [showSplash, setShowSplash] = useState(false);
+  const [showReset, setShowReset] = useState(false);
   useEffect(() => {
     api.getSetupStatus()
       .then((status) => {
@@ -403,14 +407,14 @@ export default function App() {
       confirmLabel: 'Evet, SIFIRLA',
       requireTypeText: 'SIFIRLA',
       onConfirm: async () => {
+        closeConfirm();
+        setShowReset(true); // Show animated reset screen
         try {
           await api.resetSystem();
           await reload();
           setSelectedId(null);
-          closeConfirm();
-          setSetupRequired(true); // Kurulum ekranını yeniden göster
         } catch (err) {
-          closeConfirm();
+          setShowReset(false);
           openConfirm({
             title: 'Sifirlama basarisiz',
             message: err instanceof Error ? err.message : String(err),
@@ -457,6 +461,29 @@ export default function App() {
   const hasAgents = agents.length > 0;
 
   // --- Akıllı Kurulum Sihirbazı ---
+  // Reset screen overlay
+  if (showReset) {
+    return (
+      <ResetScreen
+        onDone={() => {
+          setShowReset(false);
+          setSetupRequired(true); // Show setup wizard after reset
+        }}
+      />
+    );
+  }
+
+  // Splash screen overlay (after setup finish)
+  if (showSplash) {
+    return (
+      <SplashScreen
+        onDone={() => {
+          setShowSplash(false);
+        }}
+      />
+    );
+  }
+
   if (setupRequired === true) {
     return (
       <SetupWizard
@@ -465,6 +492,7 @@ export default function App() {
         onFinished={() => {
           setSetupRequired(false);
           reload();
+          setShowSplash(true); // Show splash after setup completes
         }}
       />
     );
