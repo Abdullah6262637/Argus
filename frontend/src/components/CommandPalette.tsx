@@ -28,6 +28,14 @@ interface CommandPaletteProps {
   onChangeFontSize?: (fontSize: any) => void;
   onEditAgent?: (id: string) => void;
   onExportChat?: () => void;
+  onDeleteAgent?: (id: string) => void;
+  onDuplicateAgent?: (id: string) => void;
+  onToggleAgentActive?: (id: string) => void;
+  onExportAgentConfig?: (id: string) => void;
+  onDeleteConversation?: () => void;
+  onToggleSystemPanel?: () => void;
+  onExportChatMD?: () => void;
+  onShowShortcuts?: () => void;
 }
 
 export function CommandPalette({
@@ -44,7 +52,15 @@ export function CommandPalette({
   onChangeDensity,
   onChangeFontSize,
   onEditAgent,
-  onExportChat}: CommandPaletteProps) {
+  onExportChat,
+  onDeleteAgent,
+  onDuplicateAgent,
+  onToggleAgentActive,
+  onExportAgentConfig,
+  onDeleteConversation,
+  onToggleSystemPanel,
+  onExportChatMD,
+  onShowShortcuts}: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -106,6 +122,30 @@ export function CommandPalette({
         icon: 'download',
         group: 'Aksiyon',
         run: () => onExportChat?.()
+      },
+      {
+        id: 'export-chat-md',
+        label: 'Aksiyon: Sohbet geçmişini Markdown (.md) olarak indir',
+        shortcut: 'Ctrl+Shift+M',
+        icon: 'article',
+        group: 'Aksiyon',
+        run: () => onExportChatMD?.()
+      },
+      {
+        id: 'delete-conversation',
+        label: 'Aksiyon: Mevcut sohbet geçmişini tamamen temizle ve sil',
+        shortcut: 'Ctrl+Shift+Backspace',
+        icon: 'delete_sweep',
+        group: 'Aksiyon',
+        run: () => onDeleteConversation?.()
+      },
+      {
+        id: 'show-shortcuts',
+        label: 'Aksiyon: Klavye Kısayolları yardım kılavuzunu görüntüle',
+        shortcut: 'Ctrl+?',
+        icon: 'keyboard',
+        group: 'Aksiyon',
+        run: () => onShowShortcuts?.()
       },
       {
         id: 'docs-api',
@@ -172,6 +212,14 @@ export function CommandPalette({
         icon: 'info',
         group: 'Sayfa',
         run: () => onOpenSettings('about')
+      },
+      {
+        id: 'toggle-system-panel',
+        label: 'Navigasyon: Sistem Sağlık & Canlı Log Panelini Aç/Kapat',
+        shortcut: 'Ctrl+Alt+L',
+        icon: 'monitoring',
+        group: 'Sayfa',
+        run: () => onToggleSystemPanel?.()
       },
       
       // --- Temalar ---
@@ -292,6 +340,34 @@ export function CommandPalette({
         group: 'Ajan',
         run: () => onEditAgent?.(a.id)
       });
+      list.push({
+        id: `agent-duplicate:${a.id}`,
+        label: `Ajan: ${a.name} ajanı çoğalt (kopyasını oluştur)`,
+        icon: 'content_copy',
+        group: 'Ajan',
+        run: () => onDuplicateAgent?.(a.id)
+      });
+      list.push({
+        id: `agent-delete:${a.id}`,
+        label: `Ajan: ${a.name} uzman ajanı sistemden sil`,
+        icon: 'delete',
+        group: 'Ajan',
+        run: () => onDeleteAgent?.(a.id)
+      });
+      list.push({
+        id: `agent-toggle-active:${a.id}`,
+        label: `Ajan: ${a.name} durumunu değiştir (Aktif: ${a.is_active ? 'Evet' : 'Hayır'})`,
+        icon: a.is_active ? 'toggle_on' : 'toggle_off',
+        group: 'Ajan',
+        run: () => onToggleAgentActive?.(a.id)
+      });
+      list.push({
+        id: `agent-export-config:${a.id}`,
+        label: `Ajan: ${a.name} prompt & ayarlarını dışa aktar (JSON)`,
+        icon: 'cloud_download',
+        group: 'Ajan',
+        run: () => onExportAgentConfig?.(a.id)
+      });
     });
 
     return list;
@@ -307,7 +383,15 @@ export function CommandPalette({
     onChangeDensity,
     onChangeFontSize,
     onEditAgent,
-    onExportChat
+    onExportChat,
+    onDeleteAgent,
+    onDuplicateAgent,
+    onToggleAgentActive,
+    onExportAgentConfig,
+    onDeleteConversation,
+    onToggleSystemPanel,
+    onExportChatMD,
+    onShowShortcuts
   ]);
 
   // Fuzzy filter (basit substring match, küçük harf duyarsız + Türkçe karakter normalize)

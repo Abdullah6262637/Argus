@@ -256,6 +256,60 @@ export default function App() {
     }
   };
 
+  const handleToggleAgentActive = async (id: string) => {
+    try {
+      const agent = agents.find((a) => a.id === id);
+      if (!agent) return;
+      await api.updateAgent(id, { is_active: !agent.is_active });
+      await reload();
+    } catch (err) {
+      openConfirm({
+        title: 'Guncelleme basarisiz',
+        message: err instanceof Error ? err.message : String(err),
+        confirmLabel: 'Tamam',
+        onConfirm: closeConfirm
+      });
+    }
+  };
+
+  const handleDeleteConversation = () => {
+    openConfirm({
+      title: 'Sohbeti Temizle',
+      message: 'Mevcut sohbet gecmisinizi temizlemek istediginizden emin misiniz? Bu islem geri alinamaz.',
+      confirmLabel: 'Evet, Temizle',
+      variant: 'danger',
+      onConfirm: () => {
+        chat.newConversation();
+        closeConfirm();
+      }
+    });
+  };
+
+  const handleExportChatMD = () => {
+    if (!selectedAgent || chat.messages.length === 0) return;
+    let md = `# Sohbet Gecmisi — ${selectedAgent.name} (${selectedAgent.role || 'Uzman'})\n`;
+    md += `Tarih: ${new Date().toLocaleDateString('tr-TR')}\n\n`;
+    
+    chat.messages.forEach((msg) => {
+      const roleName = msg.role === 'user' ? 'Kullanici' : selectedAgent.name;
+      md += `### 👤 ${roleName}\n\n${msg.content}\n\n`;
+      if (msg.tokens || msg.model) {
+        md += `*Metadata: ${msg.model ? `Model: ${msg.model}` : ''} ${msg.tokens ? `| Token: ${msg.tokens}` : ''}*\n\n`;
+      }
+      md += `---\n\n`;
+    });
+    
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Sohbet-${selectedAgent.name}-${new Date().toISOString().slice(0, 10)}.md`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   const handleNewConversation = (id: string) => {
     setSelectedId(id);
     chat.newConversation();
@@ -563,8 +617,19 @@ export default function App() {
         }}
         onExportChat={() => {
           if (selectedAgent) {
-            handleExport('json');
+            handleExport(selectedAgent.id);
           }
+        }}
+        onDeleteAgent={handleDelete}
+        onDuplicateAgent={handleDuplicate}
+        onToggleAgentActive={handleToggleAgentActive}
+        onExportAgentConfig={handleExport}
+        onDeleteConversation={handleDeleteConversation}
+        onToggleSystemPanel={toggleSystemPanel}
+        onExportChatMD={handleExportChatMD}
+        onShowShortcuts={() => {
+          setSettingsInitialTab('about');
+          setSettingsOpen(true);
         }}
       />
 
