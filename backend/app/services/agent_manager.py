@@ -409,3 +409,7 @@ class AgentManager:
 
 # Singleton ornek - lifespan icinde load edilir
 agent_manager = AgentManager()
+
+
+def get_agent_manager() -> AgentManager:
+    return agent_manager

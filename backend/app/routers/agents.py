@@ -29,7 +29,7 @@ from app.schemas.agent import (
     SoulInfo,
 )
 from app.schemas.chat import ConversationOut
-from app.services.agent_manager import AgentDefinition, agent_manager
+from app.services.agent_manager import AgentDefinition, AgentManager, get_agent_manager
 from app.services.llm.models_catalog import MODELS_BY_PROVIDER
 from app.services.llm.tester import test_connection
 
@@ -136,15 +136,18 @@ def _def_to_detail(d: AgentDefinition) -> AgentDetail:
 
 
 @router.get("", response_model=List[AgentInfo])
-async def list_agents(include_inactive: bool = False) -> List[AgentInfo]:
-    return [_def_to_info(a) for a in agent_manager.list_agents(include_inactive)]
+async def list_agents(
+    include_inactive: bool = False,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> List[AgentInfo]:
+    return [_def_to_info(a) for a in manager.list_agents(include_inactive)]
 
 
 @router.post("/reload", response_model=List[AgentInfo])
-async def reload_agents() -> List[AgentInfo]:
+async def reload_agents(manager: AgentManager = Depends(get_agent_manager)) -> List[AgentInfo]:
     """agents.yaml dosyasini yeniden yukler."""
-    agent_manager.reload()
-    return [_def_to_info(a) for a in agent_manager.list_agents()]
+    manager.reload()
+    return [_def_to_info(a) for a in manager.list_agents()]
 
 
 # ============================================================
@@ -207,8 +210,11 @@ async def delete_soul(name: str) -> None:
 # ============================================================
 
 
-@router.post("/bulk-update-provider", response_model=BulkProviderUpdateResponse)
-async def bulk_update_provider(payload: BulkProviderUpdateRequest) -> BulkProviderUpdateResponse:
+@router.post("/bulk-provider-update", response_model=BulkProviderUpdateResponse)
+async def bulk_update_provider(
+    payload: BulkProviderUpdateRequest,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> BulkProviderUpdateResponse:
     """Birden fazla ajanin provider/base_url/model bilgisini topluca gunceller.
 
     - agent_ids verilmezse tum aktif ajanlar (skip_ids haric) hedeflenir.
@@ -218,13 +224,13 @@ async def bulk_update_provider(payload: BulkProviderUpdateRequest) -> BulkProvid
     if payload.agent_ids:
         target_ids = [aid for aid in payload.agent_ids if aid not in skip]
     else:
-        all_agents = agent_manager.list_agents(include_inactive=True)
+        all_agents = manager.list_agents(include_inactive=True)
         target_ids = [a.id for a in all_agents if a.id not in skip]
 
     updated_ids: List[str] = []
     skipped = 0
     for aid in target_ids:
-        agent = agent_manager.get(aid)
+        agent = manager.get(aid)
         if not agent:
             skipped += 1
             continue
@@ -234,7 +240,7 @@ async def bulk_update_provider(payload: BulkProviderUpdateRequest) -> BulkProvid
         if payload.model:
             changes["model"] = payload.model
         try:
-            agent_manager.update_agent(aid, **changes)
+            manager.update_agent(aid, **changes)
             updated_ids.append(aid)
         except Exception:  # pragma: no cover
             skipped += 1
@@ -267,7 +273,10 @@ async def get_models_catalog() -> ModelsCatalogOut:
 
 
 @router.post("/test", response_model=ConnectionTestResponse)
-async def test_agent_connection(payload: ConnectionTestRequest) -> ConnectionTestResponse:
+async def test_agent_connection(
+    payload: ConnectionTestRequest,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> ConnectionTestResponse:
     """Verilen provider/model/api_key/base_url kombinasyonunu veya mevcut ajanin baglantisini test eder."""
     provider = payload.provider
     model = payload.model
@@ -275,7 +284,7 @@ async def test_agent_connection(payload: ConnectionTestRequest) -> ConnectionTes
     base_url = payload.base_url
 
     if payload.agent_id:
-        agent = agent_manager.get(payload.agent_id)
+        agent = manager.get(payload.agent_id)
         if agent:
             if not api_key or "xx" in api_key.lower() or api_key == "":
                 api_key = agent.api_key
@@ -301,10 +310,13 @@ async def test_agent_connection(payload: ConnectionTestRequest) -> ConnectionTes
 
 
 @router.post("", response_model=AgentDetail, status_code=201)
-async def create_agent(payload: AgentCreate) -> AgentDetail:
+async def create_agent(
+    payload: AgentCreate,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> AgentDetail:
     """Yeni ajan olusturur ve agents.yaml'a yazar."""
     try:
-        definition = agent_manager.create_agent(
+        definition = manager.create_agent(
             name=payload.name,
             role=payload.role,
             description=payload.description,
@@ -327,50 +339,67 @@ async def create_agent(payload: AgentCreate) -> AgentDetail:
 
 
 @router.get("/{agent_id}", response_model=AgentDetail)
-async def get_agent(agent_id: str) -> AgentDetail:
-    agent = agent_manager.get(agent_id)
+async def get_agent(
+    agent_id: str,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> AgentDetail:
+    agent = manager.get(agent_id)
     if not agent:
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
     return _def_to_detail(agent)
 
 
 @router.patch("/{agent_id}", response_model=AgentDetail)
-async def update_agent(agent_id: str, payload: AgentUpdate) -> AgentDetail:
+async def update_agent(
+    agent_id: str,
+    payload: AgentUpdate,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> AgentDetail:
     """Ajani kismi gunceller."""
-    if not agent_manager.get(agent_id):
+    if not manager.get(agent_id):
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
     data = payload.model_dump(exclude_unset=True)
     try:
-        definition = agent_manager.update_agent(agent_id, **data)
+        definition = manager.update_agent(agent_id, **data)
     except KeyError:
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
     return _def_to_detail(definition)
 
 
 @router.delete("/{agent_id}", status_code=204)
-async def delete_agent(agent_id: str) -> None:
+async def delete_agent(
+    agent_id: str,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> None:
     """Ajani siler."""
     try:
-        agent_manager.delete_agent(agent_id)
+        manager.delete_agent(agent_id)
     except KeyError:
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
 
 
 @router.post("/{agent_id}/duplicate", response_model=AgentDetail, status_code=201)
-async def duplicate_agent(agent_id: str) -> AgentDetail:
+async def duplicate_agent(
+    agent_id: str,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> AgentDetail:
     """Ajani kopyalar ve yeni id ile kaydeder."""
     try:
-        definition = agent_manager.duplicate_agent(agent_id)
+        definition = manager.duplicate_agent(agent_id)
     except KeyError:
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
     return _def_to_detail(definition)
 
 
 @router.get("/{agent_id}/export")
-async def export_agent(agent_id: str, include_secrets: bool = False) -> dict:
+async def export_agent(
+    agent_id: str,
+    include_secrets: bool = False,
+    manager: AgentManager = Depends(get_agent_manager)
+) -> dict:
     """Ajani JSON olarak dondurur. include_secrets=true ise api_key'ler dahil edilir."""
     try:
-        return agent_manager.export_agent(agent_id, include_secrets=include_secrets)
+        return manager.export_agent(agent_id, include_secrets=include_secrets)
     except KeyError:
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
 
@@ -380,8 +409,9 @@ async def list_agent_conversations(
     agent_id: str,
     limit: int = 50,
     session: AsyncSession = Depends(get_session),
+    manager: AgentManager = Depends(get_agent_manager),
 ) -> List[ConversationOut]:
-    if not agent_manager.get(agent_id):
+    if not manager.get(agent_id):
         raise HTTPException(status_code=404, detail="Ajan bulunamadi")
 
     stmt = (
