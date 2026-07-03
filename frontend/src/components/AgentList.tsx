@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { AgentInfo } from '@/types';
 import { ContextMenu, type ContextMenuEntry } from './ContextMenu';
 import { Icon } from './Icon';
+import { getModelLogo } from '../utils/modelHelper';
 
 interface AgentListProps {
   agents: AgentInfo[];
@@ -313,14 +314,20 @@ function AgentCard({
       {/* Satır 2: Rol veya model (font-mono ile model) */}
       <div className="text-[11px] text-brand-mutedSoft truncate leading-tight mt-1">
         {agent.role || (
-          <code className="font-mono">{agent.model}</code>
+          <span className="inline-flex items-center gap-1 font-mono">
+            <img src={getModelLogo(agent.model, agent.provider)} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
+            <span>{agent.model}</span>
+          </span>
         )}
       </div>
 
       {/* Satır 3: Model (sadece rol varsa) — diskret mono */}
       {agent.role && (
-        <div className="text-[10px] font-mono text-brand-mutedSoft/80 truncate leading-tight mt-0.5">
-          {agent.model}
+        <div className="text-[10px] font-mono text-brand-mutedSoft/80 truncate leading-tight mt-1">
+          <span className="inline-flex items-center gap-1">
+            <img src={getModelLogo(agent.model, agent.provider)} alt="" className="w-3 h-3 object-contain rounded-sm" />
+            <span>{agent.model}</span>
+          </span>
         </div>
       )}
 

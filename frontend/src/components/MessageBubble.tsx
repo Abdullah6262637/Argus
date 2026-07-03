@@ -3,6 +3,7 @@ import type { ChatMessage, ToolCallInfo } from '@/types';
 import { Icon } from './Icon';
 import { ScreenshotViewer } from './ScreenshotViewer';
 import { api } from '@/api/client';
+import { getModelLogo } from '../utils/modelHelper';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -328,8 +329,9 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
           {message.model && (
             <>
               <span className="text-brand-border" aria-hidden="true">·</span>
-              <span className="truncate max-w-[140px]" title={message.model}>
-                {message.model}
+              <span className="truncate max-w-[140px] inline-flex items-center gap-1" title={message.model}>
+                <img src={getModelLogo(message.model, (message as any).provider || '')} alt="" className="w-3 h-3 object-contain rounded-sm" />
+                <span>{message.model}</span>
               </span>
             </>
           )}

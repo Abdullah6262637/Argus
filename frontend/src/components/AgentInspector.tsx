@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { api } from '@/api/client';
 import type { AgentInfo, LogEntry } from '@/types';
 import { Icon } from './Icon';
+import { getModelLogo } from '../utils/modelHelper';
 
 interface AgentInspectorProps {
   agent: AgentInfo | null;
@@ -89,8 +90,9 @@ export function AgentInspector({ agent }: AgentInspectorProps) {
         <div className="text-[12.5px] font-semibold text-brand-text leading-tight truncate">
           {agent.name}
         </div>
-        <div className="text-[10px] font-mono text-brand-mutedSoft truncate mt-0.5">
-          {agent.provider}/{agent.model}
+        <div className="text-[10px] font-mono text-brand-mutedSoft truncate mt-0.5 flex items-center gap-1">
+          <img src={getModelLogo(agent.model, agent.provider)} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
+          <span>{agent.provider}/{agent.model}</span>
         </div>
       </div>
 

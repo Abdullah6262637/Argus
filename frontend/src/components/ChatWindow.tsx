@@ -8,6 +8,7 @@ import { VoiceButton } from './VoiceButton';
 import { FileDropZone } from './FileDropZone';
 import { WorkflowsModal } from './WorkflowsModal';
 import { KnowledgeGraphModal } from './KnowledgeGraphModal';
+import { getModelLogo } from '../utils/modelHelper';
 
 interface ChatWindowProps {
   agent: AgentInfo | null;
@@ -518,8 +519,9 @@ export function ChatWindow({
               </span>
 
               {/* Model adı */}
-              <span className="font-mono truncate" title={agent.model}>
-                {agent.model}
+              <span className="font-mono truncate flex items-center gap-1" title={agent.model}>
+                <img src={getModelLogo(agent.model, agent.provider)} alt="" className="w-3.5 h-3.5 object-contain rounded-sm" />
+                <span>{agent.model}</span>
               </span>
 
               {/* Token sayacı — her zaman görünür */}
