@@ -76,7 +76,8 @@ servers:
   - postgresql://user:password@localhost:5432/dbname
 - name: sentry
   enabled: false
-  description: Canlı sistemdeki Sentry hata kayıtlarını (exceptions) listeleme ve analiz etme.
+  description: Canlı sistemdeki Sentry hata kayıtlarını (exceptions) listeleme ve
+    analiz etme.
   command:
   - npx
   - -y
