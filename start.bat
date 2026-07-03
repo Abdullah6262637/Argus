@@ -13,9 +13,11 @@ echo.
 REM 1. Gereksinim Kontrolleri
 where python >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [!] HATA: Sisteminizde Python bulunamadı. Lütfen Python 3.12+ kurup PATH'e ekleyin.
-    pause
-    exit /b 1
+    if not exist ".venv\Scripts\python.exe" (
+        echo [!] HATA: Sisteminizde Python bulunamadı. Lütfen Python 3.12+ kurup PATH'e ekleyin.
+        pause
+        exit /b 1
+    )
 )
 
 where node >nul 2>nul

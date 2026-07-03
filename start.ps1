@@ -10,7 +10,7 @@ Write-Host ""
 
 # 1. Gereksinim Kontrolleri
 $pythonCheck = Get-Command python -ErrorAction SilentlyContinue
-if (-not $pythonCheck) {
+if (-not $pythonCheck -and -not (Test-Path -Path ".venv\Scripts\python.exe")) {
     Write-Host "[!] HATA: Sisteminizde Python bulunamadı. Lütfen Python 3.12+ kurup PATH'e ekleyin." -ForegroundColor Red
     Read-Host "Devam etmek için ENTER'a basın..."
     exit 1
