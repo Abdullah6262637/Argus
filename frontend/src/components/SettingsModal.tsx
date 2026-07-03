@@ -980,59 +980,64 @@ function ResetTab({ onRequestReset }: { onRequestReset: () => void }) {
     <div className="space-y-5">
       <PanelHeader
         title="Tehlikeli İşlemler"
-        description="Bu işlemler geri alınamaz. Lütfen dikkatli ol."
+        description="Bu işlemler geri alınamaz. Lütfen son derece dikkatli ol."
         icon="warning"
       />
 
-      <div className="rounded-xl border-2 border-brand-danger/40 bg-brand-danger/5 p-4 space-y-3.5">
-        <div className="flex items-start gap-3">
-          <div className="w-12 h-12 rounded-xl bg-brand-danger/20 text-brand-danger flex items-center justify-center flex-shrink-0">
+      <div className="rounded-xl border border-brand-border bg-brand-panelAlt/30 p-5 space-y-4">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-brand-danger/10 text-brand-danger flex items-center justify-center flex-shrink-0 border border-brand-danger/20">
             <Icon name="delete_forever" size={26} weight={550} filled />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-brand-text">
-              Sistemi Sıfırla
-            </h4>
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold text-brand-text">
+                Sistemi Sıfırla
+              </h4>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase bg-brand-danger/10 text-brand-danger border border-brand-danger/25">
+                Kritik Eylem
+              </span>
+            </div>
             <p className="text-[11.5px] text-brand-textSoft mt-1 leading-relaxed">
-              Tüm ajanları, sohbet geçmişini, zamanlanmış görevleri ve logları
-              kalıcı olarak siler. Kurulum ekranı yeniden açılır.
+              Tüm veri tabanını sıfırlar; kayıtlı tüm sohbetleri, zamanlanmış görevleri, sistem günlüklerini ve oluşturulan ajan modellerini kalıcı olarak temizler.
             </p>
           </div>
         </div>
 
         {/* Silinecekler listesi — grid */}
-        <div className="grid grid-cols-2 gap-1.5 pt-1">
+        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-brand-border/40">
           {items.map((it, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-brand-bg/40 border border-brand-danger/20"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-brand-bg/40 border border-brand-border hover:border-brand-borderStrong transition-all"
             >
               <Icon
                 name={it.icon}
-                size={13}
+                size={14}
                 weight={500}
                 className="text-brand-danger flex-shrink-0"
               />
-              <span className="text-[10.5px] text-brand-textSoft truncate">
+              <span className="text-[11px] text-brand-textSoft truncate">
                 {it.text}
               </span>
             </div>
           ))}
         </div>
 
-        <button
-          onClick={onRequestReset}
-          className="w-full h-10 inline-flex items-center justify-center gap-2 text-sm font-bold rounded-lg bg-brand-danger text-white hover:opacity-90 transition-all active:scale-95 shadow-sm"
-        >
-          <Icon name="restart_alt" size={18} weight={650} />
-          Sistemi Sıfırla
-        </button>
+        <div className="pt-2">
+          <button
+            onClick={onRequestReset}
+            className="w-full h-11 inline-flex items-center justify-center gap-2 text-xs font-bold rounded-lg bg-brand-danger text-brand-bg hover:brightness-110 transition-all active:scale-[0.98] shadow-md shadow-brand-danger/15"
+          >
+            <Icon name="restart_alt" size={18} weight={650} />
+            Sistemi Sıfırla
+          </button>
+        </div>
 
-        <div className="flex items-start gap-1.5 text-[10px] text-brand-danger/80 italic">
-          <Icon name="info" size={11} weight={500} className="flex-shrink-0 mt-px" />
+        <div className="flex items-start gap-2 text-[10px] text-brand-danger/90 bg-brand-danger/5 border border-brand-danger/10 rounded-lg p-2.5 leading-normal">
+          <Icon name="info" size={13} weight={500} className="flex-shrink-0 mt-0.5" />
           <span>
-            Tıkladıktan sonra ek bir onay diyaloğu çıkacak. "SIFIRLA" yazmadan
-            işlem tamamlanmaz.
+            Tıkladıktan sonra ek bir onay ekranı açılacaktır. Güvenlik doğrulaması için kutucuğa "SIFIRLA" yazmanız zorunludur.
           </span>
         </div>
       </div>

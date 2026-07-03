@@ -109,9 +109,6 @@ export function KnowledgeGraphModal({
         {/* ============ Header ============ */}
         <header className="px-5 py-3.5 border-b border-brand-border flex items-center justify-between bg-brand-panel">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent">
-              <Icon name="hub" size={19} weight={550} filled />
-            </div>
             <div>
               <h3 className="text-sm font-semibold text-brand-text leading-tight">
                 Knowledge Graph

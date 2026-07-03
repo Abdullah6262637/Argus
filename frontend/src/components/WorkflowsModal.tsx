@@ -206,9 +206,6 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
           {/* Sidebar Header */}
           <div className="px-3.5 py-3 border-b border-brand-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent">
-                <Icon name="bolt" size={15} weight={550} filled />
-              </div>
               <div>
                 <h3 className="text-[12px] font-semibold text-brand-text leading-tight">
                   Workflow'lar

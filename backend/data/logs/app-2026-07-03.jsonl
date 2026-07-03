@@ -741,3 +741,7 @@
 {"timestamp": "2026-07-03T12:59:54.019087Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 1", "module": "manager", "line": 29, "taskName": "Task-126"}
 {"timestamp": "2026-07-03T13:00:01.981610Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-137"}
 {"timestamp": "2026-07-03T13:00:01.996015Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-150"}
+{"timestamp": "2026-07-03T13:00:39.150051Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 0", "module": "manager", "line": 29, "taskName": "Task-150"}
+{"timestamp": "2026-07-03T13:01:41.013744Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 1", "module": "manager", "line": 24, "taskName": "Task-180"}
+{"timestamp": "2026-07-03T13:01:41.037343Z", "level": "info", "logger": "app.websocket.manager", "message": "WS baglandi, toplam: 2", "module": "manager", "line": 24, "taskName": "Task-193"}
+{"timestamp": "2026-07-03T13:01:41.043845Z", "level": "info", "logger": "app.websocket.manager", "message": "WS koptu, toplam: 1", "module": "manager", "line": 29, "taskName": "Task-180"}
