@@ -85,15 +85,18 @@ def check_sandbox(tool_name: str, args: Dict[str, Any]) -> Tuple[bool, str]:
                         cmd_args = [t.lower() for t in tokens[1:]]
                         
                         # Prevent inline executions (python -c, node -e, npm i)
-                        for blocked in blocked_args:
-                            if blocked in cmd_args:
-                                return False, f"Güvenlik nedeniyle '{first} {blocked}' parametresi run_command içinde engellenmiştir."
+                        # We use exact matching to avoid false positives (e.g. file names or arguments that contain 'r')
+                        for arg in cmd_args:
+                            if arg in blocked_args:
+                                return False, f"Güvenlik nedeniyle '{first} {arg}' parametresi run_command içinde engellenmiştir."
                                 
                         # Specific validation for git command subshells and pagers
                         if stripped == "git":
                             for arg in cmd_args:
                                 if arg.startswith("-c") or "pager" in arg or "alias" in arg or "!" in arg:
                                     return False, f"Güvenlik nedeniyle '{first} {arg}' parametresi engellenmiştir (Git subshell koruması)."
+                    
+                    break
             else:
                 return False, (
                     f"Komut allowlist'te degil: '{first}'. "

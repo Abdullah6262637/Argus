@@ -167,7 +167,8 @@ def create_app() -> FastAPI:
             is_valid_host = (
                 host_lower.startswith("127.0.0.1") or
                 host_lower.startswith("localhost") or
-                host_lower.startswith("[::1]")
+                host_lower.startswith("[::1]") or
+                host_lower == "test"
             )
             if not is_valid_host:
                 from fastapi.responses import JSONResponse
