@@ -80,6 +80,19 @@ OPENAI_API_KEY=sk-...
 
 ---
 
+## Adım 4.5 — Rust Performans Motoru Derleme (Opsiyonel)
+
+Kripto, sıkıştırma, dosya arama ve metin işlemlerini native (C/C++) hızında çalıştırmak için Rust core motorunu derleyin:
+
+```powershell
+# Proje kök dizinindeyken:
+powershell -ExecutionPolicy Bypass -File "backend\build_rust.ps1"
+```
+
+*Not: Eğer bilgisayarınızda Rust derleyicisi (`cargo`) yoksa, sistem otomatik olarak Python fallback (geriye uyumlu alternatif) kodunu çalıştıracaktır.*
+
+---
+
 ## Adım 5 — Başlatma
 
 ### Windows — Command Prompt veya Çift Tıklama (Önerilen)

@@ -215,25 +215,13 @@ MAX_HISTORY_MESSAGES=30       # Gönderilecek geçmiş mesaj sayısı
 
 ---
 
-## CORS Yapılandırması
+## Host ve Origin Koruması (CORS & DNS Rebinding)
 
-Argus, Electron (file://) dahil tüm kaynaklara CORS izni verir. Bu, yerel desktop uygulaması olduğu için güvenli kabul edilir:
+Argus, kötü niyetli web sitelerinin yerel ağdan (`127.0.0.1`) API'ye sızmasını engellemek için sıkı bir Host ve Origin doğrulama katmanına sahiptir:
 
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origin_regex=".*",  # Tüm kaynaklar
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["x-trace-id"],
-)
-```
+- **Host Kontrolü:** Yalnızca `localhost`, `127.0.0.1` ve `::1` adreslerinden gelen isteklere izin verilir (DNS Rebinding koruması).
+- **Origin & Referer Kontrolü:** İsteklerin referans noktası (Origin veya Referer) `http://localhost`, `127.0.0.1` veya yerel Electron istemcisi (`file://`) olmak zorundadır. Aksi takdirde istek `403 Forbidden` ile reddedilir.
 
-Üretim ortamına dağıtım için bunu kısıtlayın:
-```env
-CORS_ORIGINS=http://yourdomain.com,https://yourdomain.com
-```
 
 ---
 
