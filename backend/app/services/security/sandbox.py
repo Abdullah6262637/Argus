@@ -76,18 +76,24 @@ def check_sandbox(tool_name: str, args: Dict[str, Any]) -> Tuple[bool, str]:
             for stripped in (first, first_name, first.removesuffix(".exe"), first_name.removesuffix(".exe")):
                 if stripped in allowlist:
                     # Apply strict argument-level filtering on general-purpose runtime tools
-                    if stripped in ("python", "node", "npm", "pip"):
+                    if stripped in ("python", "node", "npm", "pip", "git"):
                         # Block dangerous execution flags or inline evaluations
-                        blocked_args = ("-c", "-e", "eval", "exec", "install", "uninstall", "run")
-                        # For python/node, permit only safe commands (e.g. version checks, or specific script files)
+                        blocked_args = (
+                            "-c", "-e", "eval", "exec", "install", "uninstall", "run",
+                            "i", "un", "r", "isntall", "-m", "-i"
+                        )
                         cmd_args = [t.lower() for t in tokens[1:]]
                         
-                        # Prevent inline executions (python -c, node -e)
+                        # Prevent inline executions (python -c, node -e, npm i)
                         for blocked in blocked_args:
                             if blocked in cmd_args:
                                 return False, f"Güvenlik nedeniyle '{first} {blocked}' parametresi run_command içinde engellenmiştir."
                                 
-                    break
+                        # Specific validation for git command subshells and pagers
+                        if stripped == "git":
+                            for arg in cmd_args:
+                                if arg.startswith("-c") or "pager" in arg or "alias" in arg or "!" in arg:
+                                    return False, f"Güvenlik nedeniyle '{first} {arg}' parametresi engellenmiştir (Git subshell koruması)."
             else:
                 return False, (
                     f"Komut allowlist'te degil: '{first}'. "
