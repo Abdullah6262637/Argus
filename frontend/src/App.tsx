@@ -410,7 +410,8 @@ export default function App() {
         closeConfirm();
         setShowReset(true); // Show animated reset screen
         try {
-          await api.resetSystem();
+          const res = await api.resetSystem();
+          setDeletedSize(res.deleted_size_mb);
           await reload();
           setSelectedId(null);
         } catch (err) {
@@ -460,13 +461,17 @@ export default function App() {
 
   const hasAgents = agents.length > 0;
 
+  const [deletedSize, setDeletedSize] = useState<number | null>(null);
+
   // --- Akıllı Kurulum Sihirbazı ---
   // Reset screen overlay
   if (showReset) {
     return (
       <ResetScreen
+        deletedSizeMb={deletedSize}
         onDone={() => {
           setShowReset(false);
+          setDeletedSize(null);
           setSetupRequired(true); // Show setup wizard after reset
         }}
       />

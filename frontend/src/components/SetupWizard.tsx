@@ -71,18 +71,26 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
 
   const runDoctorCheck = async () => {
     setDoctorStatus({ node: 'loading', python: 'loading', sqlite: 'loading' });
+    setDoctorDetails({ node: '', python: '', sqlite: '' });
+    
     try {
+      // Fetch data
       const res = await api.getDoctorCheck();
-      setDoctorStatus({
-        node: res.node.ok ? 'ok' : 'error',
-        python: res.python.ok ? 'ok' : 'error',
-        sqlite: res.sqlite.ok ? 'ok' : 'error'
-      });
-      setDoctorDetails({
-        node: res.node.details,
-        python: res.python.details,
-        sqlite: res.sqlite.details
-      });
+      
+      // Step 1: Node
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setDoctorStatus(prev => ({ ...prev, node: res.node.ok ? 'ok' : 'error' }));
+      setDoctorDetails(prev => ({ ...prev, node: res.node.details }));
+
+      // Step 2: Python
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setDoctorStatus(prev => ({ ...prev, python: res.python.ok ? 'ok' : 'error' }));
+      setDoctorDetails(prev => ({ ...prev, python: res.python.details }));
+
+      // Step 3: SQLite
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setDoctorStatus(prev => ({ ...prev, sqlite: res.sqlite.ok ? 'ok' : 'error' }));
+      setDoctorDetails(prev => ({ ...prev, sqlite: res.sqlite.details }));
     } catch (err) {
       setDoctorStatus({ node: 'error', python: 'error', sqlite: 'error' });
       setDoctorDetails({
@@ -163,7 +171,8 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-brand-accent/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
 
-      <div className="w-full max-w-3xl bg-brand-panel border border-brand-borderStrong rounded-2xl shadow-2xl p-8 relative overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="w-full max-w-3xl bg-brand-panel border border-brand-borderStrong rounded-2xl shadow-2xl p-8 relative overflow-hidden flex flex-col transition-all duration-500 ease-in-out max-h-[92vh]">
+
         {/* Header */}
         <div className="flex items-center gap-3 pb-6 border-b border-brand-border">
           <div className="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent border border-brand-accent/20">

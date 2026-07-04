@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 interface ResetScreenProps {
+  deletedSizeMb?: number | null;
   onDone: () => void;
 }
 
@@ -13,7 +14,8 @@ const RESET_STEPS = [
   { text: 'Sistem yeniden başlatılıyor...',        duration: 1400 },
 ];
 
-export function ResetScreen({ onDone }: ResetScreenProps) {
+export function ResetScreen({ deletedSizeMb, onDone }: ResetScreenProps) {
+
   const [stepIdx, setStepIdx]     = useState(0);   // currently active step
   const [completed, setCompleted] = useState<number[]>([]);
   const [exiting, setExiting]     = useState(false);
@@ -31,7 +33,7 @@ export function ResetScreen({ onDone }: ResetScreenProps) {
       // mark the current step as done
       const done = current;
       elapsed += RESET_STEPS[done].duration;
-      setCompleted(prev => [...prev, done]);
+      setCompleted((prev: number[]) => [...prev, done]);
       setProgress(Math.round((elapsed / total) * 100));
       current++;
 
@@ -133,11 +135,20 @@ export function ResetScreen({ onDone }: ResetScreenProps) {
           })}
         </div>
 
-        {/* Warning footer */}
-        <p className="text-[10px] text-brand-mutedSoft/40 text-center border-t border-brand-border/20 pt-4 w-full">
-          Bu işlem geri alınamaz. Lütfen uygulamayı kapatmayın.
-        </p>
+        {/* Warning & Delete Stats footer */}
+        <div className="w-full space-y-2 border-t border-brand-border/20 pt-4 text-center">
+          {deletedSizeMb !== null && deletedSizeMb !== undefined && (
+            <p className="text-[10.5px] text-brand-danger font-semibold flex items-center justify-center gap-1">
+              <span className="material-symbols-rounded text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>delete_sweep</span>
+              Temizlenen Veri Boyutu: {deletedSizeMb} MB
+            </p>
+          )}
+          <p className="text-[10px] text-brand-mutedSoft/40">
+            Bu işlem geri alınamaz. Lütfen uygulamayı kapatmayın.
+          </p>
+        </div>
       </div>
     </div>
   );
 }
+

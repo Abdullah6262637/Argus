@@ -155,6 +155,7 @@ async def update_env(payload: EnvUpdateRequest) -> EnvUpdateResponse:
 class ResetResponse(BaseModel):
     ok: bool
     removed_agents: int
+    deleted_size_mb: float
     message: str
 
 
@@ -162,6 +163,20 @@ class ResetResponse(BaseModel):
 async def reset_system() -> ResetResponse:
     """Sistemi tamamen sifirla: tum ajanlari, sohbetleri, gorevleri, loglari sil."""
     settings = get_settings()
+
+    # Calculate current DB and logs size before deleting
+    deleted_size = 0.0
+    db_path_str = settings.database_url.replace("sqlite+aiosqlite:///", "")
+    db_path = Path(db_path_str)
+    if db_path.exists():
+        deleted_size += db_path.stat().st_size / (1024 * 1024)
+
+    # Calculate Chroma DB size if exists
+    chroma_dir = Path(settings.chroma_path)
+    if chroma_dir.exists():
+        for root, _, files in os.walk(chroma_dir):
+            for f in files:
+                deleted_size += os.path.getsize(os.path.join(root, f)) / (1024 * 1024)
 
     # 1) Tum DB tablolarini temizle
     async with (engine if isinstance(engine, AsyncEngine) else engine).begin() as conn:
@@ -189,12 +204,14 @@ async def reset_system() -> ResetResponse:
     except Exception:
         pass
 
-    logger.info("Sistem sifirlandi (%d ajan silindi)", agents_count)
+    logger.info("Sistem sifirlandi (%d ajan silindi, %.2f MB silindi)", agents_count, deleted_size)
     return ResetResponse(
         ok=True,
         removed_agents=agents_count,
-        message=f"Sistem sifirlandi. {agents_count} ajan ve tum veriler silindi.",
+        deleted_size_mb=round(deleted_size, 2),
+        message=f"Sistem sifirlandi. {agents_count} ajan ve tum veriler ({deleted_size:.2f} MB) silindi.",
     )
+
 
 
 class DoctorCheckResult(BaseModel):
@@ -212,6 +229,7 @@ class DoctorResponse(BaseModel):
 async def system_doctor() -> DoctorResponse:
     """Sistem bilesenlerinin durumunu kontrol eder."""
     import sys
+    import os
     import subprocess
     
     # 1. Python Check
@@ -235,7 +253,16 @@ async def system_doctor() -> DoctorResponse:
         async with (engine if isinstance(engine, AsyncEngine) else engine).begin() as conn:
             await conn.execute(text("SELECT 1"))
         db_ok = True
-        db_details = "SQLite connection active"
+        
+        # Calculate database file size for reporting
+        settings = get_settings()
+        db_path_str = settings.database_url.replace("sqlite+aiosqlite:///", "")
+        db_path = Path(db_path_str)
+        if db_path.exists():
+            sz_mb = db_path.stat().st_size / (1024 * 1024)
+            db_details = f"SQLite Active ({sz_mb:.2f} MB)"
+        else:
+            db_details = "SQLite Active"
     except Exception as exc:
         db_details = f"SQLite connection failed: {exc}"
         
@@ -244,6 +271,7 @@ async def system_doctor() -> DoctorResponse:
         python=DoctorCheckResult(ok=py_ok, details=py_details),
         sqlite=DoctorCheckResult(ok=db_ok, details=db_details),
     )
+
 
 
 class PluginInfo(BaseModel):

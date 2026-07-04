@@ -186,7 +186,7 @@ export const api = {
     http('/health'),
 
   // Sistem
-  resetSystem: (): Promise<{ ok: boolean; removed_agents: number; message: string }> =>
+  resetSystem: (): Promise<{ ok: boolean; removed_agents: number; deleted_size_mb: number; message: string }> =>
     http('/system/reset', { method: 'POST' }),
 
   // Sistem - .env yonetimi (Sprint A.7 / A.8)
