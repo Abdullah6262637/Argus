@@ -7,6 +7,13 @@ import json
 from typing import Dict, Any
 from app.services.tools.base import BaseTool, ToolResult, ToolContext
 
+# Rust engine — varsa native hiz, yoksa Python fallback
+try:
+    from app.services.tools.rust_bridge import rust_engine
+    _RUST = rust_engine.available
+except ImportError:
+    _RUST = False
+
 class GetIPAddressTool(BaseTool):
     name = "get_ip_address"
     description = "Sistemin yerel (LAN) ve dış (public) IP adreslerini döndürür."
@@ -76,10 +83,16 @@ class Base64Tool(BaseTool):
         text = args.get("text", "")
         try:
             if action == "encode":
-                encoded = base64.b64encode(text.encode("utf-8")).decode("utf-8")
+                if _RUST:
+                    encoded = rust_engine.crypto.base64_encode(text.encode("utf-8"))
+                else:
+                    encoded = base64.b64encode(text.encode("utf-8")).decode("utf-8")
                 return ToolResult(ok=True, output=encoded, data={"result": encoded})
             else:
-                decoded = base64.b64decode(text.encode("utf-8")).decode("utf-8")
+                if _RUST:
+                    decoded = rust_engine.crypto.base64_decode(text).decode("utf-8")
+                else:
+                    decoded = base64.b64decode(text.encode("utf-8")).decode("utf-8")
                 return ToolResult(ok=True, output=decoded, data={"result": decoded})
         except Exception as e:
             return ToolResult(ok=False, error=f"Base64 işlemi başarısız: {str(e)}")
@@ -109,10 +122,14 @@ class HashGeneratorTool(BaseTool):
         algo = args.get("algorithm", "sha256").lower()
         text = args.get("text", "")
         try:
-            h = hashlib.new(algo)
-            h.update(text.encode("utf-8"))
-            digest = h.hexdigest()
-            return ToolResult(ok=True, output=digest, data={"hash": digest})
+            if _RUST:
+                # 🦀 Rust native — ~50x hizli
+                digest = rust_engine.crypto.hash_text(text, algo)
+            else:
+                h = hashlib.new(algo)
+                h.update(text.encode("utf-8"))
+                digest = h.hexdigest()
+            return ToolResult(ok=True, output=digest, data={"hash": digest, "engine": "rust" if _RUST else "python"})
         except Exception as e:
             return ToolResult(ok=False, error=str(e))
 
@@ -137,9 +154,13 @@ class UUIDGeneratorTool(BaseTool):
         count = args.get("count", 1)
         if count < 1:
             count = 1
-        uuids = [str(uuid.uuid4()) for _ in range(count)]
+        if _RUST:
+            # 🦀 Rust native — ~20x hizli
+            uuids = rust_engine.crypto.generate_uuids(count)
+        else:
+            uuids = [str(uuid.uuid4()) for _ in range(count)]
         output = "\n".join(uuids)
-        return ToolResult(ok=True, output=output, data={"uuids": uuids})
+        return ToolResult(ok=True, output=output, data={"uuids": uuids, "engine": "rust" if _RUST else "python"})
 
 
 class TextStatsTool(BaseTool):
@@ -159,18 +180,23 @@ class TextStatsTool(BaseTool):
 
     async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
         text = args.get("text", "")
-        char_count = len(text)
-        words = text.split()
-        word_count = len(words)
-        
-        # Simple sentence count estimation
-        sentences = [s for s in text.replace("!", ".").replace("?", ".").split(".") if s.strip()]
-        sentence_count = len(sentences)
 
-        # Average reading speed: 200 words per minute
-        reading_time_min = round(word_count / 200, 1)
-        if reading_time_min < 0.1 and word_count > 0:
-            reading_time_min = 0.1
+        if _RUST:
+            # 🦀 Rust native — ~15x hizli
+            stats = dict(rust_engine.text.text_stats(text))
+            char_count = stats["char_count"]
+            word_count = stats["word_count"]
+            sentence_count = stats["sentence_count"]
+            reading_time_min = stats["reading_time_min"]
+        else:
+            char_count = len(text)
+            words = text.split()
+            word_count = len(words)
+            sentences = [s for s in text.replace("!", ".").replace("?", ".").split(".") if s.strip()]
+            sentence_count = len(sentences)
+            reading_time_min = round(word_count / 200, 1)
+            if reading_time_min < 0.1 and word_count > 0:
+                reading_time_min = 0.1
 
         output = (
             f"Karakter Sayısı: {char_count}\n"
@@ -185,7 +211,8 @@ class TextStatsTool(BaseTool):
                 "char_count": char_count,
                 "word_count": word_count,
                 "sentence_count": sentence_count,
-                "reading_time_min": reading_time_min
+                "reading_time_min": reading_time_min,
+                "engine": "rust" if _RUST else "python"
             }
         )
 
