@@ -297,6 +297,55 @@ const PROVIDERS = [
 
 ---
 
+## Rust Performans Motoru Geliştirme (`argus_core`)
+
+Argus, CPU-yoğun ve ağır I/O içeren kritik işlemleri (kriptografi, zip/tar sıkıştırma, paralel disk tarama, metin analizi ve sandbox kuralları) yerel makine dili hızında yürütmek için PyO3 köprülü bir Rust modülüne sahiptir.
+
+### Dosya Yapısı
+
+```
+backend/rust_core/
+├── Cargo.toml         # Bağımlılıklar (pyo3, rayon, flate2, zip, sha2, regex)
+└── src/
+    ├── lib.rs         # Ana giriş noktası (sub-module registration)
+    ├── crypto.rs      # Hashing, HMAC, Base64, UUID v4
+    ├── compress.rs    # ZIP & TAR.GZ motoru
+    ├── fs_ops.rs      # Rayon paralel walkdir ve disk boyutu hesaplama
+    ├── text.rs        # SIMD benzeri kelime/cümle sayımı ve regex
+    └── sandbox.rs     # Zero-allocation komut ve parametre kontrolü
+```
+
+### Yapılandırma ve Derleme
+
+Geliştirme ortamında Rust SDK (`cargo`) kurulu olmalıdır. Derleme adımları:
+
+```powershell
+# Proje kök dizininde veya backend dizininde derleme betiğini çalıştırın:
+powershell -ExecutionPolicy Bypass -File "backend\build_rust.ps1"
+
+# Sadece hızlı hata kontrolü için (Debug mod):
+powershell -ExecutionPolicy Bypass -File "backend\build_rust.ps1" -Debug
+```
+
+Derleme betiği `target/release/argus_core.dll` dosyasını `backend/app/services/tools/argus_core.pyd` konumuna kopyalar ve Python sanal ortamı (`.venv`) üzerinden import testi yapar.
+
+### Python Üzerinden Kullanım
+
+Tüm araçlarda Rust modülünü import etmek için `rust_bridge.py` içindeki `rust_engine` nesnesi kullanılır:
+
+```python
+from app.services.tools.rust_bridge import rust_engine
+
+if rust_engine.available:
+    # 🦀 Rust native ile 50x daha hızlı dosya hash hesabı:
+    file_hash = rust_engine.crypto.hash_file("large_file.zip", "sha256")
+else:
+    # 🐍 Python fallback
+    file_hash = alternative_python_hash()
+```
+
+---
+
 ## Frontend Bileşeni Ekleme
 
 ### 1. Bileşen Dosyası

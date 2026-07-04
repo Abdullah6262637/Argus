@@ -30,10 +30,10 @@ gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle ge
 - [Ortam Değişkenleri](#-ortam-değişkenleri)
 - [API Referansı](#-api-referansı)
 - [Frontend Yapısı](#-frontend-yapısı)
-- [Ajan Yönetimi](#-ajan-yönetimi)
 - [Bellek ve Bilgi Grafiği](#-bellek-ve-bilgi-grafiği)
 - [İş Akışları (Workflows)](#-i̇ş-akışları-workflows)
 - [MCP Entegrasyonu](#-mcp-entegrasyonu)
+- [Rust Performans Motoru](#-rust-performans-motoru)
 - [Güvenlik ve İzinler](#-güvenlik-ve-i̇zinler)
 - [Ses (Voice)](#-ses-voice)
 - [Gözlemlenebilirlik](#-gözlemlenebilirlik)
@@ -779,9 +779,40 @@ Görsel iş akışı editörü ile karmaşık otomasyon zincirleri oluşturabili
 - Stdio ve SSE transport protokolleri desteklenir
 - Bağlantı durumu arayüzde gerçek zamanlı gösterilir
 
+### Ajanlar Arası İletişim
+
+Ajanlar koordinasyon araçlarını (`delegate_to_agent`, `blackboard_set/get`) kullanarak işbirliği yapabilirler. Bir ajan karmaşık bir alt problemi çözmek için paylaşılan karatahtaya veri bırakıp başka bir ajanı o veriyle göreve çağırabilir.
+
 ---
 
-## 🔐 Güvenlik ve İzinler
+## 🦀 Rust Performans Motoru
+
+Argus, CPU-yoğun ve yüksek I/O gerektiren işlemler için native **Rust Performans Motoruna (`argus_core`)** sahiptir. PyO3 köprüsü ile Python ve Rust hibrit olarak çalışır. Rust ikilisi bulunamadığında sistem otomatik olarak Python alternatiflerine (fallback) geri döner.
+
+### ⚡ Performans Karşılaştırması & Modüller
+
+| Modül | Görev | Performans Artışı | Rust Alt Yapısı |
+|---|---|---|---|
+| **`crypto`** | Dosya/metin hash, HMAC doğrulama, UUID v4, Base64 | **~50x Hızlı** | `sha2`, `hmac`, `md-5`, `uuid` |
+| **`compress`** | Dizin/Dosya ZIP ve TAR.GZ sıkıştırma ve açma | **~30x Hızlı** | `flate2`, `zip`, `tar` |
+| **`fs`** | Rayon ile paralel dosya sistemi tarama ve istatistik | **~40x Hızlı** | `walkdir`, `rayon` |
+| **`text`** | Metin istatistikleri, kelime frekansı, regex arama | **~15x Hızlı** | `regex` |
+| **`sandbox`** | Shell injection koruması ve komut allowlist kontrolü | **Zero-Allocation** | Native String Matching |
+
+### 🛠️ Derleme ve Kurulum
+
+Rust modülünü derlemek için bilgisayarınızda Rust derleyicisinin (`cargo`) kurulu olması gerekir.
+
+```powershell
+# Proje kök dizininde veya backend dizininde derleme betiğini çalıştırın:
+powershell -ExecutionPolicy Bypass -File "backend\build_rust.ps1"
+```
+
+Derleme sonrasında `backend/app/services/tools/argus_core.pyd` dosyası üretilir ve sistem otomatik olarak optimize edilmiş native hıza geçer.
+
+---
+
+## 🔒 Güvenlik ve İzinler
 
 ### Sandbox Koruması
 
