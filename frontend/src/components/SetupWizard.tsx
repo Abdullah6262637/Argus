@@ -166,15 +166,27 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
 
   const isDoctorReady = Object.values(doctorStatus).every(status => status === 'ok');
 
+  const STEP_GLOWS = [
+    'from-brand-accent/15 via-purple-500/5 to-transparent',
+    'from-blue-500/10 via-brand-accent/5 to-transparent',
+    'from-emerald-500/10 via-teal-500/5 to-transparent',
+    'from-rose-500/10 via-pink-500/5 to-transparent',
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-bg bg-opacity-95 p-4 animate-backdrop-in text-brand-text">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-brand-accent/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-backdrop-in text-brand-text">
       <div className="w-full max-w-3xl bg-brand-panel border border-brand-borderStrong rounded-2xl shadow-2xl p-8 relative overflow-hidden flex flex-col transition-all duration-500 ease-in-out max-h-[92vh]">
-
+        {/* Ambient Glow Background Effect */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div 
+            className={`absolute -top-40 -left-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
+          />
+          <div 
+            className={`absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
+          />
+        </div>
         {/* Header */}
-        <div className="flex items-center gap-3 pb-6 border-b border-brand-border">
+        <div className="relative z-10 flex items-center gap-3 pb-6 border-b border-brand-border">
           <div className="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent border border-brand-accent/20">
             <Icon name="visibility" size={24} weight={600} />
           </div>
@@ -211,7 +223,8 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto py-6">
+        <div className="relative z-10 flex-1 overflow-y-auto py-6">
+
           {step === 0 && (
             <div className="space-y-6 animate-step-in">
               <div className="flex items-center justify-between">
