@@ -19,7 +19,7 @@ from typing import Optional
 logger = logging.getLogger(__name__)
 
 
-_KEYRING_SERVICE = "umtalagent"
+_KEYRING_SERVICE = "argus"
 _KEYRING_USER = "master_key"
 _FALLBACK_FILENAME = ".master_key"
 _CIPHER_PREFIX = "enc::"  # ciphertext'i isaretlemek icin

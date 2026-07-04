@@ -11,7 +11,7 @@ gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle ge
 
 ![Version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)
 ![Backend](https://img.shields.io/badge/backend-FastAPI%20%2B%20Python%203.12-009688?style=flat-square)
-![Frontend](https://img.shields.io/badge/frontend-React%2019%20%2B%20TypeScript-61DAFB?style=flat-square)
+![Frontend](https://img.shields.io/badge/frontend-React%2018%20%2B%20TypeScript-61DAFB?style=flat-square)
 ![Database](https://img.shields.io/badge/database-SQLite%20(aiosqlite)-lightgrey?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
@@ -97,7 +97,7 @@ argus/
 │   │       ├── observability/      # Yapısal loglama + trace ID
 │   │       └── plugins/            # Plugin yükleyici
 │   └── agents/                     # Ajan YAML konfigürasyonları
-├── frontend/                       # React 19 + TypeScript + Vite
+├── frontend/                       # React 18 + TypeScript + Vite
 │   └── src/
 │       ├── App.tsx                 # Ana uygulama koordinatörü
 │       ├── components/             # 28 UI bileşeni

@@ -137,8 +137,15 @@ backend/data/*.db-wal
 backend/data/*.db-shm
 backend/data/chroma/
 backend/data/knowledge_graph.json
+backend/data/logs/
+backend/data/.master_key
+backend/data/.secret
 data/*.db
 data/chroma/
+data/logs/
+.master_key
+.secret
+*.spec
 
 # Operating System Files
 .DS_Store

@@ -109,7 +109,7 @@ class DeleteFileTool(BaseTool):
     name = "delete_file"
     description = "Bir dosyayi veya dizini siler. Dikkatli kullan, geri alinamaz."
     permission = "file_system"
-    requires_confirmation = False
+    requires_confirmation = True
     parameters = {
         "type": "object",
         "properties": {

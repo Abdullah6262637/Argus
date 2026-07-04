@@ -173,7 +173,7 @@ class RunCommandTool(BaseTool):
         "operasyonlar icin kullan. Cok uzun veya tehlikeli komutlardan kacin."
     )
     permission = "terminal_cmd"
-    requires_confirmation = False  # Istenirse True yapilabilir
+    requires_confirmation = True
     parameters = {
         "type": "object",
         "properties": {

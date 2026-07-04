@@ -38,8 +38,8 @@ python-docx>=1.1.2
 openpyxl>=3.1.5
 
 # v2: Memory & embedding (FAZ 3)
-# chromadb>=0.5.20,<0.6
-# sentence-transformers>=3.3.0
+chromadb>=0.5.20,<0.6
+sentence-transformers>=3.3.0
 networkx>=3.4.2
 tiktoken>=0.8.0
 

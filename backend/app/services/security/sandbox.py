@@ -53,6 +53,14 @@ def check_sandbox(tool_name: str, args: Dict[str, Any]) -> Tuple[bool, str]:
         # Allowlist
         allowlist = _parse_allowlist()
         if allowlist:
+            # Prevent command chaining/injection operators in command string
+            injection_chars = [";", "&&", "||", "|", "\n", "\r"]
+            # Look for these characters outside of quotes, but to be extremely safe, check entire string for raw chaining
+            # We want to allow commands like git log -n 1, but reject git status && rm -rf /
+            for char in injection_chars:
+                if char in cmd:
+                    return False, f"Komut zincirleme veya yönlendirme karakterleri içeremez: '{char}' (Shell injection koruması)."
+
             try:
                 tokens = shlex.split(cmd, posix=False)
             except ValueError:

@@ -131,6 +131,17 @@ def create_app() -> FastAPI:
     # Trace-id middleware (FAZ 8.1)
     @app.middleware("http")
     async def trace_id_middleware(request: Request, call_next):
+        # Localhost-only restriction for desktop security
+        client_host = request.client.host if request.client else None
+        if client_host not in ("127.0.0.1", "localhost", "::1"):
+            # Allow health checks from any local network IP if needed, but restrict everything else
+            if not request.url.path.startswith("/api/health") and request.url.path != "/":
+                from fastapi.responses import JSONResponse
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "Access forbidden: Localhost connection only."}
+                )
+
         existing = request.headers.get("x-trace-id")
         tid = existing or uuid.uuid4().hex[:16]
         token = TRACE_ID_VAR.set(tid)
@@ -165,7 +176,7 @@ def create_app() -> FastAPI:
     @app.get("/", tags=["health"])
     async def root() -> dict:
         return {
-            "name": "UmtalAgent - AI Ajan Sistemi",
+            "name": "Argus - Çoklu Ajan Sistemi",
             "docs": "/docs",
             "health": "/api/health"}
 
