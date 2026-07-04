@@ -197,6 +197,55 @@ async def reset_system() -> ResetResponse:
     )
 
 
+class DoctorCheckResult(BaseModel):
+    ok: bool
+    details: str
+
+
+class DoctorResponse(BaseModel):
+    node: DoctorCheckResult
+    python: DoctorCheckResult
+    sqlite: DoctorCheckResult
+
+
+@router.get("/doctor", response_model=DoctorResponse)
+async def system_doctor() -> DoctorResponse:
+    """Sistem bilesenlerinin durumunu kontrol eder."""
+    import sys
+    import subprocess
+    
+    # 1. Python Check
+    py_ok = True
+    py_details = f"Python {sys.version.split()[0]} ({sys.executable})"
+    
+    # 2. Node Check
+    node_ok = False
+    node_details = "Node.js executable not found"
+    try:
+        res = subprocess.run(["node", "-v"], capture_output=True, text=True, check=True)
+        node_ok = True
+        node_details = f"Node.js {res.stdout.strip()}"
+    except Exception as exc:
+        node_details = f"Node check failed: {exc}"
+        
+    # 3. Database Check
+    db_ok = False
+    db_details = "Not connected"
+    try:
+        async with (engine if isinstance(engine, AsyncEngine) else engine).begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        db_ok = True
+        db_details = "SQLite connection active"
+    except Exception as exc:
+        db_details = f"SQLite connection failed: {exc}"
+        
+    return DoctorResponse(
+        node=DoctorCheckResult(ok=node_ok, details=node_details),
+        python=DoctorCheckResult(ok=py_ok, details=py_details),
+        sqlite=DoctorCheckResult(ok=db_ok, details=db_details),
+    )
+
+
 class PluginInfo(BaseModel):
     """Eklenti bilgisi."""
     name: str
@@ -228,6 +277,7 @@ async def list_plugins() -> list[PluginInfo]:
     except Exception as exc:
         logger.exception("Plugin listesi okuma hatasi")
         raise HTTPException(500, f"Plugin listesi okuma hatasi: {exc}")
+
 
 
 # ---- setup wizard --------------------------------------------------

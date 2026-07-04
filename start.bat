@@ -1,20 +1,22 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
 REM ============================================================
-REM Argus — Akıllı Kurulum ve Başlatma Betiği (Windows)
+REM Argus — Smart Setup & Launch Script / Akıllı Kurulum Betiği
 REM ============================================================
 
 echo.
 echo ============================================================
-echo   👁️ Argus Kurulum ve Sistem Kontrol Aşaması (Doctor Mode)
+echo   👁️ Argus Diagnostics & Setup / Sistem Kontrol Aşaması
 echo ============================================================
 echo.
 
-REM 1. Gereksinim Kontrolleri
+REM 1. Requirement Checks / Gereksinim Kontrolleri
 where python >nul 2>nul
 if %ERRORLEVEL% neq 0 (
     if not exist ".venv\Scripts\python.exe" (
-        echo [!] HATA: Sisteminizde Python bulunamadı. Lütfen Python 3.12+ kurup PATH'e ekleyin.
+        echo [!] ERROR: Python was not found in your system PATH.
+        echo [!] HATA: Sisteminizde Python bulunamadı.
+        echo Please install Python 3.12+ and add it to PATH / Lütfen Python 3.12+ kurup PATH'e ekleyin.
         pause
         exit /b 1
     )
@@ -22,43 +24,48 @@ if %ERRORLEVEL% neq 0 (
 
 where node >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [!] HATA: Sisteminizde Node.js bulunamadı. Lütfen Node.js 20+ kurup PATH'e ekleyin.
+    echo [!] ERROR: Node.js was not found in your system PATH.
+    echo [!] HATA: Sisteminizde Node.js bulunamadı.
+    echo Please install Node.js 20+ and add it to PATH / Lütfen Node.js 20+ kurup PATH'e ekleyin.
     pause
     exit /b 1
 )
 
-REM 2. Backend .venv ve requirements Kontrolü
+REM 2. Backend .venv and requirements check / Sanal Ortam ve Bağımlılık Kontrolü
 cd /d "%~dp0"
 if not exist ".venv" (
-    echo [+] Python sanal ortam (.venv) bulunamadı. Oluşturuluyor...
+    echo [+] Python virtual environment (.venv) not found. Creating...
+    echo [+] Python sanal ortamı (.venv) bulunamadı. Oluşturuluyor...
     python -m venv .venv
     if !ERRORLEVEL! neq 0 (
-        echo [!] HATA: Sanal ortam oluşturulurken bir hata oluştu.
+        echo [!] ERROR: Failed to create virtual environment / Sanal ortam oluşturulamadı.
         pause
         exit /b 1
     )
-    echo [+] Sanal ortam oluşturuldu. Bağımlılıklar yükleniyor...
+    echo [+] Sanal ortam oluşturuldu. Installing backend requirements / Bağımlılıklar yükleniyor...
     call .venv\Scripts\pip install -r backend\requirements.txt
 ) else (
-    echo [+] Python sanal ortamı (.venv) hazır.
+    echo [+] Python virtual environment (.venv) is ready / Python sanal ortamı hazır.
 )
 
-REM 3. Frontend node_modules Kontrolü
+REM 3. Frontend node_modules check / Frontend Bağımlılık Kontrolü
 cd /d "%~dp0frontend"
 if not exist "node_modules" (
+    echo [+] Frontend dependencies (node_modules) not found. Installing...
     echo [+] Frontend bağımlılıkları (node_modules) bulunamadı. Yükleniyor...
     call npm install
     if !ERRORLEVEL! neq 0 (
-        echo [!] HATA: npm install çalıştırılırken bir hata oluştu.
+        echo [!] ERROR: Failed to install npm dependencies / npm install başarısız oldu.
         pause
         exit /b 1
     )
 ) else (
-    echo [+] Frontend bağımlılıkları hazır.
+    echo [+] Frontend dependencies are ready / Frontend bağımlılıkları hazır.
 )
 
 echo.
 echo ============================================================
+echo   [+] Setup check complete! Launching Argus...
 echo   [+] Tüm kontroller başarılı! Argus başlatılıyor...
 echo ============================================================
 echo.

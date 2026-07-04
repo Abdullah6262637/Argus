@@ -212,6 +212,12 @@ export const api = {
     openrouter_key?: string;
   }): Promise<{ ok: boolean }> =>
     http('/system/setup-save', { method: 'POST', body: JSON.stringify(payload) }),
+  getDoctorCheck: (): Promise<{
+    node: { ok: boolean; details: string };
+    python: { ok: boolean; details: string };
+    sqlite: { ok: boolean; details: string };
+  }> => http('/system/doctor'),
+
 
   // ============================================================
   // v2: Approvals (FAZ 1.5)
