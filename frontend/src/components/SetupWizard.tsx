@@ -224,9 +224,9 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
 
         {/* Content */}
         <div className="relative z-10 flex-1 overflow-y-auto py-6">
-
-          {step === 0 && (
-            <div className="space-y-6 animate-step-in">
+          <div key={step} className="animate-step-in">
+            {step === 0 && (
+            <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold">
@@ -332,7 +332,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
           )}
 
           {step === 1 && (
-            <div className="space-y-5 animate-step-in">
+            <div className="space-y-5">
               <div>
                 <h3 className="text-sm font-semibold">
                   {lang === 'tr' ? '2. API Anahtarlarını Yapılandırın' : '2. Configure API Keys'}
@@ -443,7 +443,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
           )}
 
           {step === 2 && (
-            <div className="space-y-4 animate-step-in">
+            <div className="space-y-4">
               <div>
                 <h3 className="text-sm font-semibold">
                   {lang === 'tr' ? '3. Hazır Ajan Şablonları' : '3. Template Agent Templates'}
@@ -534,7 +534,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
           )}
 
           {step === 3 && (
-            <div className="space-y-5 animate-step-in">
+            <div className="space-y-5">
               <div>
                 <h3 className="text-sm font-semibold">
                   {lang === 'tr' ? '4. Görsel Tema Tercihi' : '4. Visual Interface Theme'}
@@ -574,6 +574,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Footer */}

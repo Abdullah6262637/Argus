@@ -168,6 +168,11 @@ async def reset_system() -> ResetResponse:
     deleted_size = 0.0
     db_path_str = settings.database_url.replace("sqlite+aiosqlite:///", "")
     db_path = Path(db_path_str)
+    
+    # Handle relative paths resolved from backend directory
+    if not db_path.is_absolute():
+        db_path = Path(settings.backend_dir) / db_path
+        
     if db_path.exists():
         deleted_size += db_path.stat().st_size / (1024 * 1024)
 
@@ -258,11 +263,14 @@ async def system_doctor() -> DoctorResponse:
         settings = get_settings()
         db_path_str = settings.database_url.replace("sqlite+aiosqlite:///", "")
         db_path = Path(db_path_str)
+        if not db_path.is_absolute():
+            db_path = Path(settings.backend_dir) / db_path
+            
         if db_path.exists():
             sz_mb = db_path.stat().st_size / (1024 * 1024)
             db_details = f"SQLite Active ({sz_mb:.2f} MB)"
         else:
-            db_details = "SQLite Active"
+            db_details = f"SQLite Active"
     except Exception as exc:
         db_details = f"SQLite connection failed: {exc}"
         
