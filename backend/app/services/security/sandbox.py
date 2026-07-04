@@ -54,12 +54,14 @@ def check_sandbox(tool_name: str, args: Dict[str, Any]) -> Tuple[bool, str]:
         allowlist = _parse_allowlist()
         if allowlist:
             # Prevent command chaining/injection operators in command string
-            injection_chars = [";", "&&", "||", "|", "\n", "\r"]
-            # Look for these characters outside of quotes, but to be extremely safe, check entire string for raw chaining
-            # We want to allow commands like git log -n 1, but reject git status && rm -rf /
+            injection_chars = [";", "&&", "||", "|", "\n", "\r", "`", ">", "<"]
             for char in injection_chars:
                 if char in cmd:
-                    return False, f"Komut zincirleme veya yönlendirme karakterleri içeremez: '{char}' (Shell injection koruması)."
+                    return False, f"Komut zincirleme, yönlendirme veya ikame karakterleri içeremez: '{char}' (Shell injection koruması)."
+            
+            # Check for $(...) command substitution format
+            if "$(" in cmd:
+                return False, "Komut $(...) şeklinde komut ikamesi içeremez (Shell injection koruması)."
 
             try:
                 tokens = shlex.split(cmd, posix=False)
@@ -73,6 +75,18 @@ def check_sandbox(tool_name: str, args: Dict[str, Any]) -> Tuple[bool, str]:
             # .exe ekini at
             for stripped in (first, first_name, first.removesuffix(".exe"), first_name.removesuffix(".exe")):
                 if stripped in allowlist:
+                    # Apply strict argument-level filtering on general-purpose runtime tools
+                    if stripped in ("python", "node", "npm", "pip"):
+                        # Block dangerous execution flags or inline evaluations
+                        blocked_args = ("-c", "-e", "eval", "exec", "install", "uninstall", "run")
+                        # For python/node, permit only safe commands (e.g. version checks, or specific script files)
+                        cmd_args = [t.lower() for t in tokens[1:]]
+                        
+                        # Prevent inline executions (python -c, node -e)
+                        for blocked in blocked_args:
+                            if blocked in cmd_args:
+                                return False, f"Güvenlik nedeniyle '{first} {blocked}' parametresi run_command içinde engellenmiştir."
+                                
                     break
             else:
                 return False, (

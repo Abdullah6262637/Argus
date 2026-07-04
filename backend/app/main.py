@@ -131,15 +131,49 @@ def create_app() -> FastAPI:
     # Trace-id middleware (FAZ 8.1)
     @app.middleware("http")
     async def trace_id_middleware(request: Request, call_next):
-        # Localhost-only restriction for desktop security
+        # 1) Localhost IP check (prevents remote network access)
         client_host = request.client.host if request.client else None
         if client_host not in ("127.0.0.1", "localhost", "::1"):
-            # Allow health checks from any local network IP if needed, but restrict everything else
             if not request.url.path.startswith("/api/health") and request.url.path != "/":
                 from fastapi.responses import JSONResponse
                 return JSONResponse(
                     status_code=403,
                     content={"detail": "Access forbidden: Localhost connection only."}
+                )
+
+        # 2) CSRF / Host / Origin verification (prevents malicious websites executing local fetches)
+        # Verify Origin header
+        origin = request.headers.get("origin")
+        if origin:
+            # Electron requests file:// protocol which reports Origin as "null" or starts with "file://" or local dev server
+            origin_lower = origin.lower()
+            is_valid_origin = (
+                origin_lower == "null" or
+                origin_lower.startswith("file://") or
+                "localhost:" in origin_lower or
+                "127.0.0.1:" in origin_lower
+            )
+            if not is_valid_origin:
+                from fastapi.responses import JSONResponse
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": f"Access forbidden: Untrusted request origin '{origin}'."}
+                )
+
+        # Verify Host header to defend against DNS rebinding
+        host = request.headers.get("host")
+        if host:
+            host_lower = host.lower()
+            is_valid_host = (
+                host_lower.startswith("127.0.0.1") or
+                host_lower.startswith("localhost") or
+                host_lower.startswith("[::1]")
+            )
+            if not is_valid_host:
+                from fastapi.responses import JSONResponse
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": f"Access forbidden: Untrusted request host '{host}' (DNS Rebinding protection)."}
                 )
 
         existing = request.headers.get("x-trace-id")

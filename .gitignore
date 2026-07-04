@@ -138,6 +138,7 @@ backend/data/*.db-shm
 backend/data/chroma/
 backend/data/knowledge_graph.json
 backend/data/logs/
+backend/data/audit/
 backend/data/.master_key
 backend/data/.secret
 data/*.db
