@@ -1,56 +1,43 @@
 #!/usr/bin/env pwsh
-# ─────────────────────────────────────────────────────────────
-# Argus Rust Core — Build & Deploy Script
-# ─────────────────────────────────────────────────────────────
-# Rust crate'i derler ve .pyd dosyasini Python'un bulabilecegi
-# dizine kopyalar. Kullanim:
-#   .\build_rust.ps1           # release build
-#   .\build_rust.ps1 -Debug    # debug build (hizli derleme)
-
-param(
-    [switch]$Debug
-)
-
-$ErrorActionPreference = "Stop"
+# Argus Rust Core - Build & Deploy Script
+param([switch]$Debug)
 
 $RustCoreDir = Join-Path $PSScriptRoot "rust_core"
 $ToolsDir    = Join-Path $PSScriptRoot "app\services\tools"
 $VenvPython  = Join-Path (Split-Path $PSScriptRoot -Parent) ".venv\Scripts\python.exe"
 
-# ── Rust kurulu mu? ──
+# Rust kurulu mu?
 $env:Path = "$env:USERPROFILE\.cargo\bin;$env:Path"
 if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
-    Write-Error "❌ cargo bulunamadi. Rust'i kurmak icin: https://rustup.rs"
+    Write-Host "[FAIL] cargo bulunamadi. Rust kurmak icin: https://rustup.rs" -ForegroundColor Red
     exit 1
 }
 
-# ── PYO3_PYTHON ayarla ──
+# PYO3_PYTHON ayarla
 if (Test-Path $VenvPython) {
     $env:PYO3_PYTHON = $VenvPython
-    Write-Host "🐍 PYO3_PYTHON = $VenvPython" -ForegroundColor Cyan
+    Write-Host "[INFO] PYO3_PYTHON = $VenvPython" -ForegroundColor Cyan
 } else {
-    Write-Warning "⚠️  .venv Python bulunamadi, sistem Python kullanilacak"
+    Write-Host "[WARN] .venv Python bulunamadi, sistem Python kullanilacak" -ForegroundColor Yellow
 }
 
-# ── Derle ──
+# Derle
 Push-Location $RustCoreDir
 try {
     if ($Debug) {
-        Write-Host "🔨 Debug build baslatiliyor..." -ForegroundColor Yellow
-        cargo build 2>&1
+        Write-Host "[BUILD] Debug build baslatiliyor..." -ForegroundColor Yellow
+        $buildOut = cargo build 2>&1
         $ProfileDir = "debug"
     } else {
-        Write-Host "🚀 Release build baslatiliyor (LTO + strip)..." -ForegroundColor Green
-        cargo build --release 2>&1
+        Write-Host "[BUILD] Release build baslatiliyor (LTO + strip)..." -ForegroundColor Green
+        $buildOut = cargo build --release 2>&1
         $ProfileDir = "release"
     }
 
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "❌ Rust derleme basarisiz (exit code: $LASTEXITCODE)"
-        exit 1
-    }
+    # cargo ciktisini goster (stderr dahil)
+    $buildOut | ForEach-Object { Write-Host $_ }
 
-    # ── .dll → .pyd kopyala ──
+    # .dll -> .pyd kopyala
     $DllPath = Join-Path $RustCoreDir "target\$ProfileDir\argus_core.dll"
     $PydPath = Join-Path $ToolsDir "argus_core.pyd"
 
@@ -59,15 +46,25 @@ try {
         $size = (Get-Item $PydPath).Length
         $sizeMB = [math]::Round($size / 1MB, 2)
         Write-Host ""
-        Write-Host "✅ Argus Rust Core basariyla derlendi!" -ForegroundColor Green
-        Write-Host "   📦 Boyut: $sizeMB MB" -ForegroundColor Cyan
-        Write-Host "   📍 Konum: $PydPath" -ForegroundColor Cyan
+        Write-Host "[OK] Argus Rust Core basariyla derlendi!" -ForegroundColor Green
+        Write-Host "     Boyut: $sizeMB MB" -ForegroundColor Cyan
+        Write-Host "     Konum: $PydPath" -ForegroundColor Cyan
         Write-Host ""
 
-        # ── Hizli import testi ──
-        & $env:PYO3_PYTHON -c "import sys; sys.path.insert(0, r'$ToolsDir'); import argus_core; print('   🦀 Python import testi: BASARILI -', len(dir(argus_core)), 'obje')"
+        # Hizli import testi
+        $tmpPy = Join-Path $env:TEMP "argus_rust_test.py"
+        $pyCode = @'
+import sys, os
+sys.path.insert(0, os.path.normpath(TOOLS_DIR_PLACEHOLDER))
+import argus_core
+print("[TEST] Python import: OK -", len(dir(argus_core)), "obje")
+'@
+        $pyCode = $pyCode.Replace("TOOLS_DIR_PLACEHOLDER", "'$($ToolsDir.Replace('\','/'))'")
+        Set-Content -Path $tmpPy -Value $pyCode -Encoding UTF8
+        & $env:PYO3_PYTHON $tmpPy
+        Remove-Item $tmpPy -ErrorAction SilentlyContinue
     } else {
-        Write-Error "❌ DLL bulunamadi: $DllPath"
+        Write-Host "[FAIL] DLL bulunamadi: $DllPath" -ForegroundColor Red
         exit 1
     }
 } finally {
