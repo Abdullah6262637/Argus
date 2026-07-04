@@ -82,17 +82,21 @@ OPENAI_API_KEY=sk-...
 
 ## Adım 5 — Başlatma
 
-### Windows — Tek Tıkla (Önerilen)
+### Windows — Command Prompt veya Çift Tıklama (Önerilen)
 
-```
+```cmd
 start.bat
 ```
 
-`start.bat` dosyasına çift tıklayın. Backend ve frontend aynı anda başlar.
+`start.bat` dosyasına çift tıklayabilir veya klasik CMD terminalinden çalıştırabilirsiniz.
 
 ### Windows — PowerShell
 
+PowerShell, güvenlik önlemleri nedeniyle geçerli dizindeki betikleri doğrudan çalıştırmaz. Bu yüzden başına `.\` eklemelisiniz:
+
 ```powershell
+.\start.bat
+# veya
 .\start.ps1
 ```
 

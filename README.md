@@ -486,13 +486,15 @@ cp backend/.env.example backend/.env
 
 ### 5. Başlatma
 
-**Windows (tek tıkla):**
-```
+**Windows Command Prompt (Double-click or CMD):**
+```cmd
 start.bat
 ```
 
-**PowerShell:**
+**PowerShell / Terminal:**
 ```powershell
+.\start.bat
+# or
 .\start.ps1
 ```
 
