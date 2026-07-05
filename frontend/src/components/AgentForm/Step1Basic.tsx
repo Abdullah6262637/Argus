@@ -85,6 +85,7 @@ export function Step1Basic({
   onApplyTemplate: (tpl: AgentTemplate) => void;
   selectedTemplateId: string | null;
   onClearTemplate: () => void;
+  isEditing?: boolean;
 }) {
   return (
     <div className="space-y-4 max-w-xl mx-auto animate-step-in">
@@ -124,11 +125,14 @@ export function Step1Basic({
               <button
                 key={tpl.id}
                 type="button"
+                disabled={isEditing}
                 onClick={() => onApplyTemplate(tpl)}
                 className={`p-3.5 text-left text-xs rounded-xl border flex items-start gap-3 transition-all duration-300 active:scale-[0.97] shadow-sm ${
-                  isSelected
-                    ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
-                    : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
+                  isEditing 
+                    ? 'opacity-50 cursor-not-allowed border-brand-border bg-brand-panelAlt/10'
+                    : isSelected
+                      ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
+                      : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
                 }`}
               >
                 <Icon
@@ -163,11 +167,17 @@ export function Step1Basic({
           <input
             type="text"
             required
+            disabled={isEditing}
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="orn. Kodcu Asistan"
-            className={inputCls}
+            className={`${inputCls} ${isEditing ? 'opacity-65 cursor-not-allowed bg-brand-panelAlt/35 border-brand-border' : ''}`}
           />
+          {isEditing && (
+            <span className="text-[10px] text-brand-mutedSoft block mt-1">
+              * Ajan ismi kalıcı bir kimliktir, sonradan değiştirilemez.
+            </span>
+          )}
         </Field>
 
         <Field label="Rol / Unvan" icon="badge">

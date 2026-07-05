@@ -562,6 +562,7 @@ export function AgentForm({
                 onApplyTemplate={applyTemplate}
                 selectedTemplateId={selectedTemplateId}
                 onClearTemplate={handleClearTemplate}
+                isEditing={isEditing}
               />
             )}
 
