@@ -91,7 +91,7 @@ class GeminiProvider(BaseLLMProvider):
         if isinstance(schema, dict):
             new_dict = {}
             for k, v in schema.items():
-                if k in ("default", "additionalProperties", "minimum", "maximum", "minLength", "maxLength", "pattern"):
+                if k in ("default", "additionalProperties", "minimum", "maximum", "minLength", "maxLength", "pattern", "minItems", "maxItems", "uniqueItems"):
                     continue
                 new_dict[k] = GeminiProvider._sanitize_schema(v)
             return new_dict
