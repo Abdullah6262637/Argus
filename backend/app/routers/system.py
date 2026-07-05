@@ -30,6 +30,11 @@ EDITABLE_ENV_KEYS = {
     "GEMINI_API_KEY": True,        # secret
     "OPENAI_BASE_URL": False,      # public
     "ANTHROPIC_BASE_URL": False,   # public
+    "PLAN_MAX_STEPS": False,       # public
+    "PLAN_REFLECTION_ENABLED": False, # public
+    "RUN_COMMAND_ALLOWLIST": False, # public
+    "VOICE_ENABLED": False,        # public
+    "BROWSER_HEADLESS": False,     # public
 }
 
 

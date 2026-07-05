@@ -18,15 +18,19 @@ interface SettingsModalProps {
   onReloadAgents?: () => void;
 }
 
-export type TabId = 'agents' | 'theme' | 'apikeys' | 'plugins_mcp' | 'reset' | 'about';
+export type TabId = 'agents' | 'theme' | 'apikeys' | 'system' | 'security' | 'media' | 'plugins_mcp' | 'reset' | 'about';
 
 const TAB_CONFIG: Record<TabId, { icon: string; label: string }> = {
   agents: { icon: 'smart_toy', label: 'Ajan Havuzu' },
   theme: { icon: 'palette', label: 'Görünüm' },
   apikeys: { icon: 'vpn_key', label: 'API Anahtarları' },
+  system: { icon: 'settings', label: 'Sistem & Limitler' },
+  security: { icon: 'security', label: 'Güvenlik & Sandbox' },
+  media: { icon: 'volume_up', label: 'Ses & Tarayıcı' },
   plugins_mcp: { icon: 'extension', label: 'Eklentiler & MCP' },
   reset: { icon: 'restart_alt', label: 'Sıfırla' },
-  about: { icon: 'info', label: 'Hakkında' }};
+  about: { icon: 'info', label: 'Hakkında' }
+};
 
 export function SettingsModal({
   theme,
@@ -177,6 +181,9 @@ export function SettingsModal({
                 />
               )}
               {tab === 'apikeys' && <ApiKeysTab />}
+              {tab === 'system' && <SystemSettingsTab />}
+              {tab === 'security' && <SecuritySettingsTab />}
+              {tab === 'media' && <MediaSettingsTab />}
               {tab === 'plugins_mcp' && <PluginsMcpTab />}
               {tab === 'reset' && <ResetTab onRequestReset={onRequestReset} />}
               {tab === 'about' && <AboutTab />}
@@ -842,6 +849,367 @@ function ApiKeysTab() {
               </div>
             )}
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Sistem & Limitler Ayarları
+// ============================================================
+
+function SystemSettingsTab() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const [maxSteps, setMaxSteps] = useState(7);
+  const [reflection, setReflection] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await api.getEnv();
+        const safeValues = (data && typeof data.values === 'object' && data.values) || {};
+        
+        if (safeValues.PLAN_MAX_STEPS) {
+          setMaxSteps(parseInt(safeValues.PLAN_MAX_STEPS) || 7);
+        }
+        if (safeValues.PLAN_REFLECTION_ENABLED) {
+          setReflection(safeValues.PLAN_REFLECTION_ENABLED === 'true');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      await api.updateEnv({
+        PLAN_MAX_STEPS: String(maxSteps),
+        PLAN_REFLECTION_ENABLED: String(reflection)
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div className="text-center text-xs text-brand-muted py-10">Yükleniyor...</div>;
+
+  return (
+    <div className="space-y-5">
+      <PanelHeader
+        title="Sistem Ayarları & Çalışma Limitleri"
+        description="Ajanların çalışma sınırlarını ve planlama algoritmalarını yapılandırın."
+        icon="settings"
+      />
+      <div className="space-y-4 rounded-xl border border-brand-border bg-brand-bg/40 p-4">
+        <FormField label="Maksimum Ajan Adım Sayısı" icon="straighten">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-brand-text">
+              <span>{maxSteps} Adım</span>
+              <span className="text-brand-mutedSoft">Önerilen: 5-8</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value={maxSteps}
+              onChange={(e) => setMaxSteps(parseInt(e.target.value))}
+              className="w-full h-1 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-accent focus:outline-none"
+            />
+            <p className="text-[10px] text-brand-mutedSoft leading-relaxed">
+              Ajanın tek bir görevi çözerken döngüye girmeden atabileceği maksimum araç (tool) adım sınırıdır.
+            </p>
+          </div>
+        </FormField>
+
+        <div className="border-t border-brand-border my-2" />
+
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-semibold text-brand-text">Ajan Düşünme Modu (Reflection)</div>
+            <div className="text-[10px] text-brand-mutedSoft mt-0.5 leading-normal">
+              Ajanın bir adıma karar vermeden önce kendi planlarını sorgulamasını ve içsel değerlendirme (kendi kendine muhakeme) yapmasını aktif eder.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setReflection(!reflection)}
+            className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${
+              reflection ? 'bg-brand-accent' : 'bg-brand-border'
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full bg-brand-panel transition-transform duration-200 ${
+                reflection ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="h-9 px-4 inline-flex items-center gap-1.5 text-xs font-semibold rounded-lg bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 transition-all active:scale-95 shadow-sm"
+        >
+          <Icon name={saving ? 'progress_activity' : 'save'} size={14} className={saving ? 'animate-spin-slow' : ''} />
+          {saving ? 'Kaydediliyor...' : 'Kaydet'}
+        </button>
+        {saved && (
+          <span className="inline-flex items-center gap-1 text-[11px] text-brand-success font-semibold">
+            <Icon name="check_circle" size={13} filled /> Kaydedildi
+          </span>
+        )}
+        {error && (
+          <span className="inline-flex items-center gap-1 text-[11px] text-brand-danger">
+            <Icon name="error" size={13} filled /> {error}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Güvenlik & Sandbox Ayarları
+// ============================================================
+
+function SecuritySettingsTab() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const [allowlist, setAllowlist] = useState('');
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await api.getEnv();
+        const safeValues = (data && typeof data.values === 'object' && data.values) || {};
+        
+        setAllowlist(safeValues.RUN_COMMAND_ALLOWLIST || 'git,npm,python,pip,node,echo,dir,ls,cat,type,where,pwd,hostname');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      await api.updateEnv({
+        RUN_COMMAND_ALLOWLIST: allowlist.trim()
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div className="text-center text-xs text-brand-muted py-10">Yükleniyor...</div>;
+
+  return (
+    <div className="space-y-5">
+      <PanelHeader
+        title="Güvenlik & Sandbox Kontrolleri"
+        description="Ajanların bilgisayarınızda çalıştırabileceği komut limitlerini belirleyin."
+        icon="security"
+      />
+      <div className="space-y-4 rounded-xl border border-brand-border bg-brand-bg/40 p-4">
+        <FormField label="Terminal Komut İzin Listesi (Allowlist)" icon="terminal">
+          <textarea
+            value={allowlist}
+            onChange={(e) => setAllowlist(e.target.value)}
+            rows={4}
+            className="w-full bg-brand-bg border border-brand-border rounded-md px-2.5 py-1.5 text-xs font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all resize-none"
+            placeholder="git,npm,python,pip..."
+          />
+          <p className="text-[10px] text-brand-mutedSoft mt-1.5 leading-normal">
+            Virgülle ayrılmış değerler. Ajanın `run_command` aracıyla çalıştırmasına izin verilen programların ana isimleridir.
+          </p>
+        </FormField>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="h-9 px-4 inline-flex items-center gap-1.5 text-xs font-semibold rounded-lg bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 transition-all active:scale-95 shadow-sm"
+        >
+          <Icon name={saving ? 'progress_activity' : 'save'} size={14} className={saving ? 'animate-spin-slow' : ''} />
+          {saving ? 'Kaydediliyor...' : 'Kaydet'}
+        </button>
+        {saved && (
+          <span className="inline-flex items-center gap-1 text-[11px] text-brand-success font-semibold">
+            <Icon name="check_circle" size={13} filled /> Kaydedildi
+          </span>
+        )}
+        {error && (
+          <span className="inline-flex items-center gap-1 text-[11px] text-brand-danger">
+            <Icon name="error" size={13} filled /> {error}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Ses & Tarayıcı Görünüm Ayarları
+// ============================================================
+
+function MediaSettingsTab() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const [voice, setVoice] = useState(false);
+  const [headless, setHeadless] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await api.getEnv();
+        const safeValues = (data && typeof data.values === 'object' && data.values) || {};
+        
+        setVoice(safeValues.VOICE_ENABLED === 'true');
+        setHeadless(safeValues.BROWSER_HEADLESS !== 'false'); // defaults to true
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      await api.updateEnv({
+        VOICE_ENABLED: String(voice),
+        BROWSER_HEADLESS: String(headless)
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div className="text-center text-xs text-brand-muted py-10">Yükleniyor...</div>;
+
+  return (
+    <div className="space-y-5">
+      <PanelHeader
+        title="Ses Desteği & Tarayıcı Tercihleri"
+        description="Ajanların medya oynatma ve tarayıcı görünürlük tercihlerini yapılandırın."
+        icon="volume_up"
+      />
+      <div className="space-y-4 rounded-xl border border-brand-border bg-brand-bg/40 p-4">
+        {/* Voice switcher */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-semibold text-brand-text font-bold inline-flex items-center gap-1.5">
+              <Icon name="record_voice_over" size={14} className="text-brand-accent" />
+              Sesli Yanıt ve Asistan Modu
+            </div>
+            <div className="text-[10px] text-brand-mutedSoft mt-0.5 leading-normal">
+              Ajanın anons yapmasını, TTS (Text-to-Speech) sesli geri bildirim sistemlerini aktif hale getirir.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setVoice(!voice)}
+            className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${
+              voice ? 'bg-brand-accent' : 'bg-brand-border'
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full bg-brand-panel transition-transform duration-200 ${
+                voice ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+
+        <div className="border-t border-brand-border my-2" />
+
+        {/* Headless switcher */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-semibold text-brand-text font-bold inline-flex items-center gap-1.5">
+              <Icon name="open_in_new" size={14} className="text-brand-accent" />
+              Tarayıcı Headless Modu (Gizli Tarayıcı)
+            </div>
+            <div className="text-[10px] text-brand-mutedSoft mt-0.5 leading-normal">
+              Ajan internette gezinti yaparken tarayıcı penceresinin gizlenmesini sağlar. Kapatılırsa Playwright tarayıcısı ekranınızda görünür olarak açılır.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setHeadless(!headless)}
+            className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${
+              headless ? 'bg-brand-accent' : 'bg-brand-border'
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full bg-brand-panel transition-transform duration-200 ${
+                headless ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="h-9 px-4 inline-flex items-center gap-1.5 text-xs font-semibold rounded-lg bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 transition-all active:scale-95 shadow-sm"
+        >
+          <Icon name={saving ? 'progress_activity' : 'save'} size={14} className={saving ? 'animate-spin-slow' : ''} />
+          {saving ? 'Kaydediliyor...' : 'Kaydet'}
+        </button>
+        {saved && (
+          <span className="inline-flex items-center gap-1 text-[11px] text-brand-success font-semibold">
+            <Icon name="check_circle" size={13} filled /> Kaydedildi
+          </span>
+        )}
+        {error && (
+          <span className="inline-flex items-center gap-1 text-[11px] text-brand-danger">
+            <Icon name="error" size={13} filled /> {error}
+          </span>
         )}
       </div>
     </div>
