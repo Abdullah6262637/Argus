@@ -16,6 +16,15 @@ export interface ProxyPreset {
 
 export const PROXY_PRESETS: ProxyPreset[] = [
   {
+    id: 'googleaistudio',
+    label: 'Google AI Studio',
+    provider: 'googleaistudio',
+    base_url: '',
+    model: 'gemini-2.5-flash',
+    placeholder_api_key: 'AIzaSy...',
+    description: 'Google AI Studio API anahtarı ile doğrudan Gemini kullanımı.'
+  },
+  {
     id: 'openai-official',
     label: 'OpenAI (Official)',
     provider: 'openai',
@@ -177,6 +186,7 @@ export function Step2LLM({
           options={PROXY_PRESETS.map((p) => {
             const providerImg = 
               p.id === 'openai-official' ? 'openai-official' :
+              p.id === 'googleaistudio' ? 'googleaistudio' :
               p.id === 'frostai' ? 'frostai' :
               p.id === 'openrouter' ? 'openrouter' :
               p.id === 'groq' ? 'groq' :
