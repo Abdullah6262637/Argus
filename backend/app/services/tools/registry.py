@@ -979,10 +979,13 @@ class ToolRegistry:
         return [t for t in self._tools.values() if self._is_permitted(t.permission, perms)]
 
     def openai_schemas(self, perms: AgentPermissions) -> List[Dict[str, Any]]:
-        return [t.to_openai_schema() for t in self.filter_for_agent(perms)]
+        # Groq ve diger bazi LLM API limitleri maksimum 128 adet tool kabul ettiginden limitle
+        schemas = [t.to_openai_schema() for t in self.filter_for_agent(perms)]
+        return schemas[:128]
 
     def anthropic_schemas(self, perms: AgentPermissions) -> List[Dict[str, Any]]:
-        return [t.to_anthropic_schema() for t in self.filter_for_agent(perms)]
+        schemas = [t.to_anthropic_schema() for t in self.filter_for_agent(perms)]
+        return schemas[:128]
 
     # ---------- Calistirma ----------
 
