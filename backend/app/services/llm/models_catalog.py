@@ -131,6 +131,7 @@ MODELS_BY_PROVIDER: Dict[str, List[ModelInfo]] = {
     "openai": OPENAI_MODELS,
     "anthropic": ANTHROPIC_MODELS,
     "gemini": GEMINI_MODELS,
+    "googleaistudio": GEMINI_MODELS,
     "ollama": OLLAMA_MODELS,
     "groq": GROQ_MODELS,
     "mistral": MISTRAL_MODELS,

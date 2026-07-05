@@ -106,6 +106,7 @@ async def test_connection(
         "openai": settings.openai_api_key,
         "anthropic": settings.anthropic_api_key,
         "gemini": os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"),
+        "googleaistudio": os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"),
         "openrouter": os.environ.get("OPENROUTER_API_KEY"),
         "groq": os.environ.get("GROQ_API_KEY"),
         "deepseek": os.environ.get("DEEPSEEK_API_KEY"),
@@ -173,7 +174,7 @@ async def test_connection(
                 base_url=base_url, timeout_ms=timeout_ms, start=start,
                 mismatch_warning=mismatch, verify_ssl=verify_ssl,
             )
-        elif provider_low == "gemini":
+        elif provider_low in ("gemini", "googleaistudio"):
             return await _test_gemini(
                 model=model, api_key=effective_key or "",
                 timeout_ms=timeout_ms, start=start, verify_ssl=verify_ssl,

@@ -148,6 +148,7 @@ export function Step2LLM({
     provider === 'openai' ? 'OPENAI_API_KEY' : 
     provider === 'anthropic' ? 'ANTHROPIC_API_KEY' : 
     provider === 'gemini' ? 'GEMINI_API_KEY' : 
+    provider === 'googleaistudio' ? 'GEMINI_API_KEY' : 
     provider === 'openrouter' ? 'OPENROUTER_API_KEY' : 
     provider === 'groq' ? 'GROQ_API_KEY' : 
     provider === 'deepseek' ? 'DEEPSEEK_API_KEY' : 
@@ -225,7 +226,16 @@ export function Step2LLM({
                 label: (
                   <span className="flex items-center gap-2">
                     <img src="/providers/gemini.png?v=3" alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
-                    <span>Google Gemini</span>
+                    <span>Google Gemini (Vertex/GCP)</span>
+                  </span>
+                )
+              },
+              {
+                value: 'googleaistudio',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/googleaistudio.png?v=3" alt="Google AI Studio" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Google AI Studio</span>
                   </span>
                 )
               },

@@ -42,6 +42,7 @@ export function getModelLogo(model: string, provider: string): string {
   if (p === 'openai') return '/providers/openai-official.png?v=3';
   if (p === 'anthropic') return '/providers/anthropic.png?v=3';
   if (p === 'gemini') return '/providers/gemini.png?v=3';
+  if (p === 'googleaistudio') return '/providers/googleaistudio.png?v=3';
   if (p === 'openrouter') return '/providers/openrouter.png?v=3';
   if (p === 'groq') return '/providers/groq.png?v=3';
   if (p === 'deepseek') return '/providers/deepseek.png?v=3';

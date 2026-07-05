@@ -85,6 +85,14 @@ const FALLBACK_MODELS: Record<string, ModelInfoOut[]> = {
     { id: 'gemma-2-27b', label: 'Gemma 2 27B' },
     { id: 'gemma-2-9b', label: 'Gemma 2 9B' }
   ],
+  googleaistudio: [
+    { id: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+    { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+    { id: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
+    { id: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash Lite' },
+    { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+    { id: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' }
+  ],
   deepseek: [
     { id: 'deepseek-v4-pro', label: 'DeepSeek-V4 Pro (MoE 1.6T parameter)' },
     { id: 'deepseek-v4-flash', label: 'DeepSeek-V4 Flash (High Speed)' },

@@ -7,6 +7,7 @@ export type ProviderName =
   | 'anthropic'
   | 'local'
   | 'gemini'
+  | 'googleaistudio'
   | 'ollama'
   | 'groq'
   | 'mistral'

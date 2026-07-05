@@ -92,8 +92,8 @@ def get_provider(
         provider = OpenAIProvider(
             api_key=api_key or "ollama", model=model, base_url=effective_base_url
         )
-    elif provider_name == "gemini":
-        # Sprint 4.1: Google Gemini
+    elif provider_name in ("gemini", "googleaistudio"):
+        # Sprint 4.1: Google Gemini / Google AI Studio
         from app.services.llm.gemini_provider import GeminiProvider
         env_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
