@@ -150,6 +150,7 @@ WebSocket güncelleme → Durum paneli
 |---|---|---|
 | Backend framework | FastAPI | 0.115+ |
 | ASGI sunucusu | uvicorn | — |
+| Performans Motoru | Rust Core (argus_core via PyO3) | — |
 | ORM | SQLAlchemy (async) | 2.x |
 | Veritabanı | SQLite / aiosqlite | — |
 | Vektör DB | ChromaDB | — |
@@ -161,3 +162,4 @@ WebSocket güncelleme → Durum paneli
 | Dil | TypeScript | 5.x |
 | Build aracı | Vite | 6.x |
 | CSS | Tailwind CSS | 3.x |
+

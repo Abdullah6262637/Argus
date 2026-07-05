@@ -10,10 +10,11 @@ Birden fazla LLM sağlayıcısını destekler, 200'den fazla araca sahiptir,
 gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle gelir.
 
 ![Version](https://img.shields.io/badge/version-0.2.0-blue?style=flat-square)
-![Backend](https://img.shields.io/badge/backend-FastAPI%20%2B%20Python%203.12-009688?style=flat-square)
+![Backend](https://img.shields.io/badge/backend-FastAPI%20%2B%20Python%203.12%20%2B%20Rust%20Core-009688?style=flat-square)
 ![Frontend](https://img.shields.io/badge/frontend-React%2018%20%2B%20TypeScript-61DAFB?style=flat-square)
-![Database](https://img.shields.io/badge/database-SQLite%20(aiosqlite)-lightgrey?style=flat-square)
+![Database](https://img.shields.io/badge/database-SQLite%20(aiosqlite)%20%2B%20ChromaDB-lightgrey?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+
 
 </div>
 
@@ -963,5 +964,6 @@ MIT License — Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 <div align="center">
   <strong>Argus</strong> — Aynı anda her şeyi gören çoklu ajan sistemi
   <br/>
-  <sub>FastAPI + React + SQLite + ChromaDB + Playwright</sub>
+  <sub>FastAPI + Rust Core + React + SQLite + ChromaDB + Playwright</sub>
+
 </div>
