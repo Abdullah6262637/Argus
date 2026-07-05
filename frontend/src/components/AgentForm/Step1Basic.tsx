@@ -94,73 +94,72 @@ export function Step1Basic({
         desc="Ajanina bir isim ver ve ne is yapacagini kisa bicimde anlat."
       />
 
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-[10px] font-semibold text-brand-textSoft uppercase tracking-wider">
-            Sablon Galerisi (Hizli Baslangic)
-          </label>
-          {selectedTemplateId && (
-            <button
-              type="button"
-              onClick={onClearTemplate}
-              className="text-[10px] text-brand-danger hover:underline inline-flex items-center gap-0.5"
-            >
-              <Icon name="cancel" size={12} />
-              Şablonu İptal Et
-            </button>
-          )}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {AGENT_TEMPLATES.map((tpl) => {
-            const isSelected = selectedTemplateId === tpl.id;
-            const templateIcons: Record<string, string> = {
-              developer: 'code',
-              researcher: 'search',
-              writer: 'edit_note',
-              devops: 'terminal',
-            };
-            const iconName = templateIcons[tpl.id] || 'smart_toy';
-
-            return (
+      {!isEditing && (
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-[10px] font-semibold text-brand-textSoft uppercase tracking-wider">
+              Sablon Galerisi (Hizli Baslangic)
+            </label>
+            {selectedTemplateId && (
               <button
-                key={tpl.id}
                 type="button"
-                disabled={isEditing}
-                onClick={() => onApplyTemplate(tpl)}
-                className={`p-3.5 text-left text-xs rounded-xl border flex items-start gap-3 transition-all duration-300 active:scale-[0.97] shadow-sm ${
-                  isEditing 
-                    ? 'opacity-50 cursor-not-allowed border-brand-border bg-brand-panelAlt/10'
-                    : isSelected
+                onClick={onClearTemplate}
+                className="text-[10px] text-brand-danger hover:underline inline-flex items-center gap-0.5"
+              >
+                <Icon name="cancel" size={12} />
+                Şablonu İptal Et
+              </button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {AGENT_TEMPLATES.map((tpl) => {
+              const isSelected = selectedTemplateId === tpl.id;
+              const templateIcons: Record<string, string> = {
+                developer: 'code',
+                researcher: 'search',
+                writer: 'edit_note',
+                devops: 'terminal',
+              };
+              const iconName = templateIcons[tpl.id] || 'smart_toy';
+
+              return (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  onClick={() => onApplyTemplate(tpl)}
+                  className={`p-3.5 text-left text-xs rounded-xl border flex items-start gap-3 transition-all duration-300 active:scale-[0.97] shadow-sm ${
+                    isSelected
                       ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
                       : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
-                }`}
-              >
-                <Icon
-                  name={iconName}
-                  size={20}
-                  weight={550}
-                  className={`flex-shrink-0 mt-0.5 transition-colors ${
-                    isSelected ? 'text-brand-accent' : 'text-brand-textSoft'
                   }`}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between w-full">
-                    <span className="font-bold text-[12px] text-brand-text leading-tight">{tpl.name}</span>
-                    {isSelected && (
-                      <span className="text-brand-accent flex items-center flex-shrink-0">
-                        <Icon name="check_circle" size={13} filled />
-                      </span>
-                    )}
+                >
+                  <Icon
+                    name={iconName}
+                    size={20}
+                    weight={550}
+                    className={`flex-shrink-0 mt-0.5 transition-colors ${
+                      isSelected ? 'text-brand-accent' : 'text-brand-textSoft'
+                    }`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between w-full">
+                      <span className="font-bold text-[12px] text-brand-text leading-tight">{tpl.name}</span>
+                      {isSelected && (
+                        <span className="text-brand-accent flex items-center flex-shrink-0">
+                          <Icon name="check_circle" size={13} filled />
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-brand-textSoft mt-1 leading-normal block">
+                      {tpl.description}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-brand-textSoft mt-1 leading-normal block">
-                    {tpl.description}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="space-y-3">
         <Field label="Ajan Adi *" icon="smart_toy">
