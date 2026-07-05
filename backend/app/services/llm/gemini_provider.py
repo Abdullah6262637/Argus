@@ -87,11 +87,11 @@ class GeminiProvider(BaseLLMProvider):
 
     @staticmethod
     def _sanitize_schema(schema: Any) -> Any:
-        """Gemini parameters schemasinda 'default' anahtari olmasini sevmez, recursive olarak temizle."""
+        """Gemini parameters schemasinda 'default' veya 'additionalProperties' anahtari olmasini sevmez, recursive olarak temizle."""
         if isinstance(schema, dict):
             new_dict = {}
             for k, v in schema.items():
-                if k == "default":
+                if k in ("default", "additionalProperties"):
                     continue
                 new_dict[k] = GeminiProvider._sanitize_schema(v)
             return new_dict
