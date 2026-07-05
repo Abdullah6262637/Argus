@@ -27,6 +27,7 @@ router = APIRouter(prefix="/api/system", tags=["system"])
 EDITABLE_ENV_KEYS = {
     "OPENAI_API_KEY": True,        # secret
     "ANTHROPIC_API_KEY": True,     # secret
+    "GEMINI_API_KEY": True,        # secret
     "OPENAI_BASE_URL": False,      # public
     "ANTHROPIC_BASE_URL": False,   # public
 }

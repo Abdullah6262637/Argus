@@ -493,6 +493,7 @@ function ApiKeysTab() {
 
   const [openaiKey, setOpenaiKey] = useState('');
   const [anthropicKey, setAnthropicKey] = useState('');
+  const [geminiKey, setGeminiKey] = useState('');
   const [openaiBase, setOpenaiBase] = useState('');
   const [anthropicBase, setAnthropicBase] = useState('');
   const [has, setHas] = useState<Record<string, boolean>>({});
@@ -567,6 +568,7 @@ function ApiKeysTab() {
       const values: Record<string, string | null> = {};
       if (openaiKey.trim()) values.OPENAI_API_KEY = openaiKey.trim();
       if (anthropicKey.trim()) values.ANTHROPIC_API_KEY = anthropicKey.trim();
+      if (geminiKey.trim()) values.GEMINI_API_KEY = geminiKey.trim();
       if (openaiBase !== originalBases.openai) {
         values.OPENAI_BASE_URL = openaiBase.trim() || null;
       }
@@ -595,6 +597,7 @@ function ApiKeysTab() {
       setMasked(safeMasked);
       setOpenaiKey('');
       setAnthropicKey('');
+      setGeminiKey('');
       // Base URL'ler kaydedildi → orijinali güncelle
       setOriginalBases({
         openai: openaiBase,
@@ -614,7 +617,7 @@ function ApiKeysTab() {
     }
   };
 
-  const clearKey = async (key: 'OPENAI_API_KEY' | 'ANTHROPIC_API_KEY') => {
+  const clearKey = async (key: 'OPENAI_API_KEY' | 'ANTHROPIC_API_KEY' | 'GEMINI_API_KEY') => {
     setError(null);
     try {
       const res = await api.updateEnv({ [key]: null });
@@ -706,6 +709,16 @@ function ApiKeysTab() {
           baseValue={anthropicBase}
           onBaseChange={setAnthropicBase}
         />
+        <KeyRow
+          label="Google Gemini (AI Studio)"
+          icon="temp_preferences_custom"
+          placeholder="AIzaSy..."
+          value={geminiKey}
+          onChange={setGeminiKey}
+          hasExisting={!!has.GEMINI_API_KEY}
+          maskedExisting={masked.GEMINI_API_KEY}
+          onClear={() => clearKey('GEMINI_API_KEY')}
+        />
       </div>
 
       <div className="flex items-center gap-2">
@@ -762,6 +775,7 @@ function ApiKeysTab() {
             >
               <option value="openai">openai</option>
               <option value="anthropic">anthropic</option>
+              <option value="gemini">gemini</option>
               <option value="local">local</option>
             </select>
           </FormField>
@@ -856,10 +870,10 @@ function KeyRow({
   hasExisting: boolean;
   maskedExisting: string | null | undefined;
   onClear: () => void;
-  baseLabel: string;
-  basePlaceholder: string;
-  baseValue: string;
-  onBaseChange: (v: string) => void;
+  baseLabel?: string;
+  basePlaceholder?: string;
+  baseValue?: string;
+  onBaseChange?: (v: string) => void;
 }) {
   const [show, setShow] = useState(false);
   return (
@@ -930,15 +944,17 @@ function KeyRow({
       </FormField>
 
       {/* Base URL input */}
-      <FormField label={baseLabel} icon="link">
-        <input
-          type="text"
-          value={baseValue}
-          onChange={(e) => onBaseChange(e.target.value)}
-          placeholder={basePlaceholder}
-          className="w-full bg-brand-bg border border-brand-border rounded-md px-2.5 py-1.5 text-xs font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
-        />
-      </FormField>
+      {baseLabel && onBaseChange && (
+        <FormField label={baseLabel} icon="link">
+          <input
+            type="text"
+            value={baseValue || ''}
+            onChange={(e) => onBaseChange(e.target.value)}
+            placeholder={basePlaceholder}
+            className="w-full bg-brand-bg border border-brand-border rounded-md px-2.5 py-1.5 text-xs font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
+          />
+        </FormField>
+      )}
     </div>
   );
 }

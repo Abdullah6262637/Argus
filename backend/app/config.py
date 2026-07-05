@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     # LLM anahtarlari
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
+    gemini_api_key: str | None = None
 
     # Guvenlik limitleri
     max_tokens_per_request: int = 2048

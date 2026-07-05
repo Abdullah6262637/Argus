@@ -95,7 +95,7 @@ def get_provider(
     elif provider_name in ("gemini", "googleaistudio"):
         # Sprint 4.1: Google Gemini / Google AI Studio
         from app.services.llm.gemini_provider import GeminiProvider
-        env_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        env_key = settings.gemini_api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
         provider = GeminiProvider(api_key=effective_key, model=model)
     elif provider_name in _OPENAI_COMPATIBLE_PROVIDERS:
