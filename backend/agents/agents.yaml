@@ -1,1 +1,32 @@
-agents: []
+agents:
+- id: yazilim-gelistirici
+  name: Yazılım Geliştirici
+  role: Senior Software Engineer
+  description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
+  provider: groq
+  model: llama-3.3-70b-versatile
+  temperature: 0.5
+  max_tokens: 1024
+  tags: []
+  is_active: true
+  permissions:
+    file_system: true
+    terminal_cmd: true
+    web_search: true
+    system_admin: true
+  base_url: https://api.groq.com/openai/v1
+  api_key: enc::gAAAAABqSlLGbLV7DNh98wMn-mGNzkgujQWusj1dDSaVR2QcOKmIW353neXMpqkzxP8g5aDfVKFiceD6Y_nncqInzWoTkLs9jK0cPC-xXs4GmHxo4SM1-QlH5ai8fN0uIEWW0l_hNsNS2_-dTV22bspdJGi2rwWGYg==
+  system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini
+    yerine getir, kod yaz ve terminal komutlarıyla test et.
+  image:
+    enabled: false
+    provider: openai
+    model: dall-e-3
+  video:
+    enabled: false
+    provider: openai
+    model: sora-1
+  audio:
+    enabled: true
+    provider: openai
+    model: whisper-1
