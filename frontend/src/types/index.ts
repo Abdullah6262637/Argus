@@ -364,4 +364,36 @@ export type WSMessage =
       approval_id: number;
       status: 'approved' | 'rejected' | 'timeout';
       reason?: string | null;
+    }
+  | {
+      type: 'workflow_step_status';
+      workflow_name: string;
+      step_id: string;
+      status: 'skipped' | 'running' | 'success' | 'failed';
+      agent_id: string;
+      prompt?: string;
+      result?: string;
+      error?: string | null;
+    }
+  | {
+      type: 'agent_delegation';
+      source_agent: string;
+      target_agent: string;
+      prompt?: string;
+      status: 'started' | 'success' | 'failed';
+      result?: string;
+      error?: string;
+    }
+  | {
+      type: 'agent_validation';
+      target_agent: string;
+      attempt: number;
+      passed: boolean;
+      feedback?: string;
+    }
+  | {
+      type: 'blackboard_update';
+      key: string;
+      value: string;
+      keys: string[];
     };
