@@ -138,13 +138,6 @@ export function SettingsModal({
           {/* Üst başlık çubuğu */}
           <div className="h-12 px-5 flex items-center justify-between border-b border-brand-border bg-brand-panel">
             <div className="flex items-center gap-2">
-              <Icon
-                name={TAB_CONFIG[tab].icon}
-                size={16}
-                weight={550}
-                filled
-                className="text-brand-accent"
-              />
               <h3 className="text-sm font-semibold text-brand-text">
                 {TAB_CONFIG[tab].label}
               </h3>
@@ -866,6 +859,7 @@ function SystemSettingsTab() {
   const [saved, setSaved] = useState(false);
 
   const [maxSteps, setMaxSteps] = useState(7);
+  const [maxTokens, setMaxTokens] = useState(2048);
   const [reflection, setReflection] = useState(true);
 
   useEffect(() => {
@@ -876,6 +870,9 @@ function SystemSettingsTab() {
         
         if (safeValues.PLAN_MAX_STEPS) {
           setMaxSteps(parseInt(safeValues.PLAN_MAX_STEPS) || 7);
+        }
+        if (safeValues.MAX_TOKENS_PER_REQUEST) {
+          setMaxTokens(parseInt(safeValues.MAX_TOKENS_PER_REQUEST) || 2048);
         }
         if (safeValues.PLAN_REFLECTION_ENABLED) {
           setReflection(safeValues.PLAN_REFLECTION_ENABLED === 'true');
@@ -896,6 +893,7 @@ function SystemSettingsTab() {
     try {
       await api.updateEnv({
         PLAN_MAX_STEPS: String(maxSteps),
+        MAX_TOKENS_PER_REQUEST: String(maxTokens),
         PLAN_REFLECTION_ENABLED: String(reflection)
       });
       setSaved(true);
@@ -933,6 +931,29 @@ function SystemSettingsTab() {
             />
             <p className="text-[10px] text-brand-mutedSoft leading-relaxed">
               Ajanın tek bir görevi çözerken döngüye girmeden atabileceği maksimum araç (tool) adım sınırıdır.
+            </p>
+          </div>
+        </FormField>
+
+        <div className="border-t border-brand-border my-2" />
+
+        <FormField label="Maksimum Çıktı Token Sınırı (Max Tokens)" icon="toll">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-bold text-brand-text">
+              <span>{maxTokens} Token</span>
+              <span className="text-brand-mutedSoft">Normal: 1024 - 4096</span>
+            </div>
+            <input
+              type="range"
+              min="256"
+              max="8192"
+              step="256"
+              value={maxTokens}
+              onChange={(e) => setMaxTokens(parseInt(e.target.value))}
+              className="w-full h-1 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-accent focus:outline-none"
+            />
+            <p className="text-[10px] text-brand-mutedSoft leading-relaxed">
+              Ajanın tek bir LLM yanıtında üretebileceği maksimum token uzunluğudur. Çok büyük değerler gecikmeyi artırabilir.
             </p>
           </div>
         </FormField>
@@ -997,6 +1018,7 @@ function SecuritySettingsTab() {
   const [saved, setSaved] = useState(false);
 
   const [allowlist, setAllowlist] = useState('');
+  const [cwdJail, setCwdJail] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -1005,6 +1027,7 @@ function SecuritySettingsTab() {
         const safeValues = (data && typeof data.values === 'object' && data.values) || {};
         
         setAllowlist(safeValues.RUN_COMMAND_ALLOWLIST || 'git,npm,python,pip,node,echo,dir,ls,cat,type,where,pwd,hostname');
+        setCwdJail(safeValues.RUN_COMMAND_CWD_JAIL || '');
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -1020,7 +1043,8 @@ function SecuritySettingsTab() {
     setSaved(false);
     try {
       await api.updateEnv({
-        RUN_COMMAND_ALLOWLIST: allowlist.trim()
+        RUN_COMMAND_ALLOWLIST: allowlist.trim(),
+        RUN_COMMAND_CWD_JAIL: cwdJail.trim()
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -1045,12 +1069,27 @@ function SecuritySettingsTab() {
           <textarea
             value={allowlist}
             onChange={(e) => setAllowlist(e.target.value)}
-            rows={4}
+            rows={3}
             className="w-full bg-brand-bg border border-brand-border rounded-md px-2.5 py-1.5 text-xs font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all resize-none"
             placeholder="git,npm,python,pip..."
           />
           <p className="text-[10px] text-brand-mutedSoft mt-1.5 leading-normal">
             Virgülle ayrılmış değerler. Ajanın `run_command` aracıyla çalıştırmasına izin verilen programların ana isimleridir.
+          </p>
+        </FormField>
+
+        <div className="border-t border-brand-border my-2" />
+
+        <FormField label="Çalışma Dizini Hapsi (Workspace Jail)" icon="folder_lock">
+          <input
+            type="text"
+            value={cwdJail}
+            onChange={(e) => setCwdJail(e.target.value)}
+            className="w-full bg-brand-bg border border-brand-border rounded-md h-9 px-2.5 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
+            placeholder="Örn: C:\Users\HP\Desktop\sandbox"
+          />
+          <p className="text-[10px] text-brand-mutedSoft mt-1.5 leading-normal">
+            Boş bırakılırsa kısıtlama uygulanmaz. Bir klasör belirtildiğinde ajan terminal komutlarını sadece bu klasörün dışına çıkamadan çalıştırabilir.
           </p>
         </FormField>
       </div>
@@ -1091,6 +1130,8 @@ function MediaSettingsTab() {
 
   const [voice, setVoice] = useState(false);
   const [headless, setHeadless] = useState(true);
+  const [browserTimeout, setBrowserTimeout] = useState(30000);
+  const [logFormat, setLogFormat] = useState('text');
 
   useEffect(() => {
     const load = async () => {
@@ -1100,6 +1141,8 @@ function MediaSettingsTab() {
         
         setVoice(safeValues.VOICE_ENABLED === 'true');
         setHeadless(safeValues.BROWSER_HEADLESS !== 'false'); // defaults to true
+        setBrowserTimeout(safeValues.BROWSER_TIMEOUT_MS ? parseInt(safeValues.BROWSER_TIMEOUT_MS) : 30000);
+        setLogFormat(safeValues.LOG_FORMAT || 'text');
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -1116,7 +1159,9 @@ function MediaSettingsTab() {
     try {
       await api.updateEnv({
         VOICE_ENABLED: String(voice),
-        BROWSER_HEADLESS: String(headless)
+        BROWSER_HEADLESS: String(headless),
+        BROWSER_TIMEOUT_MS: String(browserTimeout),
+        LOG_FORMAT: logFormat
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -1190,6 +1235,42 @@ function MediaSettingsTab() {
             />
           </button>
         </div>
+
+        <div className="border-t border-brand-border my-2" />
+
+        {/* Browser timeout */}
+        <FormField label="Tarayıcı Yükleme Zaman Aşımı (ms)" icon="timer">
+          <input
+            type="number"
+            step="1000"
+            min="5000"
+            max="120000"
+            value={browserTimeout}
+            onChange={(e) => setBrowserTimeout(parseInt(e.target.value) || 30000)}
+            className="w-full bg-brand-bg border border-brand-border rounded-md h-9 px-2.5 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
+            placeholder="30000"
+          />
+          <p className="text-[10px] text-brand-mutedSoft mt-1.5 leading-normal">
+            Milisaniye cinsinden (Örn: 30000 = 30 saniye). Ajanın web sayfalarının yüklenmesini bekleyeceği maksimum süredir.
+          </p>
+        </FormField>
+
+        <div className="border-t border-brand-border my-2" />
+
+        {/* Log format select */}
+        <FormField label="Sistem Log Formatı" icon="description">
+          <select
+            value={logFormat}
+            onChange={(e) => setLogFormat(e.target.value)}
+            className="w-full bg-brand-bg border border-brand-border rounded-md h-9 px-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition-all"
+          >
+            <option value="text">Düz Metin (Standart Okunabilir)</option>
+            <option value="json">Yapılandırılmış JSON (Makine Okunabilir)</option>
+          </select>
+          <p className="text-[10px] text-brand-mutedSoft mt-1.5 leading-normal">
+            Backend hata ve işlem loglarının diskte hangi veri formatıyla yazılacağını belirler.
+          </p>
+        </FormField>
       </div>
 
       <div className="flex items-center gap-2">
