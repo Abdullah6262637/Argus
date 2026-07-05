@@ -48,27 +48,7 @@ export function SettingsModal({
   const [pendingTheme, setPendingTheme] = useState<ThemeId>(theme);
   const isDirty = pendingTheme !== initialTheme;
 
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState<number>(560);
-
-  useEffect(() => {
-    if (!contentRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        // Measure unconstrained tab content height, add headers, footer, padding (approx 140px)
-        const computedHeight = entry.contentRect.height + 140;
-        const bounded = Math.max(500, Math.min(computedHeight, window.innerHeight * 0.88));
-        // requestAnimationFrame kullanarak DOM güncellemelerini eşzamanlı yapıp sarsıntıyı önlüyoruz
-        requestAnimationFrame(() => {
-          setContentHeight(bounded);
-        });
-      }
-    });
-
-    observer.observe(contentRef.current);
-    return () => observer.disconnect();
-  }, [tab]);
+  const [contentHeight] = useState<number>(620);
 
   useEffect(() => {
     onChangeTheme(pendingTheme);
@@ -157,7 +137,7 @@ export function SettingsModal({
 
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto p-5">
-            <div key={tab} ref={contentRef} className="animate-step-in">
+            <div key={tab} className="animate-step-in">
               {tab === 'agents' && (
                 <AgentsManagerTab
                   onEditAgent={(id) => {
