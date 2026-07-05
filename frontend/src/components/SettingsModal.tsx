@@ -59,7 +59,10 @@ export function SettingsModal({
         // Measure unconstrained tab content height, add headers, footer, padding (approx 140px)
         const computedHeight = entry.contentRect.height + 140;
         const bounded = Math.max(500, Math.min(computedHeight, window.innerHeight * 0.88));
-        setContentHeight(bounded);
+        // requestAnimationFrame kullanarak DOM güncellemelerini eşzamanlı yapıp sarsıntıyı önlüyoruz
+        requestAnimationFrame(() => {
+          setContentHeight(bounded);
+        });
       }
     });
 
@@ -91,7 +94,7 @@ export function SettingsModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-backdrop-in">
       <div 
         style={{ height: `${contentHeight}px` }}
-        className="w-full max-w-3xl max-h-[92vh] flex rounded-xl border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden animate-modal-in transition-[height] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]"
+        className="w-full max-w-3xl max-h-[92vh] flex rounded-xl border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden animate-modal-in transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]"
       >
         {/* ---------- Sol Sidebar ---------- */}
         <aside className="w-56 flex-shrink-0 border-r border-brand-border bg-brand-bg/40 flex flex-col">
