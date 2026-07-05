@@ -86,21 +86,39 @@ class GeminiProvider(BaseLLMProvider):
         return system_instruction, history
 
     @staticmethod
+    def _sanitize_schema(schema: Any) -> Any:
+        """Gemini parameters schemasinda 'default' anahtari olmasini sevmez, recursive olarak temizle."""
+        if isinstance(schema, dict):
+            new_dict = {}
+            for k, v in schema.items():
+                if k == "default":
+                    continue
+                new_dict[k] = GeminiProvider._sanitize_schema(v)
+            return new_dict
+        elif isinstance(schema, list):
+            return [GeminiProvider._sanitize_schema(x) for x in schema]
+        return schema
+
+    @staticmethod
     def _convert_openai_tools_to_gemini(tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """OpenAI tools schema'sini Gemini Tool formatina cevir."""
+        """OpenAI tools schema'sini Gemini Tool formatina cevir ve 'default' alanlarini temizle."""
         gemini_funcs = []
         for t in tools:
             if t.get("type") == "function" and "function" in t:
                 fn = t["function"]
+                raw_params = fn.get("parameters", {"type": "object", "properties": {}})
+                sanitized_params = GeminiProvider._sanitize_schema(raw_params)
                 gemini_funcs.append({
                     "name": fn.get("name"),
                     "description": fn.get("description", ""),
-                    "parameters": fn.get("parameters", {"type": "object", "properties": {}})})
+                    "parameters": sanitized_params})
             elif "name" in t:  # zaten anthropic-benzeri format
+                raw_params = t.get("input_schema", t.get("parameters", {}))
+                sanitized_params = GeminiProvider._sanitize_schema(raw_params)
                 gemini_funcs.append({
                     "name": t.get("name"),
                     "description": t.get("description", ""),
-                    "parameters": t.get("input_schema", t.get("parameters", {}))})
+                    "parameters": sanitized_params})
         if not gemini_funcs:
             return []
         return [{"function_declarations": gemini_funcs}]
