@@ -10,6 +10,13 @@ from app.services.audit import AuditChain
 class TestAuditChain:
     async def test_append_creates_entry(self):
         """Yeni bir kayit eklenince DB'ye yazilir ve seq artar."""
+        from app.database import session_scope
+        from app.models.audit import AuditEntry
+        from sqlalchemy import delete
+        async with session_scope() as session:
+            await session.execute(delete(AuditEntry))
+            await session.commit()
+            
         chain = AuditChain()
         # Yeni instance — singleton'la cakismasin
         entry = await chain.append(
@@ -33,11 +40,21 @@ class TestAuditChain:
 
     async def test_verify_chain_returns_true_for_valid(self):
         """Hic dokunulmamis bir zincir verify edildiginde true donmeli."""
+        from app.database import session_scope
+        from app.models.audit import AuditEntry
+        from sqlalchemy import delete
+        async with session_scope() as session:
+            await session.execute(delete(AuditEntry))
+            await session.commit()
+            
         chain = AuditChain()
+        chain._last_seq = 0
+        chain._last_hash = ""
+        chain._initialized = True
         await chain.append("ev1", {"x": 1})
         await chain.append("ev2", {"x": 2})
         await chain.append("ev3", {"x": 3})
-
+ 
         ok, errors = await chain.verify_chain()
         assert ok is True
         assert errors == []
