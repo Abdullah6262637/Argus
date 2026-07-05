@@ -129,6 +129,20 @@ class DelegateToAgentTool(BaseTool):
             extra=new_extra,
         )
 
+        # Canli WS Yayini (Delegasyon baslangici)
+        try:
+            from app.websocket.manager import connection_manager
+            import asyncio
+            asyncio.create_task(connection_manager.broadcast({
+                "type": "agent_delegation",
+                "source_agent": context.agent_id,
+                "target_agent": target_id,
+                "prompt": prompt,
+                "status": "started"
+            }))
+        except Exception as ws_err:
+            logger.warning("WS broadcast failed for delegation start: %s", ws_err)
+
         try:
             # Ilk deneme
             result = await run_agent_loop(
@@ -159,6 +173,20 @@ class DelegateToAgentTool(BaseTool):
                 
                 while attempts < max_val_attempts:
                     passed, feedback = await self._validate_output(provider, validation_criteria, current_output)
+                    
+                    # Canli WS Yayini (Dogrulama denemesi)
+                    try:
+                        from app.websocket.manager import connection_manager
+                        asyncio.create_task(connection_manager.broadcast({
+                            "type": "agent_validation",
+                            "target_agent": target_id,
+                            "attempt": attempts + 1,
+                            "passed": passed,
+                            "feedback": feedback
+                        }))
+                    except Exception as ws_err:
+                        logger.warning("WS broadcast failed for validation status: %s", ws_err)
+
                     if passed:
                         logger.info("Validation passed for delegated agent %s output", target_id)
                         result.final_content = current_output
@@ -197,7 +225,32 @@ class DelegateToAgentTool(BaseTool):
 
         except Exception as exc:
             logger.exception("delegate_to_agent run hatasi")
+            # Canli WS Yayini (Hata durumu)
+            try:
+                from app.websocket.manager import connection_manager
+                asyncio.create_task(connection_manager.broadcast({
+                    "type": "agent_delegation",
+                    "source_agent": context.agent_id,
+                    "target_agent": target_id,
+                    "status": "failed",
+                    "error": str(exc)
+                }))
+            except Exception as ws_err:
+                pass
             return ToolResult(ok=False, error=f"Hedef ajan hatasi: {exc}")
+
+        # Canli WS Yayini (Basari durumu)
+        try:
+            from app.websocket.manager import connection_manager
+            asyncio.create_task(connection_manager.broadcast({
+                "type": "agent_delegation",
+                "source_agent": context.agent_id,
+                "target_agent": target_id,
+                "status": "success",
+                "result": result.final_content
+            }))
+        except Exception as ws_err:
+            pass
 
         return ToolResult(
             ok=True,
@@ -262,6 +315,19 @@ class BlackboardSetTool(BaseTool):
             
         blackboard = context.extra.setdefault("blackboard", {})
         blackboard[key] = value
+        
+        # Canli WS Yayini (Blackboard guncellemesi)
+        try:
+            from app.websocket.manager import connection_manager
+            import asyncio
+            asyncio.create_task(connection_manager.broadcast({
+                "type": "blackboard_update",
+                "key": key,
+                "value": value,
+                "keys": list(blackboard.keys())
+            }))
+        except Exception as ws_err:
+            pass
         
         return ToolResult(
             ok=True,

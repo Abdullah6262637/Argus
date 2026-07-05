@@ -141,6 +141,19 @@ class WorkflowExecutor:
                     )
                     steps_map[step_id] = step_result
                     result.steps.append(step_result)
+                    
+                    # Canli WS Yayini (Skip durumu)
+                    try:
+                        from app.websocket.manager import connection_manager
+                        asyncio.create_task(connection_manager.broadcast({
+                            "type": "workflow_step_status",
+                            "workflow_name": name,
+                            "step_id": step_id,
+                            "status": "skipped",
+                            "agent_id": agent_id,
+                        }))
+                    except Exception as ws_err:
+                        logger.warning("WS broadcast failed for workflow step skip: %s", ws_err)
                     continue
 
             if not agent_id:
@@ -170,6 +183,20 @@ class WorkflowExecutor:
                 id=step_id, agent_id=agent_id, prompt=rendered_prompt,
             )
 
+            # Canli WS Yayini (Start durumu)
+            try:
+                from app.websocket.manager import connection_manager
+                asyncio.create_task(connection_manager.broadcast({
+                    "type": "workflow_step_status",
+                    "workflow_name": name,
+                    "step_id": step_id,
+                    "status": "running",
+                    "agent_id": agent_id,
+                    "prompt": rendered_prompt
+                }))
+            except Exception as ws_err:
+                logger.warning("WS broadcast failed for workflow step start: %s", ws_err)
+
             attempts = 0
             while attempts <= retry_limit:
                 try:
@@ -192,6 +219,21 @@ class WorkflowExecutor:
 
             steps_map[step_id] = step_result
             result.steps.append(step_result)
+
+            # Canli WS Yayini (Finish durumu)
+            try:
+                from app.websocket.manager import connection_manager
+                asyncio.create_task(connection_manager.broadcast({
+                    "type": "workflow_step_status",
+                    "workflow_name": name,
+                    "step_id": step_id,
+                    "status": "success" if step_result.success else "failed",
+                    "agent_id": agent_id,
+                    "result": step_result.result,
+                    "error": step_result.error
+                }))
+            except Exception as ws_err:
+                logger.warning("WS broadcast failed for workflow step finish: %s", ws_err)
 
             if not step_result.success:
                 result.error = f"Step {step_id} basarisiz: {step_result.error}"
