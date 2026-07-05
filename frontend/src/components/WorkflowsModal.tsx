@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface WorkflowsModalProps {
   open: boolean;
@@ -126,6 +127,43 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
       setRunning(false);
     }
   };
+
+  // Real-time WebSocket Listeners for Workflow monitoring
+  useWebSocket({
+    onMessage: (msg) => {
+      if (!running || !selected) return;
+
+      if (msg.type === 'workflow_step_status') {
+        const payload = msg as any;
+        if (payload.workflow_name !== selected) return;
+
+        setResult((prev) => {
+          const steps = prev?.steps ? [...prev.steps] : [];
+          const idx = steps.findIndex((s) => s.id === payload.step_id);
+          const updatedStep = {
+            id: payload.step_id,
+            agent_id: payload.agent_id,
+            success: payload.status === 'success',
+            result: payload.result || (payload.status === 'running' ? 'Çalışıyor...' : ''),
+            error: payload.error || null,
+          };
+
+          if (idx >= 0) {
+            steps[idx] = updatedStep;
+          } else {
+            steps.push(updatedStep);
+          }
+
+          return {
+            name: selected,
+            success: payload.status === 'success' ? true : prev?.success ?? false,
+            steps,
+            final_output: payload.result || prev?.final_output,
+          };
+        });
+      }
+    },
+  });
 
   const startNew = () => {
     setMode('edit');
@@ -667,6 +705,8 @@ function StepRow({
   index: number;
 }) {
   const [open, setOpen] = useState(false);
+  const isRunning = step.result === 'Çalışıyor...';
+
   return (
     <div>
       <button
@@ -675,15 +715,18 @@ function StepRow({
       >
         <div
           className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-            step.success
-              ? 'bg-brand-success/15 text-brand-success'
-              : 'bg-brand-danger/15 text-brand-danger'
+            isRunning
+              ? 'bg-brand-accent/15 text-brand-accent animate-pulse'
+              : step.success
+                ? 'bg-brand-success/15 text-brand-success'
+                : 'bg-brand-danger/15 text-brand-danger'
           }`}
         >
           <Icon
-            name={step.success ? 'check' : 'close'}
+            name={isRunning ? 'progress_activity' : step.success ? 'check' : 'close'}
             size={12}
             weight={650}
+            className={isRunning ? 'animate-spin-slow' : ''}
           />
         </div>
         <span className="text-[10px] font-mono font-semibold text-brand-mutedSoft tabular-nums w-5 text-right">
@@ -692,6 +735,11 @@ function StepRow({
         <code className="flex-1 text-[11.5px] font-mono font-semibold text-brand-text truncate text-left">
           {step.id}
         </code>
+        {isRunning && (
+          <span className="text-[10px] text-brand-accent animate-pulse font-medium mr-2">
+            Aktif Çalışıyor
+          </span>
+        )}
         <span className="text-[10px] text-brand-mutedSoft inline-flex items-center gap-1">
           <Icon name="smart_toy" size={10} weight={500} />
           {step.agent_id}
