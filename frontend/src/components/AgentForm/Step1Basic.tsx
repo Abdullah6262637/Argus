@@ -74,7 +74,8 @@ export function Step1Basic({
   setDescription,
   onApplyTemplate,
   selectedTemplateId,
-  onClearTemplate
+  onClearTemplate,
+  isEditing
 }: {
   name: string;
   setName: (v: string) => void;
