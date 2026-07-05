@@ -56,7 +56,7 @@ export const PROXY_PRESETS: ProxyPreset[] = [
     label: 'Groq Cloud (Llama/Mixtral)',
     provider: 'groq',
     base_url: 'https://api.groq.com/openai/v1',
-    model: 'llama3-70b-8192',
+    model: 'llama-3.3-70b-versatile',
     placeholder_api_key: 'gsk_...',
     description: 'Ultra hızlı Llama model çıkarımları.'
   },
