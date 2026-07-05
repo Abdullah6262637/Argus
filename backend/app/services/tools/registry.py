@@ -978,10 +978,12 @@ class ToolRegistry:
     def filter_for_agent(self, perms: AgentPermissions) -> List[BaseTool]:
         return [t for t in self._tools.values() if self._is_permitted(t.permission, perms)]
 
-    def openai_schemas(self, perms: AgentPermissions) -> List[Dict[str, Any]]:
-        # Groq ve diger bazi LLM API limitleri maksimum 128 adet tool kabul ettiginden limitle
+    def openai_schemas(self, perms: AgentPermissions, provider_name: str = "openai") -> List[Dict[str, Any]]:
+        # Groq'un ucretsiz katmanindaki cok dar TPM (12000 tokens/dakika) limiti nedeniyle tool sayisini 30 ile kısıtlayalım.
+        # Bu, her istekte devasa sema yukunu engeller.
         schemas = [t.to_openai_schema() for t in self.filter_for_agent(perms)]
-        return schemas[:128]
+        limit = 30 if provider_name.lower() == "groq" else 128
+        return schemas[:limit]
 
     def anthropic_schemas(self, perms: AgentPermissions) -> List[Dict[str, Any]]:
         schemas = [t.to_anthropic_schema() for t in self.filter_for_agent(perms)]

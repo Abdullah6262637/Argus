@@ -206,11 +206,13 @@ async def run_agent_loop(
 
     # Tool schemalarini izinlere gore filtrele
     available_tools = tool_registry.filter_for_agent(agent.permissions)
-    tool_names = [t.name for t in available_tools]
     if provider_name == "anthropic":
         tools_schema = tool_registry.anthropic_schemas(agent.permissions)
+        tool_names = [t.name for t in available_tools][:128]
     else:
-        tools_schema = tool_registry.openai_schemas(agent.permissions)
+        tools_schema = tool_registry.openai_schemas(agent.permissions, provider_name=provider_name)
+        limit = 30 if provider_name.lower() == "groq" else 128
+        tool_names = [t.name for t in available_tools][:limit]
 
     # Mesaj listesini insa et
     messages: List[ChatMessage] = []
