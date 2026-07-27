@@ -13,7 +13,12 @@ echo.
 REM 1. Requirement Checks / Gereksinim Kontrolleri
 where python >nul 2>nul
 if %ERRORLEVEL% neq 0 (
-    if not exist ".venv\Scripts\python.exe" (
+    if exist ".venv\Scripts\python.exe" (
+        set "PYTHON_CMD=.venv\Scripts\python.exe"
+    ) else if exist "%USERPROFILE%\.local\bin\uv.exe" (
+        echo [+] Python found via uv package manager.
+        set "PYTHON_CMD=%USERPROFILE%\.local\bin\uv.exe"
+    ) else (
         echo [!] ERROR: Python was not found in your system PATH.
         echo [!] HATA: Sisteminizde Python bulunamadı.
         echo Please install Python 3.12+ and add it to PATH / Lütfen Python 3.12+ kurup PATH'e ekleyin.
