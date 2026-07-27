@@ -1,73 +1,71 @@
 # ============================================================
-# Argus — Smart Setup & Launch Script / Akıllı Kurulum Betiği (PowerShell)
+# Argus — Native PowerShell Launch Script
 # ============================================================
 
-Clear-Host
+Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "  👁️ Argus Diagnostics & Setup / Sistem Kontrol Aşaması" -ForegroundColor Cyan
+Write-Host "  Argus Diagnostics and Setup / Sistem Kontrol Asamasi" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# 1. Requirement Checks / Gereksinim Kontrolleri
-$pythonCheck = Get-Command python -ErrorAction SilentlyContinue
-if (-not $pythonCheck -and -not (Test-Path -Path ".venv\Scripts\python.exe")) {
-    Write-Host "[!] ERROR: Python was not found in your system PATH." -ForegroundColor Red
-    Write-Host "[!] HATA: Sisteminizde Python bulunamadı. Lütfen Python 3.12+ kurup PATH'e ekleyin." -ForegroundColor Red
-    Read-Host "Press ENTER to continue / Devam etmek için ENTER'a basın..."
+$rootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $rootDir
+
+# 1. Python check
+$pythonOk = $false
+if (Test-Path ".venv\Scripts\python.exe") {
+    Write-Host "[+] Python found in local .venv." -ForegroundColor Green
+    $pythonOk = $true
+} elseif (Test-Path "$env:USERPROFILE\.local\bin\uv.exe") {
+    Write-Host "[+] Python found via uv package manager." -ForegroundColor Green
+    $pythonOk = $true
+} elseif (Get-Command python -ErrorAction SilentlyContinue) {
+    Write-Host "[+] Python found in PATH." -ForegroundColor Green
+    $pythonOk = $true
+}
+
+if (-not $pythonOk) {
+    Write-Host "[!] ERROR: Python was not found." -ForegroundColor Red
+    Write-Host "[!] HATA: Sisteminizde Python bulunamadi." -ForegroundColor Red
+    Pause
     exit 1
 }
 
-$nodeCheck = Get-Command node -ErrorAction SilentlyContinue
-if (-not $nodeCheck) {
+# 2. Node.js check
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     Write-Host "[!] ERROR: Node.js was not found in your system PATH." -ForegroundColor Red
-    Write-Host "[!] HATA: Sisteminizde Node.js bulunamadı. Lütfen Node.js 20+ kurup PATH'e ekleyin." -ForegroundColor Red
-    Read-Host "Press ENTER to continue / Devam etmek için ENTER'a basın..."
+    Write-Host "[!] HATA: Sisteminizde Node.js bulunamadi." -ForegroundColor Red
+    Pause
     exit 1
 }
 
-# Port 8000 control / Port 8000 kontrolü ve temizleme
-$port8000 = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
-if ($port8000) {
-    Write-Host "[!] Port 8000 is already in use (PID: $($port8000.OwningProcess))." -ForegroundColor Yellow
-    Write-Host "[!] Port 8000 zaten kullanımda (PID: $($port8000.OwningProcess))." -ForegroundColor Yellow
-    $kill = Read-Host "Would you like to terminate the existing backend process? / Eski backend'i kapatmak ister misiniz? (y/N - e/H)"
-    if ($kill -eq "e" -or $kill -eq "E" -or $kill -eq "y" -or $kill -eq "Y") {
-        Stop-Process -Id $port8000.OwningProcess -Force -ErrorAction SilentlyContinue
-        Write-Host "[+] Pre-existing backend terminated / Eski backend kapatıldı." -ForegroundColor Green
-        Start-Sleep -Seconds 1
+# 3. Virtual environment check
+if (-not (Test-Path ".venv")) {
+    Write-Host "[+] Creating .venv..." -ForegroundColor Yellow
+    if (Test-Path "$env:USERPROFILE\.local\bin\uv.exe") {
+        & "$env:USERPROFILE\.local\bin\uv.exe" venv .venv
+    } else {
+        python -m venv .venv
     }
+    Write-Host "[+] Installing requirements..." -ForegroundColor Yellow
+    & ".venv\Scripts\pip.exe" install -r backend\requirements.txt
+} else {
+    Write-Host "[+] Python virtual environment (.venv) is ready." -ForegroundColor Green
 }
 
-# 2. Backend .venv check / Sanal Ortam Kontrolü
-$rootPath = $PSScriptRoot
-Set-Location -Path $rootPath
-
-if (-not (Test-Path -Path ".venv")) {
-    Write-Host "[+] Python virtual environment (.venv) not found. Creating..." -ForegroundColor Cyan
-    Write-Host "[+] Python sanal ortam (.venv) bulunamadı. Oluşturuluyor..." -ForegroundColor Cyan
-    Start-Process -FilePath "python" -ArgumentList "-m venv .venv" -NoNewWindow -Wait
-    
-    Write-Host "[+] Installing backend dependencies... / Bağımlılıklar yükleniyor..." -ForegroundColor Cyan
-    Start-Process -FilePath ".\.venv\Scripts\pip.exe" -ArgumentList "install -r backend/requirements.txt" -NoNewWindow -Wait
+# 4. Frontend node_modules check
+Set-Location "$rootDir\frontend"
+if (-not (Test-Path "node_modules")) {
+    Write-Host "[+] Installing frontend node_modules..." -ForegroundColor Yellow
+    npm install
 } else {
-    Write-Host "[+] Python virtual environment (.venv) is ready / Python sanal ortamı hazır." -ForegroundColor Green
-}
-
-# 3. Frontend node_modules check / Frontend Bağımlılık Kontrolü
-Set-Location -Path "$rootPath\frontend"
-if (-not (Test-Path -Path "node_modules")) {
-    Write-Host "[+] Frontend dependencies (node_modules) not found. Installing..." -ForegroundColor Cyan
-    Write-Host "[+] Frontend bağımlılıkları (node_modules) bulunamadı. Yükleniyor..." -ForegroundColor Cyan
-    Start-Process -FilePath "npm" -ArgumentList "install" -NoNewWindow -Wait
-} else {
-    Write-Host "[+] Frontend dependencies are ready / Frontend bağımlılıkları hazır." -ForegroundColor Green
+    Write-Host "[+] Frontend dependencies are ready." -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "============================================================" -ForegroundColor Green
-Write-Host "  [+] Setup checks successful! Launching Argus..." -ForegroundColor Green
-Write-Host "  [+] Tüm kontroller başarılı! Argus başlatılıyor..." -ForegroundColor Green
-Write-Host "============================================================" -ForegroundColor Green
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "  [+] Setup check complete! Launching Argus..." -ForegroundColor Green
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 npm run electron:dev
