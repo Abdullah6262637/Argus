@@ -14,39 +14,48 @@ async def test_python_eval_ast_sandbox_breakout_blocked():
     assert tool.permission == "system_admin"
     assert tool.requires_confirmation is True
 
-    ctx = ToolContext(agent_id="test", workspace_dir=".")
+    ctx = ToolContext(agent_id="test", agent_name="TestAgent", workspace_dir=".")
     
     # Dunder subclass traversal denemesi
     res = await tool.execute({"code": "().__class__.__bases__[0].__subclasses__()"}, ctx)
-    assert not res.ok or "SecurityError" in res.output or "HATA" in res.output
+    assert not res.ok or "SecurityError" in res.output or "HATA" in res.output or "Yasaklı" in res.output
 
     # Dangerous built-in eval/exec denemesi
     res2 = await tool.execute({"code": "eval('1+1')"}, ctx)
-    assert not res2.ok or "SecurityError" in res2.output or "HATA" in res2.output
+    assert not res2.ok or "SecurityError" in res2.output or "HATA" in res2.output or "Yasaklı" in res2.output
 
 
 @pytest.mark.asyncio
 async def test_delegate_to_agent_privilege_escalation():
-    from app.services.agent_manager import agent_manager, Agent
+    from app.services.agent_manager import agent_manager
+    from app.schemas.agent import AgentInfo, AgentPermissions
 
     # Düşük yetkili ajanı kaydet
-    low_agent = Agent(
+    low_agent = AgentInfo(
         id="low-priv-agent",
         name="Low Priv Agent",
-        permissions={"web_search": True, "terminal_cmd": False, "system_admin": False}
+        role="Researcher",
+        description="Low priv agent",
+        provider="openai",
+        model="gpt-4o-mini",
+        permissions=AgentPermissions(web_search=True, file_system=False, terminal_cmd=False, system_admin=False)
     )
     # Yüksek yetkili ajanı kaydet
-    high_agent = Agent(
+    high_agent = AgentInfo(
         id="high-priv-agent",
         name="High Priv Agent",
-        permissions={"web_search": True, "terminal_cmd": True, "system_admin": True}
+        role="Admin",
+        description="High priv agent",
+        provider="openai",
+        model="gpt-4o-mini",
+        permissions=AgentPermissions(web_search=True, file_system=True, terminal_cmd=True, system_admin=True)
     )
 
     agent_manager._agents["low-priv-agent"] = low_agent
     agent_manager._agents["high-priv-agent"] = high_agent
 
     tool = DelegateToAgentTool()
-    ctx = ToolContext(agent_id="low-priv-agent", workspace_dir=".")
+    ctx = ToolContext(agent_id="low-priv-agent", agent_name="LowPrivAgent", workspace_dir=".")
 
     res = await tool.execute({
         "agent_id": "high-priv-agent",

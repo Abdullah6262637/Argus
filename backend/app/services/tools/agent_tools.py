@@ -107,8 +107,12 @@ class DelegateToAgentTool(BaseTool):
         if context.agent_id:
             current_agent = agent_manager.get(context.agent_id)
             if current_agent:
-                curr_perms = current_agent.permissions or {}
-                targ_perms = target_agent.permissions or {}
+                curr_perms_raw = current_agent.permissions or {}
+                targ_perms_raw = target_agent.permissions or {}
+
+                curr_perms = curr_perms_raw.model_dump() if hasattr(curr_perms_raw, "model_dump") else (curr_perms_raw if isinstance(curr_perms_raw, dict) else {})
+                targ_perms = targ_perms_raw.model_dump() if hasattr(targ_perms_raw, "model_dump") else (targ_perms_raw if isinstance(targ_perms_raw, dict) else {})
+
                 for perm_key, is_enabled in targ_perms.items():
                     if is_enabled and not curr_perms.get(perm_key, False):
                         return ToolResult(

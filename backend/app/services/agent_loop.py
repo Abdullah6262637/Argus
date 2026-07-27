@@ -154,19 +154,26 @@ def _build_system_prompt(
 def _get_fallback_provider_info(primary_provider: str, primary_model: str) -> Optional[tuple[str, str]]:
     """Cevap alinamamasi durumunda API anahtari olan yedek LLM seceneklerini doner."""
     import os
-    
+    from app.services.security.secrets import decrypt
+
+    def _get_key(env_name: str) -> Optional[str]:
+        val = os.environ.get(env_name)
+        if val and val.strip():
+            return decrypt(val.strip())
+        return None
+
     # 1. Gemini
-    gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    gemini_key = _get_key("GEMINI_API_KEY") or _get_key("GOOGLE_API_KEY")
     if gemini_key and primary_provider != "gemini":
         return "gemini", "gemini-1.5-flash"
         
     # 2. OpenRouter (Llama 3 Free)
-    openrouter_key = os.environ.get("OPENROUTER_API_KEY")
+    openrouter_key = _get_key("OPENROUTER_API_KEY")
     if openrouter_key and primary_provider != "openrouter":
         return "openrouter", "meta-llama/llama-3-8b-instruct:free"
 
     # 3. Groq (Llama 3)
-    groq_key = os.environ.get("GROQ_API_KEY")
+    groq_key = _get_key("GROQ_API_KEY")
     if groq_key and primary_provider != "groq":
         return "groq", "llama3-8b-8192"
 

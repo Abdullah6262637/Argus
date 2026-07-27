@@ -384,14 +384,41 @@ class CloudBackupTool(BaseTool):
                     )
                 )
             
-            output = f"Bulut Yedekleme\n"
+            if cloud_provider.lower() == "aws":
+                try:
+                    import boto3
+                    s3 = boto3.client("s3")
+                    key_name = os.path.basename(source_path)
+                    if os.path.isdir(source_path):
+                        for root, _, files in os.walk(source_path):
+                            for file in files:
+                                local_p = os.path.join(root, file)
+                                rel_p = os.path.relpath(local_p, source_path)
+                                s3.upload_file(local_p, destination_bucket, rel_p)
+                    else:
+                        s3.upload_file(source_path, destination_bucket, key_name)
+
+                    return ToolResult(
+                        ok=True,
+                        output=f"AWS S3 Yükleme Başarılı!\nKaynak: {source_path}\nBucket: {destination_bucket}",
+                        data={"source": source_path, "provider": "aws", "destination": destination_bucket}
+                    )
+                except ImportError:
+                    return ToolResult(
+                        ok=False,
+                        error="[Eksik Bağımlılık] AWS S3 yedeklemesi için 'boto3' paketi yüklü değil. (pip install boto3)"
+                    )
+                except Exception as exc:
+                    return ToolResult(ok=False, error=f"[AWS S3 Hatası] {exc}")
+
+            output = f"Bulut Yedekleme ({cloud_provider.upper()})\n"
             output += f"Kaynak: {source_path}\n"
-            output += f"Sağlayıcı: {cloud_provider}\n"
-            output += f"Hedef: {destination_bucket}\n"
-            output += f"Durum: ✅ İşlem tamamlandı."
+            output += f"Hedef Bucket: {destination_bucket}\n"
+            output += f"Durum: Gerekli SDK paketinin (azure-storage-blob / google-cloud-storage) yüklenmesi bekleniyor."
             
             return ToolResult(
-                ok=True,
+                ok=False,
+                error=f"[{cloud_provider.upper()} Entegrasyon Uyarısı] Gerçek {cloud_provider} yedeklemesi için ilgili SDK paketini yükleyin.",
                 output=output,
                 data={
                     "source": source_path,

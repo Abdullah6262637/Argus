@@ -85,16 +85,16 @@ def _apply_schema_migrations(sync_conn) -> None:
             return False
 
     def _add_column_if_missing(table: str, column: str, sql_type: str) -> None:
-        """Tablo + sutun yoksa hata vermeden ekle."""
+        """Tablo + sutun yoksa ekle, durumunu logla."""
         try:
             if not inspector.has_table(table):
                 return
             if _has_column(table, column):
                 return
             sync_conn.execute(text(f'ALTER TABLE {table} ADD COLUMN {column} {sql_type}'))
-        except Exception:
-            # SQLite zaten varsa OperationalError verebilir; sessizce gec
-            pass
+            logger.info("Veritabanı Şeması Güncellendi: %s tablosuna %s kolonu eklendi.", table, column)
+        except Exception as exc:
+            logger.warning("Veritabanı migration Uyarısı (%s.%s): %s", table, column, exc)
 
     # plans tablosu: failure_analysis_json (Sprint F.4)
     _add_column_if_missing("plans", "failure_analysis_json", "TEXT")
