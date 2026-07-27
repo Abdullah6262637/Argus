@@ -26,10 +26,13 @@ class OpenAIProvider(BaseLLMProvider):
         api_key: Optional[str],
         model: str = "gpt-4o-mini",
         base_url: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> None:
         super().__init__(api_key=api_key, model=model)
+        if name:
+            self.name = name
         if not api_key:
-            raise LLMError("OPENAI_API_KEY tanimli degil")
+            raise LLMError(f"{self.name.upper()}_API_KEY tanimli degil")
         self.base_url = base_url
         try:
             from openai import AsyncOpenAI  # type: ignore

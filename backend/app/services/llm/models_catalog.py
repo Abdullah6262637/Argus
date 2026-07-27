@@ -126,6 +126,27 @@ OPENROUTER_MODELS: List[ModelInfo] = [
     {"id": "meta-llama/llama-3.3-70b-instruct", "label": "Llama 3.3 70B (OR)"},
     {"id": "deepseek/deepseek-r1", "label": "DeepSeek R1 (OR)"}]
 
+SAMBANOVA_MODELS: List[ModelInfo] = [
+    {"id": "Meta-Llama-3.3-70B-Instruct", "label": "Meta Llama 3.3 70B (SambaNova - 1000+ t/s)"},
+    {"id": "Meta-Llama-3.1-405B-Instruct", "label": "Meta Llama 3.1 405B (SambaNova)"},
+    {"id": "Meta-Llama-3.1-70B-Instruct", "label": "Meta Llama 3.1 70B (SambaNova)"},
+    {"id": "Meta-Llama-3.1-8B-Instruct", "label": "Meta Llama 3.1 8B (SambaNova)"},
+    {"id": "DeepSeek-R1", "label": "DeepSeek R1 (SambaNova)"}]
+
+CEREBRAS_MODELS: List[ModelInfo] = [
+    {"id": "llama3.3-70b", "label": "Llama 3.3 70B (Cerebras WSE - 2000+ t/s)"},
+    {"id": "llama3.1-8b", "label": "Llama 3.1 8B (Cerebras WSE - 2200+ t/s)"}]
+
+FIREWORKS_MODELS: List[ModelInfo] = [
+    {"id": "accounts/fireworks/models/llama-v3p3-70b-instruct", "label": "Llama 3.3 70B Instruct (Fireworks)"},
+    {"id": "accounts/fireworks/models/deepseek-r1", "label": "DeepSeek R1 (Fireworks)"},
+    {"id": "accounts/fireworks/models/deepseek-v3", "label": "DeepSeek V3 (Fireworks)"}]
+
+TOGETHER_MODELS: List[ModelInfo] = [
+    {"id": "meta-llama/Llama-3.3-70B-Instruct-Turbo", "label": "Llama 3.3 70B Turbo (Together)"},
+    {"id": "deepseek-ai/DeepSeek-R1", "label": "DeepSeek R1 (Together)"},
+    {"id": "deepseek-ai/DeepSeek-V3", "label": "DeepSeek V3 (Together)"}]
+
 
 MODELS_BY_PROVIDER: Dict[str, List[ModelInfo]] = {
     "openai": OPENAI_MODELS,
@@ -137,4 +158,8 @@ MODELS_BY_PROVIDER: Dict[str, List[ModelInfo]] = {
     "mistral": MISTRAL_MODELS,
     "deepseek": DEEPSEEK_MODELS,
     "xai": XAI_MODELS,
-    "openrouter": OPENROUTER_MODELS}
+    "openrouter": OPENROUTER_MODELS,
+    "sambanova": SAMBANOVA_MODELS,
+    "cerebras": CEREBRAS_MODELS,
+    "fireworks": FIREWORKS_MODELS,
+    "together": TOGETHER_MODELS}

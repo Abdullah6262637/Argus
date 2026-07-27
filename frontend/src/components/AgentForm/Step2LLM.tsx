@@ -61,11 +61,38 @@ export const PROXY_PRESETS: ProxyPreset[] = [
     description: 'Ultra hızlı Llama model çıkarımları.'
   },
   {
+    id: 'sambanova',
+    label: 'SambaNova Cloud (1000+ t/s)',
+    provider: 'sambanova',
+    base_url: 'https://api.sambanova.ai/v1',
+    model: 'Meta-Llama-3.3-70B-Instruct',
+    placeholder_api_key: 'sn_...',
+    description: 'Rekor hızında SambaNova LPU çıkarım motoru.'
+  },
+  {
+    id: 'cerebras',
+    label: 'Cerebras Systems (2000+ t/s)',
+    provider: 'cerebras',
+    base_url: 'https://api.cerebras.ai/v1',
+    model: 'llama3.3-70b',
+    placeholder_api_key: 'csk-...',
+    description: 'Wafer-Scale Engine ile dünyanın en hızlı Llama çıkarımı.'
+  },
+  {
+    id: 'fireworks',
+    label: 'Fireworks AI (Speculative)',
+    provider: 'fireworks',
+    base_url: 'https://api.fireworks.ai/inference/v1',
+    model: 'accounts/fireworks/models/llama-v3p3-70b-instruct',
+    placeholder_api_key: 'fw_...',
+    description: 'Gelişmiş speculative decoding çıkarım servisi.'
+  },
+  {
     id: 'together',
     label: 'Together AI (Serverless)',
-    provider: 'openai',
+    provider: 'together',
     base_url: 'https://api.together.xyz/v1',
-    model: 'meta-llama/Llama-3-70b-chat-hf',
+    model: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
     placeholder_api_key: '••••',
     description: 'Geniş açık kaynak model kütüphanesi.'
   },

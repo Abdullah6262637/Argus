@@ -26,7 +26,19 @@ _OPENAI_COMPATIBLE_PROVIDERS: Dict[str, Dict[str, str]] = {
         "env_key": "XAI_API_KEY"},
     "openrouter": {
         "base_url": "https://openrouter.ai/api/v1",
-        "env_key": "OPENROUTER_API_KEY"}}
+        "env_key": "OPENROUTER_API_KEY"},
+    "sambanova": {
+        "base_url": "https://api.sambanova.ai/v1",
+        "env_key": "SAMBANOVA_API_KEY"},
+    "cerebras": {
+        "base_url": "https://api.cerebras.ai/v1",
+        "env_key": "CEREBRAS_API_KEY"},
+    "fireworks": {
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "env_key": "FIREWORKS_API_KEY"},
+    "together": {
+        "base_url": "https://api.together.xyz/v1",
+        "env_key": "TOGETHER_API_KEY"}}
 
 
 def get_provider(
@@ -110,7 +122,7 @@ def get_provider(
                 f"{provider_name} icin API key gerekli (.env: {meta['env_key']} veya ajan ayarlarinda)"
             )
         provider = OpenAIProvider(
-            api_key=effective_key, model=model, base_url=effective_base_url
+            api_key=effective_key, model=model, base_url=effective_base_url, name=provider_name
         )
     else:
         raise LLMError(f"Desteklenmeyen LLM saglayici: {provider_name}")

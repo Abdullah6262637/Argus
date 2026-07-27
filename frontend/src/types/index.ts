@@ -13,7 +13,11 @@ export type ProviderName =
   | 'mistral'
   | 'deepseek'
   | 'xai'
-  | 'openrouter';
+  | 'openrouter'
+  | 'sambanova'
+  | 'cerebras'
+  | 'fireworks'
+  | 'together';
 
 // Sprint A.11: Soul (system_prompt) dosyalari
 export interface SoulInfo {

@@ -48,6 +48,10 @@ export function getModelLogo(model: string, provider: string): string {
   if (p === 'deepseek') return '/providers/deepseek.png?v=3';
   if (p === 'mistral') return '/providers/mistral.png?v=3';
   if (p === 'xai') return '/providers/xai.png?v=3';
+  if (p === 'sambanova') return '/providers/sambanova.png?v=3';
+  if (p === 'cerebras') return '/providers/cerebras.png?v=3';
+  if (p === 'fireworks') return '/providers/fireworks.png?v=3';
+  if (p === 'together') return '/providers/together.png?v=3';
   if (p === 'local') return '/providers/local.png?v=3';
   
   return '/providers/local.png?v=3';

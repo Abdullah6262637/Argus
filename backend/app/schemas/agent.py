@@ -17,7 +17,11 @@ ProviderName = Literal[
     "mistral",
     "deepseek",
     "xai",
-    "openrouter"]
+    "openrouter",
+    "sambanova",
+    "cerebras",
+    "fireworks",
+    "together"]
 
 
 class MediaCapabilityInput(BaseModel):
