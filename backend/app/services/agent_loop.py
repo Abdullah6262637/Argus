@@ -342,19 +342,27 @@ async def run_agent_loop(
                 )
             )
 
-        # Her tool'u sirayla calistir
-        for tc in tool_calls:
+        # Paralel tool calistirma (Performans Iyilestirmesi)
+        async def execute_single_tool(tc: ToolCall) -> tuple[ToolCall, Any, int, ToolCallRecord]:
             await _emit(on_event, "tool_call_started", {
                 "id": tc.id,
                 "name": tc.name,
                 "arguments": tc.arguments,
                 "agent_id": agent.id,
-                "step": step})
+                "step": step
+            })
 
             t_start = time.time()
-            tool_result = await tool_registry.execute(
-                tc.name, tc.arguments, agent.permissions, context
-            )
+            # Hata toleransi ve otomatik retry (Gelecekte genisletilebilir)
+            try:
+                tool_result = await tool_registry.execute(
+                    tc.name, tc.arguments, agent.permissions, context
+                )
+            except Exception as e:
+                # Beklenmeyen hatalari yakalayip aracin cokmesini engelle
+                from app.services.tools import ToolResult
+                tool_result = ToolResult(ok=False, output="", error=f"Bilinmeyen hata: {str(e)}")
+
             duration_ms = int((time.time() - t_start) * 1000)
 
             record = ToolCallRecord(
@@ -367,12 +375,23 @@ async def run_agent_loop(
                 data=tool_result.data,
                 duration_ms=duration_ms,
             )
-            result.tool_calls.append(record)
-
+            
             await _emit(on_event, "tool_call_completed", {
                 **record.to_dict(),
                 "agent_id": agent.id,
-                "step": step})
+                "step": step
+            })
+            
+            return tc, tool_result, duration_ms, record
+
+        import asyncio
+        # Tum toollari ayni anda (concurrent) calistir
+        execution_tasks = [execute_single_tool(tc) for tc in tool_calls]
+        execution_results = await asyncio.gather(*execution_tasks)
+
+        # Sonuclari toparlayip listelere ekle
+        for tc, tool_result, duration_ms, record in execution_results:
+            result.tool_calls.append(record)
 
             # LLM'e geri verecegimiz mesaji ekle
             if used_text_format:

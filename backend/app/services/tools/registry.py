@@ -1045,7 +1045,7 @@ class ToolRegistry:
         # ============ /Sandbox ============
 
         try:
-            result = await asyncio.wait_for(tool.execute(args, context), timeout=timeout)
+            result = await asyncio.wait_for(tool.execute_safe(args, context), timeout=timeout)
         except asyncio.TimeoutError:
             result = ToolResult(ok=False, error=f"Tool zaman asimi: {name} ({timeout}s)")
         except Exception as exc:

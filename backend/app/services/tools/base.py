@@ -71,6 +71,26 @@ class BaseTool(ABC):
         """Tool'u verilen argumanlarla calistir."""
         raise NotImplementedError
 
+    async def execute_safe(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        """Tool'u guvenli bir sekilde, sure takibi ve hata yakalama ile calistirir."""
+        import time
+        start_t = time.perf_counter()
+        try:
+            res = await self.execute(args, context)
+            elapsed_ms = round((time.perf_counter() - start_t) * 1000, 2)
+            if res.data is None:
+                res.data = {}
+            res.data["execution_time_ms"] = elapsed_ms
+            return res
+        except Exception as exc:
+            elapsed_ms = round((time.perf_counter() - start_t) * 1000, 2)
+            logger.exception("Tool execution exception (%s): %s", self.name, exc)
+            return ToolResult(
+                ok=False,
+                error=f"Araç çalıştırma sırasında beklenmeyen hata ({self.name}): {exc}",
+                data={"execution_time_ms": elapsed_ms}
+            )
+
     def to_openai_schema(self) -> Dict[str, Any]:
         """OpenAI 'tools' parametresi icin schema uret."""
         return {
