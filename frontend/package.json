@@ -18,7 +18,7 @@
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium",
     "electron": "node electron/launcher.cjs",
-    "backend:dev": "..\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000",
+    "backend:dev": "node -e \"const { spawn } = require('child_process'); const fs = require('fs'); const py = fs.existsSync('../.venv/Scripts/python.exe') ? '../.venv/Scripts/python.exe' : 'python'; const proc = spawn(py, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'], { stdio: 'inherit', shell: true }); proc.on('exit', c => process.exit(c || 0));\"",
     "electron:dev": "cross-env ARGUS_NO_BACKEND=1 concurrently -k -n BACKEND,VITE,ELECTRON -c green,cyan,magenta \"npm run backend:dev\" \"npm run dev\" \"wait-on http-get://127.0.0.1:5173 http-get://127.0.0.1:8000/api/health && node electron/launcher.cjs\"",
     "electron:only": "cross-env ARGUS_NO_BACKEND=1 node electron/launcher.cjs",
     "electron:build": "npm run build && electron-builder --win --x64"
