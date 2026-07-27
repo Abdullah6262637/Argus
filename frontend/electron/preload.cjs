@@ -1,8 +1,6 @@
 // Electron preload - renderer'a guvenli API expose eder.
-// Su anda sadece bir version/platform bilgisi paylasiyoruz.
-// Ileride dosya IO veya native secret store gibi kanallar buraya eklenebilir.
 
-const { contextBridge } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('openclaw', {
   platform: process.platform,
@@ -10,5 +8,10 @@ contextBridge.exposeInMainWorld('openclaw', {
     node: process.versions.node,
     chrome: process.versions.chrome,
     electron: process.versions.electron,
+  },
+  windowControls: {
+    minimize: () => ipcRenderer.send('window-minimize'),
+    maximize: () => ipcRenderer.send('window-maximize'),
+    close: () => ipcRenderer.send('window-close'),
   },
 });

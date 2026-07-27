@@ -126,8 +126,14 @@ function createMainWindow() {
     height: 900,
     minWidth: 1100,
     minHeight: 700,
-    backgroundColor: '#000000',
+    backgroundColor: '#0f172a',
     title: 'Argus - Çoklu Ajan Sistemi',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#0f172a',
+      symbolColor: '#f8fafc',
+      height: 35
+    },
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
@@ -137,6 +143,17 @@ function createMainWindow() {
       sandbox: true,
     },
   });
+
+  const { ipcMain } = require('electron');
+  ipcMain.on('window-minimize', () => mainWindow?.minimize());
+  ipcMain.on('window-maximize', () => {
+    if (mainWindow?.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow?.maximize();
+    }
+  });
+  ipcMain.on('window-close', () => mainWindow?.close());
 
   if (isDev) {
     mainWindow.loadURL(DEV_URL);

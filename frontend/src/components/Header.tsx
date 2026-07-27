@@ -54,9 +54,9 @@ export function Header({
   onOpenWorkflows,
   onOpenCommandPalette}: HeaderProps) {
   return (
-    <header className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down">
+    <header className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down select-none" style={{ WebkitAppRegion: 'drag' } as any}>
       {/* Sol: Logo + isim */}
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex items-center gap-2.5 min-w-0" style={{ WebkitAppRegion: 'no-drag' } as any}>
         <img
           src="/logo.png"
           className="w-10 h-10 rounded-lg object-contain flex-shrink-0"
@@ -73,7 +73,7 @@ export function Header({
       </div>
 
       {/* Sağ: Komut paleti + aksiyon grubu + ayarlar + bağlantı */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" style={{ WebkitAppRegion: 'no-drag' } as any}>
         {/* Komut paleti — özel kbd hint'li search-look */}
         {onOpenCommandPalette && (
           <button
@@ -202,6 +202,33 @@ export function Header({
             />
           </span>
         </div>
+
+        {/* Window Controls (Electron desktop mode) */}
+        {typeof window !== 'undefined' && (window as any).openclaw?.windowControls && (
+          <div className="flex items-center gap-1 ml-2 pl-2 border-l border-brand-border select-none" style={{ WebkitAppRegion: 'no-drag' } as any}>
+            <button
+              onClick={() => (window as any).openclaw.windowControls.minimize()}
+              title="Küçült (-)"
+              className="w-7 h-7 inline-flex items-center justify-center rounded-md text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
+            >
+              <span className="text-[11px] font-bold">─</span>
+            </button>
+            <button
+              onClick={() => (window as any).openclaw.windowControls.maximize()}
+              title="Ekranı Kapla / Tam Ekran (□)"
+              className="w-7 h-7 inline-flex items-center justify-center rounded-md text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
+            >
+              <span className="w-2.5 h-2.5 border-1.5 border-current rounded-[1px] block" />
+            </button>
+            <button
+              onClick={() => (window as any).openclaw.windowControls.close()}
+              title="Kapat (✕)"
+              className="w-7 h-7 inline-flex items-center justify-center rounded-md text-brand-textSoft hover:text-white hover:bg-red-500/90 transition-all duration-150 active:scale-90"
+            >
+              <span className="text-[12px] font-bold">✕</span>
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
