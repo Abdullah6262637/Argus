@@ -3,28 +3,29 @@
    data-theme attribute'una gore paleti degisir
    ============================================================ */
 
-/* Varsayilan: Minimal Siyah-Beyaz */
+/* Varsayilan: Modern Argus Slate & Emerald Minimal */
 :root,
-[data-theme='mono'] {
-  --brand-bg: #000000;
-  --brand-panel: #0a0a0a;
-  --brand-panel-alt: #111111;
-  --brand-border: #1f1f1f;
-  --brand-border-strong: #2a2a2a;
-  --brand-accent: #ffffff;
-  --brand-accent-dim: #d4d4d4;
-  --brand-muted: #737373;
-  --brand-muted-soft: #525252;
-  --brand-text: #fafafa;
-  --brand-text-soft: #a3a3a3;
-  --brand-user: #ffffff;
-  --brand-user-text: #000000;
-  --brand-agent: #0a0a0a;
-  --brand-agent-text: #fafafa;
+[data-theme='midnight'],
+[data-theme='slate'] {
+  --brand-bg: #0b1120;
+  --brand-panel: #101827;
+  --brand-panel-alt: #162032;
+  --brand-border: #1e293b;
+  --brand-border-strong: #334155;
+  --brand-accent: #10b981;
+  --brand-accent-dim: #34d399;
+  --brand-muted: #64748b;
+  --brand-muted-soft: #475569;
+  --brand-text: #f8fafc;
+  --brand-text-soft: #94a3b8;
+  --brand-user: #10b981;
+  --brand-user-text: #ffffff;
+  --brand-agent: #101827;
+  --brand-agent-text: #f8fafc;
   --brand-danger: #ef4444;
-  --brand-success: #22c55e;
-  --brand-scrollbar: #1f1f1f;
-  --brand-scrollbar-hover: #2a2a2a;
+  --brand-success: #10b981;
+  --brand-scrollbar: #1e293b;
+  --brand-scrollbar-hover: #334155;
 }
 
 /* Alternatif: Koyu Gece Mavisi (Argus Slate & Emerald) */
