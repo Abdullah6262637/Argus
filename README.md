@@ -49,9 +49,9 @@ gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle ge
 
 ### 🖼️ Kullanıcı Arayüzü (GUI Overview)
 
-![Argus GUI Overview](docs/images/argus_ui_overview.png)
+![Argus GUI Overview](docs/images/argus_app_gui.png)
 
-*`image-cropper` ve `ui-screenshot-inspector` ajanları tarafından temizlenen canlı masaüstü GUI arayüz ekran görüntüsü.*
+*`gui-auth-autologin`, `playwright-browser-agent` ve `image-cropper` ajanları tarafından otomatik oturum açılarak alınan canlı Argus Arayüz ekran görüntüsü.*
 
 #### 🖥️ Arayüz Bileşenleri ve Adım Adım Çalışma Rehberi:
 
