@@ -151,7 +151,9 @@ function createMainWindow() {
   ipcMain.on('window-close', () => mainWindow?.close());
 
   if (isDev) {
-    mainWindow.loadURL(DEV_URL);
+    mainWindow.loadURL(DEV_URL).catch(() => {
+      mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+    });
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
