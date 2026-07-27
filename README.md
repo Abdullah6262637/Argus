@@ -23,6 +23,7 @@ gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle ge
 ## 📋 İçindekiler
 
 - [Genel Bakış](#-genel-bakış)
+- [Ajan Oluşturma Sihirbazı](#-ajan-oluşturma-sihirbazı-step-by-step-agent-creation-wizard)
 - [Mimari](#-mimari)
 - [Özellikler](#-özellikler)
 - [LLM Sağlayıcıları](#-llm-sağlayıcıları)
@@ -81,6 +82,104 @@ gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle ge
 | Vektör belleği + KG | ✅ | ⚠️ Ek kütüphane gerekir |
 | Görsel iş akışı editörü | ✅ | ❌ |
 | Planlama motoru | ✅ Çok adımlı | ⚠️ Basit |
+
+---
+
+## 🧙‍♂️ Ajan Oluşturma Sihirbazı (Step-by-Step Agent Creation Wizard)
+
+Argus, 6 adımlı gelişmiş görsel sihirbazı (**Agent Creation Wizard**) sayesinde kullanıcıların sıfırdan uzmanlaşmış yapay zeka ajanları oluşturmasını veya hazır 12 uzman şablondan (*Yazılım Geliştirici*, *Araştırmacı*, *DevOps*, *Veri Analisti* vb.) tek tıkla ajan türetmesini sağlar.
+
+---
+
+### 1️⃣ Adım 1: Temel Bilgiler (Basic Info & Templates)
+
+![Adım 1: Temel Bilgiler](docs/images/wizard_step1.png)
+
+- **Hazır Şablonlar (Templates):** *Yazılım Geliştirici*, *Araştırmacı Asistan*, *İçerik Yazarı*, *DevOps Mühendisi*, *Veri Analisti*, *Proje Yöneticisi* gibi hazır şablonlardan biri seçildiğinde form otomatik olarak en uygun rol, açıklama, LLM modeli ve izinlerle doldurulur.
+- **Özel Tanımlama:** Ajan Adı (`name`), Rol/Ünvan (`role`) ve Açıklama (`description`) alanları doğrudan elle girilebilir.
+
+---
+
+### 2️⃣ Adım 2: LLM Yapılandırması (LLM Configuration, Proxies & Providers)
+
+![Adım 2: LLM Yapılandırması](docs/images/wizard_step2.png)
+
+#### 🔌 Desteklenen Proxy & Preset Yapılandırmaları (Canlı Şerit)
+<div align="center">
+  <marquee behavior="scroll" direction="left" scrollamount="6" style="background: #090d16; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
+    <img src="https://img.shields.io/badge/Ollama_Local-http%3A%2F%2Flocalhost%3A11434-000000?style=for-the-badge&logo=ollama&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/LM_Studio-http%3A%2F%2Flocalhost%3A1234-22c55e?style=for-the-badge&logo=python&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/vLLM_Server-http%3A%2F%2Flocalhost%3A8000-6366f1?style=for-the-badge&logo=fastapi&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/OpenAI_Direct-https%3A%2F%2Fapi.openai.com-412991?style=for-the-badge&logo=openai&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/OpenRouter_Gateway-https%3A%2F%2Fopenrouter.ai-6566F1?style=for-the-badge&logo=router&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Groq_Speed-https%3A%2F%2Fapi.groq.com-f97316?style=for-the-badge&logo=lightning&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/DeepSeek_Direct-https%3A%2F%2Fapi.deepseek.com-0284c7?style=for-the-badge&logo=deepseek&logoColor=white" />
+  </marquee>
+</div>
+
+<br/>
+
+#### 🧠 Desteklenen Yerli & Küresel LLM Sağlayıcıları (Canlı Şerit)
+<div align="center">
+  <marquee behavior="scroll" direction="right" scrollamount="5" style="background: #090d16; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
+    <img src="https://img.shields.io/badge/OpenAI-GPT--4o%20%7C%20o3--mini-412991?style=for-the-badge&logo=openai&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Anthropic-Claude%203.5%20Sonnet-d97706?style=for-the-badge&logo=anthropic&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Google_Gemini-Gemini%202.0%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Groq_Cloud-Llama%203.3%2070B-f97316?style=for-the-badge&logo=speedtest&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/DeepSeek-V3%20%26%20R1%20Reasoning-0284c7?style=for-the-badge&logo=deepseek&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/OpenRouter-200%2B%20Models-6366f1?style=for-the-badge&logo=openrouter&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Ollama_Local-Llama3%20%2F%20Mistral-000000?style=for-the-badge&logo=ollama&logoColor=white" />
+  </marquee>
+</div>
+
+<br/>
+
+- **Manuel & Preset Seçimi:** İster hazır proxy preset'lerinden (*Ollama Local*, *LM Studio*, *OpenRouter*, *Groq*) birini seçin, ister özel `Base URL` girerek kendi kurumsal LLM sunucunuza bağlanın.
+- **Canlı Bağlantı Testi (Live Connectivity Check):** `Bağlantıyı Test Et` butonu sayesinde SSL sertifikası, API anahtarı geçerliliği ve ağ gecikmesi (ms cinsinden) ajanı kaydetmeden önce gerçek zamanlı doğrulanır.
+
+---
+
+### 3️⃣ Adım 3: Medya Yetenekleri (Multimodal Media Capabilities)
+
+![Adım 3: Medya Yetenekleri](docs/images/wizard_step3.png)
+
+- **Görsel Yeteneği (Image Vision & Gen):** Ajanın resim analiz etmesini, screenshot incelemesini veya görsel üretmesini aktifleştirir.
+- **Video Yeteneği (Video Understanding):** Video içeriklerinin karesel analizini ve özetlenmesini sağlar.
+- **Ses Yeteneği (Speech & Audio):** Sesli komut dinleme (STT) ve sesli yanıt verme (TTS) yeteneklerini ajan bazında bağımsız konfigüre eder.
+
+---
+
+### 4️⃣ Adım 4: Davranış ve Kişilik (Behavior & System Prompt / SOUL)
+
+![Adım 4: Davranış ve Kişilik](docs/images/wizard_step4.png)
+
+- **Hazır SOUL Dosyası Seçici:** Sistemde kayıtlı hazır kişilik ve uzmanlık talimatlarını (System Prompt / SOUL) tek tıkla yükler.
+- **Yaratıcılık & Sıcaklık (Temperature):** `0.0` (kesin/analitik) ile `1.0` (yaratıcı/serbest) arasında ajan yanıt tarzını ayarlar.
+- **Max Tokens & Etiketler:** Yanıt uzunluk sınırını belirler ve ajana arama/filtreleme için etiketler ekler.
+
+---
+
+### 5️⃣ Adım 5: Güvenlik ve Yetkiler (Security & Granular Permissions)
+
+![Adım 5: Güvenlik ve Yetkiler](docs/images/wizard_step5.png)
+
+- **Hazır İzin Profilleri:** *Salt-okunur*, *Araştırmacı*, *Yazar*, *Geliştirici*, *Tam Yetkili* veya *Özel Yapılandırma* profillerinden birini seçin.
+- **İnce Ayar İzin Anahtarları:**
+  - 📁 **Dosya Sistemi:** Yerel dosya okuma/yazma erişimi.
+  - 💻 **Terminal ve Komut Çalıştırma:** PowerShell/Bash komutu çalıştırma yetkisi.
+  - 🌐 **Web Erişimi:** Web araması ve tarayıcı otomasyonu.
+  - ⚙️ **Sistem Yönetimi:** Üst düzey sistem konfigürasyonu.
+
+---
+
+### 6️⃣ Adım 6: Plugins ve MCP Yetenekleri (Model Context Protocol & Extensions)
+
+![Adım 6: Plugins ve MCP Yetenekleri](docs/images/wizard_step6.png)
+
+*`playwright-browser-agent` subagent tarafından otomatik gezinti yapılarak ekran görüntüsü alınan canlı Adım 6 arayüzü.*
+
+- **Aktif MCP Sunucuları (Model Context Protocol):** Sistem genelinde aktif olan MCP sunucularını (*Fetch*, *Memory*, *Filesystem*, *Browser* vb.) ajanın erişimine sunar.
+- **Eklenti (Plugin) Entegrasyonu:** Global olarak etkinleştirilen plugin araçlarını ajanın yetenek kümesine dahil eder.
 
 ---
 
