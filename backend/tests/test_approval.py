@@ -64,13 +64,13 @@ class TestApprovalServiceFlow:
         service = ApprovalService(default_timeout=5.0)
 
         async def approver(approval_id_holder: list):
-            await asyncio.sleep(0.1)
-            # ID'yi bekleyen waiter'larin son anahtariyla bul
-            await asyncio.sleep(0.05)
-            ids = list(service._waiters.keys())
-            if ids:
-                approval_id_holder.append(ids[-1])
-                await service.decide(ids[-1], approved=True, reason="ok")
+            for _ in range(40):
+                ids = list(service._waiters.keys())
+                if ids:
+                    approval_id_holder.append(ids[-1])
+                    await service.decide(ids[-1], approved=True, reason="ok")
+                    return
+                await asyncio.sleep(0.05)
 
         ids: list = []
         # Eszamanli istek + karar
@@ -88,10 +88,12 @@ class TestApprovalServiceFlow:
         service = ApprovalService(default_timeout=5.0)
 
         async def rejector():
-            await asyncio.sleep(0.1)
-            ids = list(service._waiters.keys())
-            if ids:
-                await service.decide(ids[-1], approved=False, reason="no")
+            for _ in range(40):
+                ids = list(service._waiters.keys())
+                if ids:
+                    await service.decide(ids[-1], approved=False, reason="no")
+                    return
+                await asyncio.sleep(0.05)
 
         reject_task = asyncio.create_task(rejector())
         ok, reason = await service.request_approval(

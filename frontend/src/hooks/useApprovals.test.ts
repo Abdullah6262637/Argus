@@ -29,11 +29,9 @@ describe('useApprovals', () => {
   beforeEach(() => {
     mockedApi.listPendingApprovals.mockReset();
     mockedApi.listPendingApprovals.mockResolvedValue([]);
-    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    vi.useRealTimers();
     vi.clearAllMocks();
   });
 

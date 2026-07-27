@@ -19,7 +19,7 @@ describe('API client', () => {
   });
 
   it('localStorage override is respected', async () => {
-    localStorage.setItem('umtalagent_api_base', 'http://example.com:9000/api');
+    localStorage.setItem('argus_api_base', 'http://example.com:9000/api');
     const { API_BASE } = await import('./client');
     expect(API_BASE).toBe('http://example.com:9000/api');
   });
