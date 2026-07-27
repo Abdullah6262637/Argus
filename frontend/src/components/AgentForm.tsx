@@ -204,23 +204,23 @@ const FALLBACK_MODELS: Record<string, ModelInfoOut[]> = {
     { id: 'codellama', label: 'Code Llama' }
   ],
   sambanova: [
-    { id: 'Meta-Llama-3.3-70B-Instruct', label: 'Meta Llama 3.3 70B (SambaNova 1000+ t/s)' },
+    { id: 'Meta-Llama-3.3-70B-Instruct', label: 'Meta Llama 3.3 70B Instruct (1000+ tok/s)' },
     { id: 'Meta-Llama-3.1-405B-Instruct', label: 'Meta Llama 3.1 405B (SambaNova)' },
     { id: 'Meta-Llama-3.1-70B-Instruct', label: 'Meta Llama 3.1 70B (SambaNova)' },
     { id: 'Meta-Llama-3.1-8B-Instruct', label: 'Meta Llama 3.1 8B (SambaNova)' },
     { id: 'DeepSeek-R1', label: 'DeepSeek R1 (SambaNova)' }
   ],
   cerebras: [
-    { id: 'llama3.3-70b', label: 'Llama 3.3 70B (Cerebras WSE 2000+ t/s)' },
-    { id: 'llama3.1-8b', label: 'Llama 3.1 8B (Cerebras WSE 2200+ t/s)' }
+    { id: 'llama3.3-70b', label: 'Llama 3.3 70B (2000+ tok/s)' },
+    { id: 'llama3.1-8b', label: 'Llama 3.1 8B' }
   ],
   fireworks: [
-    { id: 'accounts/fireworks/models/llama-v3p3-70b-instruct', label: 'Llama 3.3 70B Instruct (Fireworks Speculative)' },
+    { id: 'accounts/fireworks/models/llama-v3p3-70b-instruct', label: 'Llama 3.3 70B Instruct' },
     { id: 'accounts/fireworks/models/deepseek-r1', label: 'DeepSeek R1 (Fireworks)' },
     { id: 'accounts/fireworks/models/deepseek-v3', label: 'DeepSeek V3 (Fireworks)' }
   ],
   together: [
-    { id: 'meta-llama/Llama-3.3-70B-Instruct-Turbo', label: 'Llama 3.3 70B Turbo (Together AI)' },
+    { id: 'meta-llama/Llama-3.3-70B-Instruct-Turbo', label: 'Llama 3.3 70B Instruct Turbo' },
     { id: 'deepseek-ai/DeepSeek-R1', label: 'DeepSeek R1 (Together AI)' },
     { id: 'deepseek-ai/DeepSeek-V3', label: 'DeepSeek V3 (Together AI)' }
   ]

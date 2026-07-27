@@ -267,8 +267,20 @@ async def get_models_catalog() -> ModelsCatalogOut:
             for m in items
         ]
     return ModelsCatalogOut(
-        openai=to_out(MODELS_BY_PROVIDER["openai"]),
-        anthropic=to_out(MODELS_BY_PROVIDER["anthropic"]),
+        openai=to_out(MODELS_BY_PROVIDER.get("openai", [])),
+        anthropic=to_out(MODELS_BY_PROVIDER.get("anthropic", [])),
+        local=to_out(MODELS_BY_PROVIDER.get("local", [])),
+        gemini=to_out(MODELS_BY_PROVIDER.get("gemini", [])),
+        ollama=to_out(MODELS_BY_PROVIDER.get("ollama", [])),
+        groq=to_out(MODELS_BY_PROVIDER.get("groq", [])),
+        mistral=to_out(MODELS_BY_PROVIDER.get("mistral", [])),
+        deepseek=to_out(MODELS_BY_PROVIDER.get("deepseek", [])),
+        xai=to_out(MODELS_BY_PROVIDER.get("xai", [])),
+        openrouter=to_out(MODELS_BY_PROVIDER.get("openrouter", [])),
+        sambanova=to_out(MODELS_BY_PROVIDER.get("sambanova", [])),
+        cerebras=to_out(MODELS_BY_PROVIDER.get("cerebras", [])),
+        fireworks=to_out(MODELS_BY_PROVIDER.get("fireworks", [])),
+        together=to_out(MODELS_BY_PROVIDER.get("together", [])),
     )
 
 

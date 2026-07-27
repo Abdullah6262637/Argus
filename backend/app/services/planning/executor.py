@@ -459,11 +459,12 @@ class PlanExecutor:
                     break
 
         # Sonuclari topla
+        local_tokens = 0
         for step in group:
             try:
                 loop_result: AgentLoopResult = await tasks[step.id]
                 if loop_result and loop_result.total_tokens:
-                    total_tokens += loop_result.total_tokens
+                    local_tokens += loop_result.total_tokens
                 step.result = loop_result.final_content
                 step.tool_calls = [tc.to_dict() for tc in loop_result.tool_calls]
                 step.status = StepStatus.COMPLETED

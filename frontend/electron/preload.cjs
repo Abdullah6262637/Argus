@@ -2,7 +2,7 @@
 
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('openclaw', {
+const apiPayload = {
   platform: process.platform,
   versions: {
     node: process.versions.node,
@@ -14,4 +14,7 @@ contextBridge.exposeInMainWorld('openclaw', {
     maximize: () => ipcRenderer.send('window-maximize'),
     close: () => ipcRenderer.send('window-close'),
   },
-});
+};
+
+contextBridge.exposeInMainWorld('argus', apiPayload);
+contextBridge.exposeInMainWorld('openclaw', apiPayload);

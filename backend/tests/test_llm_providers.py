@@ -1,7 +1,8 @@
 """Unit tests for new ultra-high speed LLM Providers and Factory mappings."""
 import pytest
 from app.services.llm.factory import get_provider, _OPENAI_COMPATIBLE_PROVIDERS
-from app.schemas.agent import ProviderName
+from app.schemas.agent import ProviderName, ModelsCatalogOut
+from app.routers.agents import get_models_catalog
 
 
 def test_ultra_speed_providers_registered_in_factory():
@@ -18,14 +19,16 @@ def test_ultra_speed_providers_registered_in_factory():
 
 def test_factory_instantiates_openai_compatible_provider():
     """Factory'nin yeni sağlayıcılar için OpenAIProvider ürettiğini doğrular."""
-    provider_inst = get_provider(
-        provider_name="sambanova",
-        model="Meta-Llama-3.3-70B-Instruct",
-        api_key="sn_test_key_12345"
-    )
-    assert provider_inst is not None
-    assert provider_inst.name == "sambanova"
-    assert provider_inst.model == "Meta-Llama-3.3-70B-Instruct"
+    for p in ("sambanova", "cerebras", "fireworks", "together"):
+        provider_inst = get_provider(
+            provider_name=p,
+            model="test-model",
+            api_key=f"{p}_test_key_12345"
+        )
+        assert provider_inst is not None
+        assert provider_inst.provider_name == p
+        assert provider_inst.name == p
+        assert provider_inst.model == "test-model"
 
 
 def test_models_catalog_contains_new_providers():
@@ -37,3 +40,14 @@ def test_models_catalog_contains_new_providers():
         models = MODELS_BY_PROVIDER[p]
         assert len(models) > 0
         assert "id" in models[0]
+
+
+@pytest.mark.asyncio
+async def test_get_models_catalog_router():
+    """Router'ın ModelsCatalogOut içinde yeni sağlayıcıları döndürdüğünü doğrular."""
+    catalog: ModelsCatalogOut = await get_models_catalog()
+    assert len(catalog.sambanova) > 0
+    assert len(catalog.cerebras) > 0
+    assert len(catalog.fireworks) > 0
+    assert len(catalog.together) > 0
+

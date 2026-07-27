@@ -150,8 +150,9 @@ class WebPDFGeneratorTool(BaseTool):
 # 5. sandbox_execute_python
 class SandboxExecutePythonTool(BaseTool):
     name = "sandbox_execute_python"
-    description = "Python kodunu izole Docker veya guvenli sandbox icinde calistirip ciktisini getirir."
-    permission = "terminal_cmd"
+    description = "Python kodunu izole Docker container icinde calistirip ciktisini getirir."
+    permission = "system_admin"
+    requires_confirmation = True
     parameters = {
         "type": "object",
         "properties": {
@@ -162,8 +163,7 @@ class SandboxExecutePythonTool(BaseTool):
 
     async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
         code = args.get("code", "")
-        # Docker destegi varsa docker run, yoksa izole python komutu
-        docker_cmd = ["docker", "run", "--rm", "python:3.11-slim", "python", "-c", code]
+        docker_cmd = ["docker", "run", "--rm", "--network=none", "python:3.11-slim", "python", "-c", code]
         try:
             proc = await asyncio.create_subprocess_exec(
                 docker_cmd[0], *docker_cmd[1:],
@@ -174,27 +174,19 @@ class SandboxExecutePythonTool(BaseTool):
             if proc.returncode == 0:
                 return ToolResult(ok=True, output=stdout.decode().strip())
             return ToolResult(ok=False, error=stderr.decode().strip())
-        except Exception:
-            # Fallback to local subprocess python inside workspace
-            try:
-                proc = await asyncio.create_subprocess_exec(
-                    "python", "-c", code,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
-                )
-                stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=10.0)
-                if proc.returncode == 0:
-                    return ToolResult(ok=True, output=stdout.decode().strip())
-                return ToolResult(ok=False, error=stderr.decode().strip())
-            except Exception as e:
-                return ToolResult(ok=False, error=f"Local Python calistirma hatasi: {e}")
+        except Exception as e:
+            return ToolResult(
+                ok=False,
+                error=f"Docker container baslatilamadi veya sistemde Docker aktif degil. Güvenlik nedeniyle host uzerinde kod calistirilamaz: {e}"
+            )
 
 
 # 6. sandbox_execute_js
 class SandboxExecuteJSTool(BaseTool):
     name = "sandbox_execute_js"
-    description = "Node.js veya Javascript kodunu izole bir sandbox veya Docker icinde calistirir."
-    permission = "terminal_cmd"
+    description = "Node.js/Javascript kodunu izole bir Docker container icinde calistirir."
+    permission = "system_admin"
+    requires_confirmation = True
     parameters = {
         "type": "object",
         "properties": {
@@ -205,7 +197,7 @@ class SandboxExecuteJSTool(BaseTool):
 
     async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
         code = args.get("code", "")
-        docker_cmd = ["docker", "run", "--rm", "node:18-alpine", "node", "-e", code]
+        docker_cmd = ["docker", "run", "--rm", "--network=none", "node:18-alpine", "node", "-e", code]
         try:
             proc = await asyncio.create_subprocess_exec(
                 docker_cmd[0], *docker_cmd[1:],
@@ -216,19 +208,11 @@ class SandboxExecuteJSTool(BaseTool):
             if proc.returncode == 0:
                 return ToolResult(ok=True, output=stdout.decode().strip())
             return ToolResult(ok=False, error=stderr.decode().strip())
-        except Exception:
-            try:
-                proc = await asyncio.create_subprocess_exec(
-                    "node", "-e", code,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
-                )
-                stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=10.0)
-                if proc.returncode == 0:
-                    return ToolResult(ok=True, output=stdout.decode().strip())
-                return ToolResult(ok=False, error=stderr.decode().strip())
-            except Exception as e:
-                return ToolResult(ok=False, error=f"Local Node.js calistirma hatasi (Node.js yuklu olmayabilir): {e}")
+        except Exception as e:
+            return ToolResult(
+                ok=False,
+                error=f"Docker container baslatilamadi veya sistemde Docker aktif degil. Güvenlik nedeniyle host uzerinde JS calistirilamaz: {e}"
+            )
 
 
 # 7. sandbox_install_package

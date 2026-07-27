@@ -107,17 +107,19 @@ Argus, 6 adımlı gelişmiş görsel sihirbazı (**Agent Creation Wizard**) saye
 #### 🔌 Desteklenen Proxy & Preset Yapılandırmaları (Canlı Şerit)
 <div align="center">
   <marquee behavior="scroll" direction="left" scrollamount="6" style="background: #090d16; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
-    <img src="https://img.shields.io/badge/SambaNova_Cloud-1000%2B_tok%2Fs-ff6b00?style=for-the-badge&logo=cpu&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Cerebras_WSE-2000%2B_tok%2Fs-00d2ff?style=for-the-badge&logo=lightning&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Fireworks_AI-Speculative-8a2be2?style=for-the-badge&logo=rocket&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Together_AI-Turbo-00b4d8?style=for-the-badge&logo=server&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/SambaNova-1000%2B%20tok%2Fs-FF6B00?style=for-the-badge&logo=cpu&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Cerebras-2000%2B%20tok%2Fs-FF3B00?style=for-the-badge&logo=lightning&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Fireworks_AI-Speculative-8A2BE2?style=for-the-badge&logo=rocket&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Together_AI-Turbo-00B4D8?style=for-the-badge&logo=server&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Mistral_AI-https%3A%2F%2Fapi.mistral.ai-FF7000?style=for-the-badge&logo=mistral&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/xAI_Grok-https%3A%2F%2Fapi.x.ai-000000?style=for-the-badge&logo=x&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://img.shields.io/badge/Ollama_Local-http%3A%2F%2Flocalhost%3A11434-000000?style=for-the-badge&logo=ollama&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/LM_Studio-http%3A%2F%2Flocalhost%3A1234-22c55e?style=for-the-badge&logo=python&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/vLLM_Server-http%3A%2F%2Flocalhost%3A8000-6366f1?style=for-the-badge&logo=fastapi&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/LM_Studio-http%3A%2F%2Flocalhost%3A1234-22C55E?style=for-the-badge&logo=python&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/vLLM_Server-http%3A%2F%2Flocalhost%3A8000-6366F1?style=for-the-badge&logo=fastapi&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://img.shields.io/badge/OpenAI_Direct-https%3A%2F%2Fapi.openai.com-412991?style=for-the-badge&logo=openai&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://img.shields.io/badge/OpenRouter_Gateway-https%3A%2F%2Fopenrouter.ai-6566F1?style=for-the-badge&logo=router&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Groq_Speed-https%3A%2F%2Fapi.groq.com-f97316?style=for-the-badge&logo=speedtest&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/DeepSeek_Direct-https%3A%2F%2Fapi.deepseek.com-0284c7?style=for-the-badge&logo=deepseek&logoColor=white" />
+    <img src="https://img.shields.io/badge/Groq_Speed-https%3A%2F%2Fapi.groq.com-F97316?style=for-the-badge&logo=speedtest&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/DeepSeek_Direct-https%3A%2F%2Fapi.deepseek.com-0284C7?style=for-the-badge&logo=deepseek&logoColor=white" />
   </marquee>
 </div>
 
@@ -126,15 +128,18 @@ Argus, 6 adımlı gelişmiş görsel sihirbazı (**Agent Creation Wizard**) saye
 #### 🧠 Desteklenen Yerli & Küresel LLM Sağlayıcıları (Canlı Şerit)
 <div align="center">
   <marquee behavior="scroll" direction="right" scrollamount="5" style="background: #090d16; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
-    <img src="https://img.shields.io/badge/SambaNova-Llama_3.3_70B-ff6b00?style=for-the-badge&logo=cpu&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Cerebras-Llama_3.3_70B_WSE-00d2ff?style=for-the-badge&logo=lightning&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Fireworks-DeepSeek_R1_%2F_V3-8a2be2?style=for-the-badge&logo=fireworks&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/SambaNova-Llama_3.3_70B-FF6B00?style=for-the-badge&logo=cpu&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Cerebras-Llama_3.3_70B_WSE-FF3B00?style=for-the-badge&logo=lightning&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Fireworks_AI-DeepSeek_R1_%2F_V3-8A2BE2?style=for-the-badge&logo=fireworks&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Together_AI-Llama_3.3_70B_Turbo-00B4D8?style=for-the-badge&logo=server&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Mistral_AI-Mistral_Large_3-FF7000?style=for-the-badge&logo=mistral&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/xAI_Grok-Grok_4.3-000000?style=for-the-badge&logo=x&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://img.shields.io/badge/OpenAI-GPT--4o%20%7C%20o3--mini-412991?style=for-the-badge&logo=openai&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Anthropic-Claude%203.5%20Sonnet-d97706?style=for-the-badge&logo=anthropic&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Anthropic-Claude%203.5%20Sonnet-D97706?style=for-the-badge&logo=anthropic&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://img.shields.io/badge/Google_Gemini-Gemini%202.0%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/Groq_Cloud-Llama%203.3%2070B-f97316?style=for-the-badge&logo=speedtest&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/DeepSeek-V3%20%26%20R1%20Reasoning-0284c7?style=for-the-badge&logo=deepseek&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://img.shields.io/badge/OpenRouter-200%2B%20Models-6366f1?style=for-the-badge&logo=openrouter&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/Groq_Cloud-Llama%203.3%2070B-F97316?style=for-the-badge&logo=speedtest&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/DeepSeek-V3%20%26%20R1%20Reasoning-0284C7?style=for-the-badge&logo=deepseek&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://img.shields.io/badge/OpenRouter-200%2B%20Models-6366F1?style=for-the-badge&logo=openrouter&logoColor=white" /> &nbsp;&nbsp;&nbsp;&nbsp;
     <img src="https://img.shields.io/badge/Ollama_Local-Llama3%20%2F%20Mistral-000000?style=for-the-badge&logo=ollama&logoColor=white" />
   </marquee>
 </div>

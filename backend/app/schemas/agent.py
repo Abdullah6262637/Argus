@@ -176,6 +176,10 @@ class ModelsCatalogOut(BaseModel):
     deepseek: List[ModelInfoOut] = Field(default_factory=list)
     xai: List[ModelInfoOut] = Field(default_factory=list)
     openrouter: List[ModelInfoOut] = Field(default_factory=list)
+    sambanova: List[ModelInfoOut] = Field(default_factory=list)
+    cerebras: List[ModelInfoOut] = Field(default_factory=list)
+    fireworks: List[ModelInfoOut] = Field(default_factory=list)
+    together: List[ModelInfoOut] = Field(default_factory=list)
 
 
 # ============================================================

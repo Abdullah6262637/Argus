@@ -54,7 +54,7 @@ export const API_BASE = _resolveApiBase();
 function _resolveWsBase(): string {
   try {
     const stored = typeof localStorage !== 'undefined'
-      ? localStorage.getItem('umtalagent_ws_base')
+      ? (localStorage.getItem('argus_ws_base') || localStorage.getItem('umtalagent_ws_base'))
       : null;
     if (stored && stored.trim()) return stored.trim().replace(/\/$/, '');
   } catch {
