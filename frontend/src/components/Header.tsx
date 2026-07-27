@@ -208,24 +208,30 @@ export function Header({
           <div className="flex items-center gap-1 ml-2 pl-2 border-l border-brand-border select-none" style={{ WebkitAppRegion: 'no-drag' } as any}>
             <button
               onClick={() => (window as any).openclaw.windowControls.minimize()}
-              title="Küçült (-)"
-              className="w-7 h-7 inline-flex items-center justify-center rounded-md text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
+              title="Simge Durumuna Küçült (-)"
+              className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
             >
-              <span className="text-[11px] font-bold">─</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="5.5" width="8" height="1.2" rx="0.6" fill="currentColor" />
+              </svg>
             </button>
             <button
               onClick={() => (window as any).openclaw.windowControls.maximize()}
               title="Ekranı Kapla / Tam Ekran (□)"
-              className="w-7 h-7 inline-flex items-center justify-center rounded-md text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
+              className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
             >
-              <span className="w-2.5 h-2.5 border-1.5 border-current rounded-[1px] block" />
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2.25" y="2.25" width="7.5" height="7.5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
             </button>
             <button
               onClick={() => (window as any).openclaw.windowControls.close()}
               title="Kapat (✕)"
-              className="w-7 h-7 inline-flex items-center justify-center rounded-md text-brand-textSoft hover:text-white hover:bg-red-500/90 transition-all duration-150 active:scale-90"
+              className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-white hover:bg-red-500/90 transition-all duration-150 active:scale-90"
             >
-              <span className="text-[12px] font-bold">✕</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.5 2.5L9.5 9.5M9.5 2.5L2.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
             </button>
           </div>
         )}

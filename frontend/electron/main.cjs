@@ -128,12 +128,7 @@ function createMainWindow() {
     minHeight: 700,
     backgroundColor: '#0f172a',
     title: 'Argus - Çoklu Ajan Sistemi',
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#0f172a',
-      symbolColor: '#f8fafc',
-      height: 35
-    },
+    frame: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
