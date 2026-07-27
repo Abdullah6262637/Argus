@@ -12,12 +12,12 @@ export const THEMES: ThemeDef[] = [
   {
     id: 'mono',
     name: 'Mono',
-    description: 'Minimal siyah-beyaz',
+    description: 'Klasik siyah-beyaz',
   },
   {
     id: 'midnight',
-    name: 'Midnight',
-    description: 'Koyu gece mavisi',
+    name: 'Argus Slate',
+    description: 'Modern slate & zümrüt',
   },
   {
     id: 'sunset',
@@ -40,12 +40,12 @@ function applyTheme(theme: ThemeId) {
 }
 
 function getInitialTheme(): ThemeId {
-  if (typeof window === 'undefined') return 'mono';
+  if (typeof window === 'undefined') return 'midnight';
   const saved = window.localStorage.getItem(STORAGE_KEY);
   if (saved === 'mono' || saved === 'midnight' || saved === 'sunset' || saved === 'forest') {
     return saved;
   }
-  return 'mono';
+  return 'midnight';
 }
 
 export function useTheme() {

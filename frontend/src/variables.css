@@ -27,27 +27,27 @@
   --brand-scrollbar-hover: #2a2a2a;
 }
 
-/* Alternatif: Koyu Gece Mavisi */
+/* Alternatif: Koyu Gece Mavisi (Argus Slate & Emerald) */
 [data-theme='midnight'] {
-  --brand-bg: #0b1220;
-  --brand-panel: #111a2e;
-  --brand-panel-alt: #162238;
-  --brand-border: #1f2a44;
-  --brand-border-strong: #2a3a5c;
-  --brand-accent: #60a5fa;
-  --brand-accent-dim: #93c5fd;
+  --brand-bg: #0b1120;
+  --brand-panel: #101827;
+  --brand-panel-alt: #162032;
+  --brand-border: #1e293b;
+  --brand-border-strong: #334155;
+  --brand-accent: #10b981;
+  --brand-accent-dim: #34d399;
   --brand-muted: #64748b;
   --brand-muted-soft: #475569;
-  --brand-text: #e2e8f0;
+  --brand-text: #f8fafc;
   --brand-text-soft: #94a3b8;
-  --brand-user: #3b82f6;
+  --brand-user: #10b981;
   --brand-user-text: #ffffff;
-  --brand-agent: #111a2e;
-  --brand-agent-text: #e2e8f0;
-  --brand-danger: #f87171;
-  --brand-success: #34d399;
-  --brand-scrollbar: #1f2a44;
-  --brand-scrollbar-hover: #2a3a5c;
+  --brand-agent: #101827;
+  --brand-agent-text: #f8fafc;
+  --brand-danger: #ef4444;
+  --brand-success: #10b981;
+  --brand-scrollbar: #1e293b;
+  --brand-scrollbar-hover: #334155;
 }
 
 /* Alternatif: Sunset (turuncu/amber) */

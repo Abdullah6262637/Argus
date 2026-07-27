@@ -520,15 +520,6 @@ export function AgentForm({
     }
   };
 
-  const STEP_GLOWS = [
-    'from-brand-accent/15 via-purple-500/5 to-transparent',       // Step 0: Purple/Indigo
-    'from-blue-500/10 via-brand-accent/5 to-transparent',         // Step 1: Blue LLM
-    'from-emerald-500/10 via-teal-500/5 to-transparent',          // Step 2: Teal Media
-    'from-rose-500/10 via-pink-500/5 to-transparent',             // Step 3: Rose Behavior
-    'from-amber-500/10 via-orange-500/5 to-transparent',          // Step 4: Amber Permissions
-    'from-violet-500/10 via-indigo-500/5 to-transparent',         // Step 5: Violet Plugins
-  ];
-
   return (
     <div 
       onClick={(e) => {
@@ -539,15 +530,8 @@ export function AgentForm({
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
     >
       <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
-        {/* Ambient Glow Background Effect */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div 
-            className={`absolute -top-40 -left-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
-          />
-          <div 
-            className={`absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
-          />
-        </div>
+        {/* Minimalist background without ambient glow */}
+        <div className="absolute inset-0 pointer-events-none z-0 bg-brand-panel" />
 
         {/* Baslik + Adim gostergesi */}
         <div className="relative z-10 px-6 py-4 border-b border-brand-border bg-brand-panelAlt/90 backdrop-blur-[2px]">
