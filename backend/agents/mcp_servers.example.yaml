@@ -7,6 +7,13 @@ servers:
   - -y
   - '@modelcontextprotocol/server-filesystem'
   - ./data/sandbox
+- name: fetch
+  enabled: false
+  description: URL içeriği getirme.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-fetch'
 - name: github
   enabled: false
   description: GitHub repo, issue, PR yönetimi.
