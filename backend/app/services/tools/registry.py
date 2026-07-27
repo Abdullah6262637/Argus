@@ -1052,6 +1052,24 @@ class ToolRegistry:
             logger.exception("Tool calistirma hatasi: %s", name)
             result = ToolResult(ok=False, error=f"Tool hatasi: {exc}")
 
+        # ============ Smart Error Routing ============
+        if not result.ok and result.error:
+            err_lower = result.error.lower()
+            hint = ""
+            if "not found" in err_lower or "bulunamadi" in err_lower:
+                if "file" in err_lower or "dosya" in err_lower or name in ["read_file", "write_file", "delete_file"]:
+                    hint = " İpucu: Dosya adını veya yolunu yanlış yazmış olabilirsin. Klasördeki mevcut dosyaları görmek için 'list_dir' aracını kullanmayı dene."
+            elif "timeout" in err_lower or "zaman asimi" in err_lower:
+                hint = " İpucu: İşlem çok uzun sürdü. Tekrar denemeyi veya isteği daha küçük parçalara bölmeyi (örneğin daha spesifik bir arama yapmayı) düşünebilirsin."
+            elif "permission" in err_lower or "izin" in err_lower or "denied" in err_lower:
+                hint = " İpucu: Yetki hatası. İşletim sisteminde veya hedef serviste gerekli izinlere sahip olmayabilirsin."
+            elif "json parse" in err_lower or "invalid argument" in err_lower:
+                hint = " İpucu: Araç argümanlarını (JSON) oluştururken bir format hatası yaptın. Lütfen araca gönderdiğin JSON yapısını kontrol edip düzelt."
+                
+            if hint:
+                result.error = result.error + hint
+        # ============================================
+
         # ============ Audit log (FAZ 1.6) ============
         try:
             from app.services.audit import audit_chain

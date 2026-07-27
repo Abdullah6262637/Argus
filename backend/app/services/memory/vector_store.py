@@ -97,6 +97,7 @@ class VectorStore:
         collection: Optional[str] = None,
         agent_id: Optional[str] = None,
         where: Optional[Dict[str, Any]] = None,
+        apply_recency_decay: bool = False,
     ) -> List[Dict[str, Any]]:
         coll_name = self._collection_name(agent_id, collection)
         coll = self.get_collection(coll_name)
@@ -111,13 +112,52 @@ class VectorStore:
         docs = (result.get("documents") or [[]])[0]
         metas = (result.get("metadatas") or [[]])[0]
         dists = (result.get("distances") or [[]])[0]
+        
+        import time
+        current_time = time.time()
+        
         for i, doc in enumerate(docs):
+            dist = dists[i] if i < len(dists) else 0.0
+            meta = metas[i] if i < len(metas) else {}
+            
+            # Recency Decay (Zaman/Önem Ağırlıklandırması)
+            if apply_recency_decay and 'timestamp' in meta:
+                age_seconds = current_time - float(meta['timestamp'])
+                # Formül: Daha eski verilerin distance (mesafe) değerini hafifçe artırarak arkaya at
+                # (Chroma'da distance küçük = daha yakın/iyi)
+                penalty = (age_seconds / (86400 * 30)) * 0.1 # Her 30 gün için +0.1 ceza
+                dist += penalty
+                
             out.append({
                 "id": ids[i] if i < len(ids) else None,
                 "text": doc,
-                "metadata": metas[i] if i < len(metas) else {},
-                "distance": dists[i] if i < len(dists) else None})
+                "metadata": meta,
+                "distance": dist
+            })
+            
+        if apply_recency_decay:
+            # Yeni distance değerlerine göre tekrar sırala
+            out.sort(key=lambda x: x["distance"])
+            
         return out
+
+    async def async_upsert(self, *args, **kwargs) -> List[str]:
+        """Büyük verileri ana thread'i bloklamadan arkaplanda vektör veritabanına yazar."""
+        import asyncio
+        return await asyncio.to_thread(self.upsert, *args, **kwargs)
+
+    def semantic_cache_search(
+        self,
+        embedding: List[float],
+        threshold: float = 0.15,
+        collection: str = "semantic_cache"
+    ) -> Optional[str]:
+        """Önceden sorulmuş benzer bir sorunun cevabını döndürür (LLM by-pass)."""
+        results = self.query(embedding, k=1, collection=collection)
+        if results and results[0]["distance"] < threshold:
+            # Soru çok benzerse direkt metadata'daki cevabı dön
+            return results[0]["metadata"].get("answer")
+        return None
 
     def delete(
         self,
