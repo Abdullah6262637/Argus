@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
     gemini_api_key: str | None = None
+    SAMBANOVA_API_KEY: Optional[str] = None
+    CEREBRAS_API_KEY: Optional[str] = None
+    FIREWORKS_API_KEY: Optional[str] = None
+    TOGETHER_API_KEY: Optional[str] = None
 
     # Guvenlik limitleri
     max_tokens_per_request: int = 2048

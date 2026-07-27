@@ -27,12 +27,13 @@ class OpenAIProvider(BaseLLMProvider):
         model: str = "gpt-4o-mini",
         base_url: Optional[str] = None,
         name: Optional[str] = None,
+        provider_name: str = "openai",
     ) -> None:
         super().__init__(api_key=api_key, model=model)
-        if name:
-            self.name = name
+        self.provider_name = provider_name if provider_name != "openai" else (name or "openai")
+        self.name = self.provider_name
         if not api_key:
-            raise LLMError(f"{self.name.upper()}_API_KEY tanimli degil")
+            raise LLMError(f"{self.provider_name.upper()}_API_KEY tanimli degil")
         self.base_url = base_url
         try:
             from openai import AsyncOpenAI  # type: ignore
@@ -146,7 +147,7 @@ class OpenAIProvider(BaseLLMProvider):
 
         return LLMResponse(
             content=msg.content or "",
-            provider=self.name,
+            provider=self.provider_name,
             model=self.model,
             prompt_tokens=getattr(usage, "prompt_tokens", None) if usage else None,
             completion_tokens=getattr(usage, "completion_tokens", None) if usage else None,

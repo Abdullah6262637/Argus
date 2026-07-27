@@ -71,7 +71,7 @@ def get_provider(
         env_key = settings.openai_api_key
         effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
         provider: BaseLLMProvider = OpenAIProvider(
-            api_key=effective_key, model=model, base_url=base_url
+            api_key=effective_key, model=model, base_url=base_url, provider_name="openai"
         )
     elif provider_name == "anthropic":
         from app.services.llm.anthropic_provider import AnthropicProvider
@@ -94,7 +94,7 @@ def get_provider(
             effective_base_url = effective_base_url.replace("localhost", "127.0.0.1")
 
         provider = OpenAIProvider(
-            api_key="local", model=model, base_url=effective_base_url
+            api_key="local", model=model, base_url=effective_base_url, provider_name="local"
         )
     elif provider_name == "ollama":
         # Sprint 4.2: Ollama (yerel, OpenAI-compatible)
@@ -102,7 +102,7 @@ def get_provider(
         effective_base_url = base_url or os.environ.get("OLLAMA_BASE_URL") or "http://127.0.0.1:11434/v1"
         effective_base_url = effective_base_url.replace("localhost", "127.0.0.1")
         provider = OpenAIProvider(
-            api_key=api_key or "ollama", model=model, base_url=effective_base_url
+            api_key=api_key or "ollama", model=model, base_url=effective_base_url, provider_name="ollama"
         )
     elif provider_name in ("gemini", "googleaistudio"):
         # Sprint 4.1: Google Gemini / Google AI Studio
@@ -111,18 +111,18 @@ def get_provider(
         effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
         provider = GeminiProvider(api_key=effective_key, model=model)
     elif provider_name in _OPENAI_COMPATIBLE_PROVIDERS:
-        # Sprint 4.3: Groq / Mistral / DeepSeek / xAI / OpenRouter
+        # Sprint 4.3: Groq / Mistral / DeepSeek / xAI / OpenRouter / SambaNova / Cerebras / Fireworks / Together
         from app.services.llm.openai_provider import OpenAIProvider
         meta = _OPENAI_COMPATIBLE_PROVIDERS[provider_name]
         effective_base_url = base_url or meta["base_url"]
-        env_key = os.environ.get(meta["env_key"])
+        env_key = getattr(settings, meta["env_key"], None) or getattr(settings, meta["env_key"].lower(), None) or os.environ.get(meta["env_key"])
         effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
         if not effective_key:
             raise LLMError(
                 f"{provider_name} icin API key gerekli (.env: {meta['env_key']} veya ajan ayarlarinda)"
             )
         provider = OpenAIProvider(
-            api_key=effective_key, model=model, base_url=effective_base_url, name=provider_name
+            api_key=effective_key, model=model, base_url=effective_base_url, provider_name=provider_name
         )
     else:
         raise LLMError(f"Desteklenmeyen LLM saglayici: {provider_name}")

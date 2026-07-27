@@ -112,6 +112,10 @@ async def test_connection(
         "deepseek": os.environ.get("DEEPSEEK_API_KEY"),
         "mistral": os.environ.get("MISTRAL_API_KEY"),
         "xai": os.environ.get("XAI_API_KEY"),
+        "sambanova": settings.SAMBANOVA_API_KEY or os.environ.get("SAMBANOVA_API_KEY"),
+        "cerebras": settings.CEREBRAS_API_KEY or os.environ.get("CEREBRAS_API_KEY"),
+        "fireworks": settings.FIREWORKS_API_KEY or os.environ.get("FIREWORKS_API_KEY"),
+        "together": settings.TOGETHER_API_KEY or os.environ.get("TOGETHER_API_KEY"),
     }
 
     env_key = env_keys.get(provider_low)
@@ -158,15 +162,27 @@ async def test_connection(
             "xai": base_url or "https://api.x.ai/v1",
             "local": base_url or ("http://127.0.0.1:1234/v1" if "lmstudio" in model.lower() else "http://127.0.0.1:11434/v1"),
             "ollama": base_url or "http://127.0.0.1:11434/v1",
+            "sambanova": ("https://api.sambanova.ai/v1", "Meta-Llama-3.3-70B-Instruct"),
+            "cerebras": ("https://api.cerebras.ai/v1", "llama3.3-70b"),
+            "fireworks": ("https://api.fireworks.ai/inference/v1", "accounts/fireworks/models/llama-v3p3-70b-instruct"),
+            "together": ("https://api.together.xyz/v1", "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
         }
 
         if provider_low in openai_compatibles:
-            effective_base_url = openai_compatibles[provider_low]
+            target = openai_compatibles[provider_low]
+            if isinstance(target, tuple):
+                default_url, default_model = target
+                effective_base_url = base_url or default_url
+                test_model = model or default_model
+            else:
+                effective_base_url = target
+                test_model = model
             test_key = effective_key or "local"
             return await _test_openai(
-                model=model, api_key=test_key,
+                model=test_model, api_key=test_key,
                 base_url=effective_base_url, timeout_ms=timeout_ms, start=start,
                 mismatch_warning=mismatch, verify_ssl=verify_ssl,
+                provider=provider,
             )
         elif provider_low == "anthropic":
             return await _test_anthropic(
@@ -221,6 +237,7 @@ async def _test_openai(
     start: float,
     mismatch_warning: Optional[str],
     verify_ssl: bool = True,
+    provider: str = "openai",
 ) -> ConnectionTestResult:
     url_root = _normalize_url(base_url) if base_url else "https://api.openai.com/v1"
     url = f"{url_root}/chat/completions"
@@ -241,7 +258,7 @@ async def _test_openai(
     elapsed = int((time.perf_counter() - start) * 1000)
 
     return _parse_openai_response(
-        resp=resp, elapsed=elapsed, provider="openai", model=model, url=url,
+        resp=resp, elapsed=elapsed, provider=provider, model=model, url=url,
         mismatch_warning=mismatch_warning,
     )
 

@@ -189,7 +189,11 @@ export function Step2LLM({
     provider === 'groq' ? 'GROQ_API_KEY' : 
     provider === 'deepseek' ? 'DEEPSEEK_API_KEY' : 
     provider === 'mistral' ? 'MISTRAL_API_KEY' : 
-    provider === 'xai' ? 'XAI_API_KEY' : null;
+    provider === 'xai' ? 'XAI_API_KEY' :
+    provider === 'sambanova' ? 'SAMBANOVA_API_KEY' :
+    provider === 'cerebras' ? 'CEREBRAS_API_KEY' :
+    provider === 'fireworks' ? 'FIREWORKS_API_KEY' :
+    provider === 'together' ? 'TOGETHER_API_KEY' : null;
   const envHasKey = envKey ? !!envStatus?.has?.[envKey] : false;
   const envMaskedKey = envKey ? envStatus?.masked?.[envKey] : null;
   const isLocal = provider === 'local';
@@ -217,6 +221,9 @@ export function Step2LLM({
               p.id === 'frostai' ? 'frostai' :
               p.id === 'openrouter' ? 'openrouter' :
               p.id === 'groq' ? 'groq' :
+              p.id === 'sambanova' ? 'sambanova' :
+              p.id === 'cerebras' ? 'cerebras' :
+              p.id === 'fireworks' ? 'fireworks' :
               p.id === 'together' ? 'together' :
               p.id === 'lmstudio' ? 'lmstudio' :
               p.id === 'ollama' ? 'local' :
@@ -291,6 +298,42 @@ export function Step2LLM({
                   <span className="flex items-center gap-2">
                     <img src="/providers/groq.png?v=3" alt="Groq" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Groq Cloud</span>
+                  </span>
+                )
+              },
+              {
+                value: 'sambanova',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/sambanova.png?v=3" alt="SambaNova" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>SambaNova Cloud (1000+ t/s)</span>
+                  </span>
+                )
+              },
+              {
+                value: 'cerebras',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/cerebras.png?v=3" alt="Cerebras" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Cerebras Systems (2000+ t/s)</span>
+                  </span>
+                )
+              },
+              {
+                value: 'fireworks',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/fireworks.png?v=3" alt="Fireworks AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Fireworks AI</span>
+                  </span>
+                )
+              },
+              {
+                value: 'together',
+                label: (
+                  <span className="flex items-center gap-2">
+                    <img src="/providers/together.png?v=3" alt="Together AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <span>Together AI</span>
                   </span>
                 )
               },
