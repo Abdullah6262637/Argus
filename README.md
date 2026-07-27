@@ -47,7 +47,28 @@ gerçek zamanlı WebSocket iletişimi sunar ve premium bir React arayüzüyle ge
 
 **Argus**, birden fazla yapay zeka ajanını aynı anda çalıştırmanıza, yönetmenize ve birbirleriyle iletişim kurmasına olanak tanıyan yerel bir platform sistemidir. Tek bir makine üzerinde OpenAI, Anthropic, Google Gemini, Mistral, DeepSeek, xAI Grok, Groq ve yerel Ollama modellerini kullanarak ajan ekipleri kurabilirsiniz.
 
-### Neden Argus?
+### 🖼️ Kullanıcı Arayüzü (GUI Overview)
+
+![Argus GUI Overview](docs/images/argus_ui_overview.png)
+
+*`image-cropper` ve `ui-screenshot-inspector` ajanları tarafından temizlenen canlı masaüstü GUI arayüz ekran görüntüsü.*
+
+#### 🖥️ Arayüz Bileşenleri ve Adım Adım Çalışma Rehberi:
+
+1. **Sol Navigasyon & Proje Yan Paneli (Sidebar):**
+   - Aktif projeleri, oturum geçmişini (sessions) ve kayıtlı ajan profillerini listeler.
+   - Farklı çalışma alanları (workspaces) arasında anında geçiş yapmayı sağlar.
+
+2. **Merkezi Sohbet & Yanıt Alanı (Chat & Response Stream):**
+   - Ajanların gerçek zamanlı ReAct (Reasoning + Acting) turlarını, düşündüğü adımları ve çalıştırdığı araç çıktılarını canlı olarak görüntüler.
+   - Kod bloklarını syntax highlighting ile, matematiksel bağıntıları LaTeX ile ve yanıtları zengin Markdown biçiminde render eder.
+
+3. **Canlı Ajan Sürü Paneli (Agent Swarm Status Bar):**
+   - Alt kısımda o anda çalışan aktif subagent sayısını ve görev durumlarını (`1 subagent running`, `master-planner active`) gösterir.
+   - Sürü içerisindeki ajanların delegasyon zincirlerini (`delegation_chain`) ve ortak hafıza (`blackboard`) güncellemelerini anlık izler.
+
+4. **Mesaj Aksiyon & İnsan Onay Çubuğu (HITL Approval & Action Bar):**
+   - Riskli bir komut (`run_command`, `delete_file`, `system_admin`) çalıştırılmadan önce kullanıcıdan canlı WebSocket onayı (Approve/Reject) ister.
 
 | Özellik | Argus | Alternatifler |
 |---|---|---|

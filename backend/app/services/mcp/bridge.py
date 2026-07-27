@@ -38,8 +38,6 @@ logger = logging.getLogger(__name__)
 class MCPProxyTool(BaseTool):
     """MCP server'dan import edilen bir tool icin proxy."""
 
-    permission = "none"  # MCP'ye guvenirsek
-
     def __init__(
         self,
         server_name: str,
@@ -54,6 +52,17 @@ class MCPProxyTool(BaseTool):
         self._server_name = server_name
         self._mcp_tool_name = tool_name
         self._bridge = bridge
+
+        # Güvenlik: MCP araçları için sunucu tipine göre uygun izin seviyeleri belirle
+        if server_name in ("filesystem", "sqlite"):
+            self.permission = "file_system"
+            self.requires_confirmation = True
+        elif server_name in ("terminal", "shell", "bash"):
+            self.permission = "terminal_cmd"
+            self.requires_confirmation = True
+        else:
+            self.permission = "web_search"
+            self.requires_confirmation = False
 
     async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
         session = self._bridge.get_session(self._server_name)

@@ -31,7 +31,8 @@ class PythonEvalTool(BaseTool):
         "Dosya, network, OS erisimi YOKTUR. Kisa hesaplamalar, string dönüşümleri, "
         "veri donusumleri icin kullan. print() ile cikti yazabilirsin."
     )
-    permission = "none"
+    permission = "system_admin"
+    requires_confirmation = True
     parameters = {
         "type": "object",
         "properties": {
@@ -58,6 +59,19 @@ class PythonEvalTool(BaseTool):
 
     @staticmethod
     def _eval_sync(code: str) -> str:
+        import ast
+
+        # AST kontrolü - dunder özniteliklere veya tehlikeli fonksiyonlara erişimi engelle
+        try:
+            parsed = ast.parse(code)
+            for node in ast.walk(parsed):
+                if isinstance(node, ast.Attribute) and node.attr.startswith("__"):
+                    return "HATA: SecurityError: Dunder öznitelik erişimi engellendi (__class__, __subclasses__, vb.)"
+                if isinstance(node, ast.Name) and (node.id.startswith("__") or node.id in ("eval", "exec", "open", "compile", "globals", "locals", "importlib")):
+                    return f"HATA: SecurityError: '{node.id}' sembolü engellendi."
+        except SyntaxError as e:
+            return f"HATA: SyntaxError: {e}"
+
         # Sandbox - sadece guvenli built-ins
         import builtins
         safe_builtins = {

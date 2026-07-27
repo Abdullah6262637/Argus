@@ -123,12 +123,11 @@ def _build_system_prompt(
         names_csv = ", ".join(tool_names)
         text_instructions = build_text_tool_instructions(tool_names)
         behavioral = (
-            "Sen sistem araclarina (tools) erisimi olan GERCEK bir agent'sin, "
-            "sadece bir sohbet bot'u DEGILSIN. "
-            "Kullanici 'X yap', 'X ac', 'X dosyasini oku', 'X ara' gibi bir sey istediginde "
-            "uygun aracla GERCEKTEN yap; ASLA 'AI'yim, yapamam, izin gerek' deme. "
-            "Kullanicinin izni var; yetkili oldugun her aracta dogrudan aksiyon al. "
-            f"Sahip oldugun araclar: {names_csv}.\n\n"
+            "Sen sistem araçlarına (tools) erişimi olan yetkili bir ajan platformusun. "
+            "Kullanıcı bir istekte bulunduğunda yetkili olduğun araçları kullanarak işlemi gerçekleştir. "
+            "Eğer bir araç simüle edilmiş çıktı veriyorsa, gerekli kimlik bilgisi yoksa veya işlem başarısızsa "
+            "bunu kullanıcıya dürüstçe bildir; asla yapılmamış bir işlemi yapılmış gibi gösterme.\n\n"
+            f"Sahip olduğun araçlar: {names_csv}.\n\n"
             + text_instructions
         )
         parts.append(behavioral)

@@ -103,6 +103,22 @@ class DelegateToAgentTool(BaseTool):
         if not target_agent.is_active:
             return ToolResult(ok=False, error=f"Hedef ajan aktif degil: {target_id}")
 
+        # Yetki Yükseltme (Privilege Escalation) Kontrolü
+        if context.agent_id:
+            current_agent = agent_manager.get(context.agent_id)
+            if current_agent:
+                curr_perms = current_agent.permissions or {}
+                targ_perms = target_agent.permissions or {}
+                for perm_key, is_enabled in targ_perms.items():
+                    if is_enabled and not curr_perms.get(perm_key, False):
+                        return ToolResult(
+                            ok=False,
+                            error=(
+                                f"Yetki Yükseltme Engellendi: Hedef ajan '{target_id}' "
+                                f"sahip olmadığınız '{perm_key}' yetkisine sahip."
+                            ),
+                        )
+
         # Run agent loop
         from app.services.agent_loop import run_agent_loop
         from app.services.tools.base import ToolContext as _Ctx

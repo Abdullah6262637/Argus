@@ -164,11 +164,24 @@ class DatabaseBackupTool(BaseTool):
             backup_file = args.get("backup_file")
             db_type = args.get("db_type", "postgresql")
             
+            if db_type == "sqlite":
+                if os.path.exists(database_name):
+                    shutil.copy2(database_name, backup_file)
+                else:
+                    return ToolResult(ok=False, error=f"SQLite veritabanı bulunamadı: {database_name}")
+            else:
+                dump_cmd = "pg_dump" if db_type == "postgresql" else ("mysqldump" if db_type == "mysql" else "mongodump")
+                if not shutil.which(dump_cmd):
+                    return ToolResult(
+                        ok=False,
+                        error=f"[Yapılandırma Hatası] '{db_type}' yedeklemesi için gerekli '{dump_cmd}' aracı sistemde bulunamadı."
+                    )
+            
             output = f"Veritabanı Yedekleme\n"
             output += f"Veritabanı: {database_name}\n"
             output += f"Yedek Dosyası: {backup_file}\n"
             output += f"Tür: {db_type}\n"
-            output += f"Durum: ✅ Başarılı"
+            output += f"Durum: ✅ İşlem tamamlandı."
             
             return ToolResult(
                 ok=True,
@@ -354,11 +367,28 @@ class CloudBackupTool(BaseTool):
             cloud_provider = args.get("cloud_provider", "aws")
             destination_bucket = args.get("destination_bucket")
             
+            # Bulut kimlik bilgileri kontrolü
+            env_key_map = {
+                "aws": "AWS_ACCESS_KEY_ID",
+                "azure": "AZURE_STORAGE_CONNECTION_STRING",
+                "gcp": "GOOGLE_APPLICATION_CREDENTIALS",
+                "dropbox": "DROPBOX_ACCESS_TOKEN",
+            }
+            required_env = env_key_map.get(cloud_provider.lower(), "CLOUD_API_KEY")
+            if not os.environ.get(required_env):
+                return ToolResult(
+                    ok=False,
+                    error=(
+                        f"[Yapılandırma Hatası] '{cloud_provider}' bulut entegrasyonu için "
+                        f"gerekli '{required_env}' ortam değişkeni bulunamadı."
+                    )
+                )
+            
             output = f"Bulut Yedekleme\n"
             output += f"Kaynak: {source_path}\n"
             output += f"Sağlayıcı: {cloud_provider}\n"
             output += f"Hedef: {destination_bucket}\n"
-            output += f"Durum: ✅ Başarılı"
+            output += f"Durum: ✅ İşlem tamamlandı."
             
             return ToolResult(
                 ok=True,

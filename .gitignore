@@ -151,3 +151,7 @@ data/logs/
 # Operating System Files
 .DS_Store
 Thumbs.db
+
+# Agent configs containing credentials / local paths
+backend/agents/agents.yaml
+backend/agents/mcp_servers.yaml

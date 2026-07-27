@@ -24,7 +24,7 @@ def _parse_cwd_jail() -> Path | None:
     settings = get_settings()
     raw = (settings.run_command_cwd_jail or "").strip()
     if not raw:
-        return None
+        return Path.cwd().resolve()
     return _expand_path(raw)
 
 

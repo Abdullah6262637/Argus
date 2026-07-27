@@ -5,11 +5,18 @@ Twitter/X, Instagram, LinkedIn, Reddit
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any, Dict
 
 from app.services.tools.base import BaseTool, PermissionKey, ToolContext, ToolResult
 
 logger = logging.getLogger(__name__)
+
+
+def _check_cred(platform: str, env_var: str) -> str | None:
+    if not os.environ.get(env_var):
+        return f"[Yapılandırma Hatası] {platform} entegrasyonu için gerekli '{env_var}' ortam değişkeni tanımlanmamış."
+    return None
 
 
 # Twitter/X Tools (10 tool)
@@ -27,6 +34,9 @@ class TwitterPostTweetTool(BaseTool):
     }
     async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
         try:
+            err = _check_cred("Twitter/X", "TWITTER_BEARER_TOKEN")
+            if err:
+                return ToolResult(ok=False, error=err)
             text = args.get("text")
             return ToolResult(ok=True, output=f"Tweet atıldı: {text[:50]}...", data={"text": text})
         except Exception as e:

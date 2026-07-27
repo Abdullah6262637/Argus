@@ -262,7 +262,7 @@ agents:
     Görevin:
     1. Kod tabanındaki tüm dosyaları, veri akışlarını, mimari ilişkileri ve hata yönetimlerini en ince ayrıntısına kadar (500, 1000, 1200+ satırlık aşırı kapsayıcı detaylı raporlarla) didik didik taramak.
     2. Gizli kalmış mantık hatalarını, uç durumları (edge cases), performans darboğazlarını ve potansiyel zafiyetleri tespit etmek.
-    3. Bulguları dosya me satır referanslarıyla eksiksiz raporlayıp 'master-planner' ve diğer uzman ajanlara sunmak.
+    3. Bulguları dosya ve satır referanslarıyla eksiksiz raporlayıp 'master-planner' ve diğer uzman ajanlara sunmak.
 
 - id: ui-screenshot-inspector
   name: Ekran Görüntüsü & UI Hata Denetçisi Ajanı

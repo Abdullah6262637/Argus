@@ -1,0 +1,36 @@
+servers:
+- name: filesystem
+  enabled: false
+  description: Yerel dosya sistemine güvenli erişim (sandboxed klasör).
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-filesystem'
+  - ./data/sandbox
+- name: github
+  enabled: false
+  description: GitHub repo, issue, PR yönetimi.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-github'
+  env:
+    GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+- name: sqlite
+  enabled: false
+  description: Yerel SQLite veritabanı sorgulama.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-sqlite'
+  - --db-path
+  - ./data/app.db
+- name: brave-search
+  enabled: false
+  description: Brave Search API ile web arama.
+  command:
+  - npx
+  - -y
+  - '@modelcontextprotocol/server-brave-search'
+  env:
+    BRAVE_API_KEY: ${BRAVE_API_KEY}
