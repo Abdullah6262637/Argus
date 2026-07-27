@@ -55,7 +55,7 @@ export function Header({
   onOpenCommandPalette}: HeaderProps) {
   return (
     <header className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down select-none" style={{ WebkitAppRegion: 'drag' } as any}>
-      {/* Sol: Logo + isim */}
+      {/* Sol: Logo + isim + Canlı Statü */}
       <div className="flex items-center gap-2.5 min-w-0" style={{ WebkitAppRegion: 'no-drag' } as any}>
         <img
           src="/logo.png"
@@ -63,9 +63,26 @@ export function Header({
           alt="Argus Logo"
         />
         <div className="min-w-0 hidden sm:block">
-          <h1 className="text-sm font-semibold text-brand-text leading-tight tracking-tight">
-            Argus
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-sm font-semibold text-brand-text leading-tight tracking-tight">
+              Argus
+            </h1>
+            <div
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-semibold tracking-wide ${
+                wsConnected
+                  ? 'bg-emerald-500/10 text-emerald-400'
+                  : 'bg-rose-500/10 text-rose-400'
+              }`}
+              title={
+                wsConnected
+                  ? 'WebSocket bağlantısı aktif'
+                  : 'WebSocket bağlantısı kopuk'
+              }
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-emerald-400' : 'bg-rose-500'}`} />
+              <span>{wsConnected ? 'Canlı' : 'Kopuk'}</span>
+            </div>
+          </div>
           <p className="text-[10.5px] text-brand-mutedSoft leading-tight">
             Aynı anda her şeyi gören çoklu ajan sistemi
           </p>
@@ -157,51 +174,6 @@ export function Header({
         >
           <Icon name="settings" size={17} weight={550} />
         </button>
-
-        {/* Bağlantı durumu rozeti */}
-        <div
-          className={`hidden md:flex items-center gap-1.5 h-9 px-2.5 rounded-lg border ${
-            wsConnected
-              ? 'border-brand-success/30 bg-brand-success/5 text-brand-success'
-              : 'border-brand-danger/30 bg-brand-danger/5 text-brand-danger'
-          }`}
-          title={
-            wsConnected
-              ? 'WebSocket bağlantısı aktif'
-              : 'WebSocket bağlantısı kopuk'
-          }
-        >
-          <span className="relative flex w-2 h-2">
-            {wsConnected && (
-              <span className="absolute inline-flex h-full w-full rounded-full bg-brand-success opacity-60 animate-ping" />
-            )}
-            <span
-              className={`relative inline-flex w-2 h-2 rounded-full ${
-                wsConnected ? 'bg-brand-success' : 'bg-brand-danger'
-              }`}
-            />
-          </span>
-          <span className="text-[10.5px] font-bold uppercase tracking-wider">
-            {wsConnected ? 'Canlı' : 'Kopuk'}
-          </span>
-        </div>
-
-        {/* Mobile bağlantı dot'ı */}
-        <div
-          className="md:hidden w-9 h-9 inline-flex items-center justify-center"
-          title={wsConnected ? 'Bağlı' : 'Kopuk'}
-        >
-          <span className="relative flex w-2.5 h-2.5">
-            {wsConnected && (
-              <span className="absolute inline-flex h-full w-full rounded-full bg-brand-success opacity-60 animate-ping" />
-            )}
-            <span
-              className={`relative inline-flex w-2.5 h-2.5 rounded-full ${
-                wsConnected ? 'bg-brand-success' : 'bg-brand-danger'
-              }`}
-            />
-          </span>
-        </div>
 
         {/* Window Controls (Electron desktop mode) */}
         {typeof window !== 'undefined' && (window as any).openclaw?.windowControls && (
