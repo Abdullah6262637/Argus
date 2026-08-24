@@ -28,23 +28,14 @@ export const BASE_THEMES: Array<{
   {
     id: 'mono',
     name: 'Mono',
-<<<<<<< HEAD
-    description: 'Klasik siyah-beyaz',
-  },
-  {
-    id: 'midnight',
-    name: 'Argus Slate',
-    description: 'Modern slate & zümrüt',
-=======
     darkDesc: 'Minimal siyah-beyaz',
     lightDesc: 'Saf minimal beyaz',
   },
   {
     id: 'midnight',
-    name: 'Midnight',
-    darkDesc: 'Koyu gece mavisi',
+    name: 'Argus Slate',
+    darkDesc: 'Modern slate & zümrüt',
     lightDesc: 'Ferah gökyüzü mavisi',
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   },
   {
     id: 'sunset',
@@ -61,8 +52,8 @@ export const BASE_THEMES: Array<{
 ];
 
 export const THEMES: ThemeDef[] = [
+  { id: 'midnight', name: 'Argus Slate (Koyu)', description: 'Modern slate & zümrüt' },
   { id: 'mono', name: 'Mono (Koyu)', description: 'Minimal siyah-beyaz' },
-  { id: 'midnight', name: 'Midnight (Koyu)', description: 'Koyu gece mavisi' },
   { id: 'sunset', name: 'Sunset (Koyu)', description: 'Sıcak turuncu-amber' },
   { id: 'forest', name: 'Forest (Koyu)', description: 'Koyu orman yeşili' },
   { id: 'mono-light', name: 'Mono (Açık)', description: 'Saf minimal beyaz' },
@@ -75,7 +66,7 @@ export function getBaseThemeId(theme: ThemeId): BaseThemeId {
   if (theme.startsWith('midnight')) return 'midnight';
   if (theme.startsWith('sunset')) return 'sunset';
   if (theme.startsWith('forest')) return 'forest';
-  return 'mono';
+  return 'midnight';
 }
 
 export function getThemeVariant(theme: ThemeId): ThemeVariant {
@@ -98,12 +89,7 @@ function applyTheme(theme: ThemeId) {
 }
 
 function getInitialTheme(): ThemeId {
-<<<<<<< HEAD
   if (typeof window === 'undefined') return 'midnight';
-  const saved = window.localStorage.getItem(STORAGE_KEY);
-  if (saved === 'mono' || saved === 'midnight' || saved === 'sunset' || saved === 'forest') {
-=======
-  if (typeof window === 'undefined') return 'mono';
   const saved = window.localStorage.getItem(STORAGE_KEY) as ThemeId;
   const validThemes: ThemeId[] = [
     'mono',
@@ -116,7 +102,6 @@ function getInitialTheme(): ThemeId {
     'forest-light',
   ];
   if (validThemes.includes(saved)) {
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
     return saved;
   }
   return 'midnight';

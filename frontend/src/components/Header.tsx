@@ -9,20 +9,18 @@ interface HeaderProps {
   onOpenCommandPalette?: () => void;
 }
 
-
-
 function WindowControls() {
   const isElectron = typeof window !== 'undefined' && !!(window as any).argus;
   if (!isElectron) return null;
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 ml-2 pl-2 border-l border-brand-border select-none" style={{ WebkitAppRegion: 'no-drag' } as any}>
       {/* Minimize */}
       <button
         type="button"
         onClick={() => (window as any).argus?.minimize?.()}
-        title="Simge Durumuna Küçült"
-        className="w-7 h-7 flex items-center justify-center rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-panelAlt transition-colors"
+        title="Simge Durumuna Küçült (-)"
+        className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
       >
         <svg width="10" height="2" viewBox="0 0 10 2" fill="currentColor">
           <rect width="10" height="2" rx="1" />
@@ -33,8 +31,8 @@ function WindowControls() {
       <button
         type="button"
         onClick={() => (window as any).argus?.maximize?.()}
-        title="Ekranı Kapla / Geri Yükle"
-        className="w-7 h-7 flex items-center justify-center rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-panelAlt transition-colors"
+        title="Ekranı Kapla / Geri Yükle (□)"
+        className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
       >
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.3">
           <rect x="0.65" y="0.65" width="8.7" height="8.7" rx="1.5" />
@@ -45,8 +43,8 @@ function WindowControls() {
       <button
         type="button"
         onClick={() => (window as any).argus?.close?.()}
-        title="Kapat"
-        className="w-7 h-7 flex items-center justify-center rounded-md text-brand-muted hover:text-white hover:bg-red-500/90 transition-colors"
+        title="Kapat (✕)"
+        className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-white hover:bg-red-500/90 transition-all duration-150 active:scale-90"
       >
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.3">
           <line x1="1.5" y1="1.5" x2="8.5" y2="8.5" strokeLinecap="round" />
@@ -63,15 +61,19 @@ export function Header({
   onCreateAgent,
   onOpenSettings,
   onOpenWorkflows,
-  onOpenCommandPalette}: HeaderProps) {
+  onOpenCommandPalette,
+}: HeaderProps) {
   return (
-<<<<<<< HEAD
-    <header className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down select-none" style={{ WebkitAppRegion: 'drag' } as any}>
+    <header
+      className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down select-none"
+      style={{ WebkitAppRegion: 'drag' } as any}
+      onDoubleClick={() => (window as any).argus?.maximize?.()}
+    >
       {/* Sol: Logo + isim + Canlı Statü */}
       <div className="flex items-center gap-2.5 min-w-0" style={{ WebkitAppRegion: 'no-drag' } as any}>
         <img
           src="/logo.png"
-          className="w-10 h-10 rounded-lg object-contain flex-shrink-0"
+          className="w-8 h-8 rounded-lg object-contain flex-shrink-0"
           alt="Argus Logo"
         />
         <div className="min-w-0 hidden sm:block">
@@ -95,33 +97,22 @@ export function Header({
               <span>{wsConnected ? 'Canlı' : 'Kopuk'}</span>
             </div>
           </div>
-          <p className="text-[10.5px] text-brand-mutedSoft leading-tight">
-            Aynı anda her şeyi gören çoklu ajan sistemi
-          </p>
         </div>
       </div>
 
-      {/* Sağ: Komut paleti + aksiyon grubu + ayarlar + bağlantı */}
+      {/* Sağ: Komut paleti + aksiyon grubu + ayarlar + pencere kontrolleri */}
       <div className="flex items-center gap-2" style={{ WebkitAppRegion: 'no-drag' } as any}>
-=======
-    <header
-      className="app-region-drag h-14 flex-shrink-0 flex items-center justify-between px-3 bg-brand-panel animate-fade-in-down select-none"
-      onDoubleClick={() => (window as any).argus?.maximize?.()}
-    >
-      {/* Sol: Komut paleti + aksiyon grubu + ayarlar + bağlantı durumu */}
-      <div className="flex items-center gap-2 app-region-no-drag">
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
         {/* Komut paleti — özel kbd hint'li search-look */}
         {onOpenCommandPalette && (
           <button
             onClick={onOpenCommandPalette}
             title="Komut paleti (Ctrl+K)"
-            className="h-9 inline-flex items-center gap-2 px-2.5 rounded-xl bg-brand-panelAlt/50 text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95 select-none"
+            className="h-8 inline-flex items-center gap-2 px-2.5 rounded-xl bg-brand-panelAlt/50 text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95 select-none"
           >
-            <Icon name="search" size={15} weight={550} />
+            <Icon name="search" size={14} />
             <span className="hidden md:inline text-xs leading-none">Komut ara</span>
             <kbd
-              className="hidden md:inline-flex items-center justify-center text-[10px] rounded px-1.5 h-5 font-mono bg-brand-bg/60 text-brand-textSoft leading-none not-italic font-semibold tracking-tight"
+              className="hidden md:inline-flex items-center justify-center text-[10px] rounded px-1.5 h-4.5 font-mono bg-brand-bg/60 text-brand-textSoft leading-none not-italic font-semibold tracking-tight"
               style={{ fontStyle: 'normal' }}
             >
               Ctrl+K
@@ -129,7 +120,7 @@ export function Header({
           </button>
         )}
 
-        {/* Aksiyon grubu — segmentlenmiş tek kapsül görünümü (İkonsuz, Ayarlar dahil) */}
+        {/* Aksiyon grubu */}
         <div className="hidden sm:flex items-center bg-brand-panelAlt/50 rounded-xl p-0.5 gap-0.5">
           <button
             onClick={onCreateAgent}
@@ -163,7 +154,7 @@ export function Header({
           </button>
         </div>
 
-        {/* Mobile fallback (sm altında grup iç içe) */}
+        {/* Mobile fallback */}
         <div className="sm:hidden flex items-center bg-brand-panelAlt/50 rounded-xl p-0.5 gap-0.5">
           <button
             onClick={onCreateAgent}
@@ -197,58 +188,8 @@ export function Header({
           </button>
         </div>
 
-        {/* Bağlantı durumu — Sadece sorun olduğunda kırmızı uyarı */}
-        {!wsConnected && (
-          <div
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-brand-danger/10 text-brand-danger select-none animate-pulse"
-            title="WebSocket bağlantısı kopuk — Sunucuya bağlanılamıyor"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-danger flex-shrink-0" />
-            <span className="text-[11px] font-semibold tracking-wide">
-              Bağlantı Yok
-            </span>
-          </div>
-        )}
-      </div>
-
-<<<<<<< HEAD
-        {/* Window Controls (Electron desktop mode) */}
-        {typeof window !== 'undefined' && (window as any).openclaw?.windowControls && (
-          <div className="flex items-center gap-1 ml-2 pl-2 border-l border-brand-border select-none" style={{ WebkitAppRegion: 'no-drag' } as any}>
-            <button
-              onClick={() => (window as any).openclaw.windowControls.minimize()}
-              title="Simge Durumuna Küçült (-)"
-              className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="5.5" width="8" height="1.2" rx="0.6" fill="currentColor" />
-              </svg>
-            </button>
-            <button
-              onClick={() => (window as any).openclaw.windowControls.maximize()}
-              title="Ekranı Kapla / Tam Ekran (□)"
-              className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2.25" y="2.25" width="7.5" height="7.5" rx="1" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-            </button>
-            <button
-              onClick={() => (window as any).openclaw.windowControls.close()}
-              title="Kapat (✕)"
-              className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-white hover:bg-red-500/90 transition-all duration-150 active:scale-90"
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.5 2.5L9.5 9.5M9.5 2.5L2.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-=======
-      {/* Sağ: Sadece Pencere Kontrolleri (Küçült, Büyüt, Kapat) */}
-      <div className="flex items-center app-region-no-drag">
+        {/* Window Controls (Electron) */}
         <WindowControls />
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
       </div>
     </header>
   );

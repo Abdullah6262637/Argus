@@ -534,22 +534,9 @@ export function AgentForm({
       }}
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
     >
-<<<<<<< HEAD
-      <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
-        {/* Minimalist background without ambient glow */}
+      <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-2xl border border-brand-borderStrong bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
+        {/* Minimalist background */}
         <div className="absolute inset-0 pointer-events-none z-0 bg-brand-panel" />
-=======
-      <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-2xl bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
-        {/* Ambient Glow Background Effect */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div 
-            className={`absolute -top-40 -left-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
-          />
-          <div 
-            className={`absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
-          />
-        </div>
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
 
         {/* Baslik + Adim gostergesi */}
         <div className="relative z-10 px-6 pt-5 pb-3 bg-brand-panelAlt/90 backdrop-blur-[2px]">

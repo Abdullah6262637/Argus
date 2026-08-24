@@ -548,22 +548,6 @@ export function ChatWindow({
               <div className="max-w-[85%] w-full">
                 <ReflectionCard reflection={lastReflection} />
               </div>
-<<<<<<< HEAD
-
-              {/* Orta: shimmer text — soldan sağa parıltı geçer */}
-              <span
-                className="text-[12px] font-semibold tracking-normal leading-none bg-gradient-to-r from-brand-text via-brand-accent to-brand-text bg-[length:200%_100%] bg-clip-text text-transparent animate-text-shimmer not-italic inline-block align-middle flex items-center gap-[2px]"
-                style={{ fontStyle: 'normal' }}
-              >
-                Düşünüyor
-                <span className="flex gap-[2px] ml-1">
-                  <span className="w-1 h-1 rounded-full bg-brand-accent typing-dot" style={{ animationDelay: '0ms' }} />
-                  <span className="w-1 h-1 rounded-full bg-brand-accent typing-dot" style={{ animationDelay: '200ms' }} />
-                  <span className="w-1 h-1 rounded-full bg-brand-accent typing-dot" style={{ animationDelay: '400ms' }} />
-                </span>
-              </span>
-=======
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
             </div>
           )}
 
