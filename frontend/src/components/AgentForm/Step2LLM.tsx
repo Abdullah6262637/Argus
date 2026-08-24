@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '../Icon';
 import { StepHeading, Field, CustomSelect, SearchableCustomSelect, inputCls, Checkbox } from './FormComponents';
-import { getModelLogo } from '../../utils/modelHelper';
+import { getModelLogo, getProviderLogo, resolveAsset } from '../../utils/modelHelper';
 import type { ModelInfoOut, ProviderName, ConnectionTestResponse } from '@/types';
 
 export interface ProxyPreset {
@@ -232,7 +232,7 @@ export function Step2LLM({
               value: p.id,
               label: (
                 <span className="flex items-center gap-2">
-                  <img src={`/providers/${providerImg}.png?v=3`} alt={p.label} className="w-4 h-4 object-contain rounded-sm" />
+                  <img src={resolveAsset(`providers/${providerImg}.png`)} alt={p.label} className="w-4 h-4 object-contain rounded-sm" />
                   <span>{p.label}{p.base_url ? ` — ${p.base_url}` : ''}</span>
                 </span>
               )
@@ -251,7 +251,7 @@ export function Step2LLM({
                 value: 'openai',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/openai-official.png?v=3" alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('openai')} alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>OpenAI (ve uyumlu)</span>
                   </span>
                 )
@@ -260,7 +260,7 @@ export function Step2LLM({
                 value: 'anthropic',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/anthropic.png?v=3" alt="Anthropic" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('anthropic')} alt="Anthropic" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Anthropic (Claude)</span>
                   </span>
                 )
@@ -269,7 +269,7 @@ export function Step2LLM({
                 value: 'gemini',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/gemini.png?v=3" alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('gemini')} alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Google Gemini (Vertex/GCP)</span>
                   </span>
                 )
@@ -278,7 +278,7 @@ export function Step2LLM({
                 value: 'googleaistudio',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/googleaistudio.png?v=3" alt="Google AI Studio" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('googleaistudio')} alt="Google AI Studio" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Google AI Studio</span>
                   </span>
                 )
@@ -287,7 +287,7 @@ export function Step2LLM({
                 value: 'openrouter',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/openrouter.png?v=3" alt="OpenRouter" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('openrouter')} alt="OpenRouter" className="w-4 h-4 object-contain rounded-sm" />
                     <span>OpenRouter</span>
                   </span>
                 )
@@ -296,7 +296,7 @@ export function Step2LLM({
                 value: 'groq',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/groq.png?v=3" alt="Groq" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('groq')} alt="Groq" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Groq Cloud</span>
                   </span>
                 )
@@ -305,7 +305,7 @@ export function Step2LLM({
                 value: 'sambanova',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/sambanova.png?v=3" alt="SambaNova" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('sambanova')} alt="SambaNova" className="w-4 h-4 object-contain rounded-sm" />
                     <span>SambaNova Cloud (1000+ t/s)</span>
                   </span>
                 )
@@ -314,7 +314,7 @@ export function Step2LLM({
                 value: 'cerebras',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/cerebras.png?v=3" alt="Cerebras" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('cerebras')} alt="Cerebras" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Cerebras Systems (2000+ t/s)</span>
                   </span>
                 )
@@ -323,7 +323,7 @@ export function Step2LLM({
                 value: 'fireworks',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/fireworks.png?v=3" alt="Fireworks AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('fireworks')} alt="Fireworks AI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Fireworks AI</span>
                   </span>
                 )
@@ -332,7 +332,7 @@ export function Step2LLM({
                 value: 'together',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/together.png?v=3" alt="Together AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('together')} alt="Together AI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Together AI</span>
                   </span>
                 )
@@ -341,7 +341,7 @@ export function Step2LLM({
                 value: 'deepseek',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/deepseek.png?v=3" alt="DeepSeek" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('deepseek')} alt="DeepSeek" className="w-4 h-4 object-contain rounded-sm" />
                     <span>DeepSeek</span>
                   </span>
                 )
@@ -350,7 +350,7 @@ export function Step2LLM({
                 value: 'mistral',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/mistral.png?v=3" alt="Mistral AI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('mistral')} alt="Mistral AI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Mistral AI</span>
                   </span>
                 )
@@ -359,7 +359,7 @@ export function Step2LLM({
                 value: 'xai',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/xai.png?v=3" alt="xAI" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('xai')} alt="xAI" className="w-4 h-4 object-contain rounded-sm" />
                     <span>xAI (Grok)</span>
                   </span>
                 )
@@ -368,7 +368,7 @@ export function Step2LLM({
                 value: 'local',
                 label: (
                   <span className="flex items-center gap-2">
-                    <img src="/providers/local.png?v=3" alt="Yerel" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('local')} alt="Yerel" className="w-4 h-4 object-contain rounded-sm" />
                     <span>Yerel (Ollama, LM Studio vb.)</span>
                   </span>
                 )

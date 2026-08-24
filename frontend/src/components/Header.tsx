@@ -1,4 +1,5 @@
 import { Icon } from './Icon';
+import { resolveAsset } from '../utils/modelHelper';
 
 interface HeaderProps {
   wsConnected: boolean;
@@ -72,7 +73,7 @@ export function Header({
       {/* Sol: Logo + isim + Canlı Statü */}
       <div className="flex items-center gap-2.5 min-w-0" style={{ WebkitAppRegion: 'no-drag' } as any}>
         <img
-          src="/logo.png"
+          src={resolveAsset('logo.png')}
           className="w-8 h-8 rounded-lg object-contain flex-shrink-0"
           alt="Argus Logo"
         />

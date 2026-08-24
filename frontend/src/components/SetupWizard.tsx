@@ -4,6 +4,7 @@ import { Icon } from './Icon';
 import { CustomSelect } from './CustomSelect';
 import { THEMES, type ThemeId } from '@/hooks/useTheme';
 import type { ProviderName } from '@/types';
+import { getProviderLogo } from '@/utils/modelHelper';
 
 interface SetupWizardProps {
   theme: ThemeId;
@@ -347,7 +348,7 @@ export default function SetupWizard({ theme, onChangeTheme, onFinished }: SetupW
                 {/* OpenAI */}
                 <div className="p-4 bg-brand-panelAlt/20 border border-brand-border rounded-xl space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold">
-                    <img src="/providers/openai-official.png?v=3" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('openai')} alt="OpenAI" className="w-4 h-4 object-contain rounded-sm" />
                     OpenAI API Key
                   </div>
                   <div className="relative">
@@ -371,7 +372,7 @@ export default function SetupWizard({ theme, onChangeTheme, onFinished }: SetupW
                 {/* Anthropic */}
                 <div className="p-4 bg-brand-panelAlt/20 border border-brand-border rounded-xl space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold">
-                    <img src="/providers/anthropic.png?v=3" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('anthropic')} alt="Anthropic" className="w-4 h-4 object-contain rounded-sm" />
                     Anthropic API Key
                   </div>
                   <div className="relative">
@@ -395,7 +396,7 @@ export default function SetupWizard({ theme, onChangeTheme, onFinished }: SetupW
                 {/* Google Gemini */}
                 <div className="p-4 bg-brand-panelAlt/20 border border-brand-border rounded-xl space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold">
-                    <img src="/providers/gemini.png?v=3" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('gemini')} alt="Gemini" className="w-4 h-4 object-contain rounded-sm" />
                     Google Gemini API Key
                   </div>
                   <div className="relative">
@@ -419,7 +420,7 @@ export default function SetupWizard({ theme, onChangeTheme, onFinished }: SetupW
                 {/* OpenRouter */}
                 <div className="p-4 bg-brand-panelAlt/20 border border-brand-border rounded-xl space-y-2">
                   <div className="flex items-center gap-2 text-xs font-bold">
-                    <img src="/providers/openrouter.png?v=3" className="w-4 h-4 object-contain rounded-sm" />
+                    <img src={getProviderLogo('openrouter')} alt="OpenRouter" className="w-4 h-4 object-contain rounded-sm" />
                     OpenRouter API Key
                   </div>
                   <div className="relative">

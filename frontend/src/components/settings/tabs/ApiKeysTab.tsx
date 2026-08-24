@@ -6,6 +6,7 @@ import { CustomSelect } from '../../CustomSelect';
 import { PanelHeader } from '../shared/PanelHeader';
 import { FormField } from '../shared/FormField';
 import { KeyRow } from '../shared/KeyRow';
+import { getProviderLogo } from '@/utils/modelHelper';
 
 export function ApiKeysTab() {
   const [loading, setLoading] = useState(true);
@@ -201,7 +202,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="openai"
           label="OpenAI"
-          logoUrl="/providers/openai-official.png?v=3"
+          logoUrl={getProviderLogo('openai')}
           placeholder="sk-..."
           value={openaiKey}
           onChange={setOpenaiKey}
@@ -216,7 +217,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="anthropic"
           label="Anthropic Claude"
-          logoUrl="/providers/anthropic.png?v=3"
+          logoUrl={getProviderLogo('anthropic')}
           placeholder="sk-ant-..."
           value={anthropicKey}
           onChange={setAnthropicKey}
@@ -231,7 +232,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="gemini"
           label="Google Gemini"
-          logoUrl="/providers/gemini.png?v=3"
+          logoUrl={getProviderLogo('gemini')}
           placeholder="AIzaSy..."
           value={geminiKey}
           onChange={setGeminiKey}
@@ -242,7 +243,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="groq"
           label="Groq Cloud"
-          logoUrl="/providers/groq.png?v=3"
+          logoUrl={getProviderLogo('groq')}
           placeholder="gsk_..."
           value={groqKey}
           onChange={setGroqKey}
@@ -253,7 +254,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="deepseek"
           label="DeepSeek AI"
-          logoUrl="/providers/deepseek.png?v=3"
+          logoUrl={getProviderLogo('deepseek')}
           placeholder="sk-..."
           value={deepseekKey}
           onChange={setDeepseekKey}
@@ -264,7 +265,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="openrouter"
           label="OpenRouter"
-          logoUrl="/providers/openrouter.png?v=3"
+          logoUrl={getProviderLogo('openrouter')}
           placeholder="sk-or-..."
           value={openrouterKey}
           onChange={setOpenrouterKey}
@@ -275,7 +276,7 @@ export function ApiKeysTab() {
         <KeyRow
           providerId="mistral"
           label="Mistral AI"
-          logoUrl="/providers/mistral.png?v=3"
+          logoUrl={getProviderLogo('mistral')}
           placeholder="api_..."
           value={mistralKey}
           onChange={setMistralKey}
