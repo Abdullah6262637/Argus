@@ -38,7 +38,7 @@ export function Step6Plugins() {
         desc="Bu ajanin kullanabilecegi eklenti (plugin) ve MCP sunucu listesi."
       />
 
-      <div className="rounded border border-brand-accent/20 bg-brand-accent/5 p-3 text-xs flex items-start gap-2">
+      <div className="rounded-xl bg-brand-accent/10 p-3 text-xs flex items-start gap-2">
         <Icon name="info" size={16} className="text-brand-accent flex-shrink-0 mt-0.5" />
         <div>
           <strong className="text-brand-accent">Bilgi:</strong> Eklentiler ve MCP sunucuları globaldir. Bunları etkinleştirmek veya devre dışı bırakmak için üst menüdeki <strong>Ayarlar &gt; Eklentiler &amp; MCP</strong> sekmesini kullanabilirsiniz.
@@ -47,16 +47,16 @@ export function Step6Plugins() {
 
       <div className="space-y-3">
         {/* MCP Ozet */}
-        <div className="rounded border border-brand-border bg-brand-bg/30 p-3 space-y-2">
-          <div className="text-[11px] font-bold text-brand-text uppercase tracking-wider">Aktif MCP Sunuculari</div>
+        <div className="rounded-xl bg-brand-panelAlt/40 p-3 space-y-2">
+          <div className="text-[11px] font-bold text-brand-text uppercase tracking-wider">Aktif MCP Sunucuları</div>
           {mcpServers.length === 0 ? (
-            <div className="text-[11px] text-brand-mutedSoft italic">Aktif MCP sunucusu bulunmamaktadir.</div>
+            <div className="text-[11px] text-brand-mutedSoft italic">Aktif MCP sunucusu bulunmamaktadır.</div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {mcpServers.map((s) => {
                 const logo = getMcpLogo(s.name);
                 return (
-                  <span key={s.name} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono border border-brand-border bg-brand-panel text-brand-text shadow-sm transition-all hover:border-brand-accent/20">
+                  <span key={s.name} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-brand-panelAlt/70 text-brand-text transition-all">
                     {logo ? (
                       <img src={logo} alt={s.name} className="w-3.5 h-3.5 object-contain" />
                     ) : (
@@ -71,10 +71,10 @@ export function Step6Plugins() {
         </div>
 
         {/* Plugins Ozet */}
-        <div className="rounded border border-brand-border bg-brand-bg/30 p-3 space-y-2">
+        <div className="rounded-xl bg-brand-panelAlt/40 p-3 space-y-2">
           <div className="text-[11px] font-bold text-brand-text uppercase tracking-wider">Sistem Eklentileri (Python Plugins)</div>
           {plugins.length === 0 ? (
-            <div className="text-[11px] text-brand-mutedSoft italic">Eklenti bulunmamaktadir.</div>
+            <div className="text-[11px] text-brand-mutedSoft italic">Eklenti bulunmamaktadır.</div>
           ) : (
             <div className="space-y-1.5">
               {plugins.map((p) => (

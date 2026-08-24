@@ -15,6 +15,7 @@ agents:
     web_search: true
     system_admin: true
   base_url: https://api.groq.com/openai/v1
+<<<<<<< HEAD
   api_key: ""
   system_prompt: |
     Sen Argus 10-Ajanlı Sürü Sisteminin (Agent Swarm) Ele Baş Plancı ve Koordinatör Ajanısın (Master Planner).
@@ -153,11 +154,37 @@ agents:
   temperature: 0.5
   max_tokens: 2048
   tags: [swarm, frontend, ui]
+=======
+  api_key: enc::gAAAAABqSlLGbLV7DNh98wMn-mGNzkgujQWusj1dDSaVR2QcOKmIW353neXMpqkzxP8g5aDfVKFiceD6Y_nncqInzWoTkLs9jK0cPC-xXs4GmHxo4SM1-QlH5ai8fN0uIEWW0l_hNsNS2_-dTV22bspdJGi2rwWGYg==
+  system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini yerine getir, kod yaz ve terminal komutlarıyla test et.
+  image:
+    enabled: false
+    provider: openai
+    model: dall-e-3
+  video:
+    enabled: false
+    provider: openai
+    model: sora-1
+  audio:
+    enabled: true
+    provider: openai
+    model: whisper-1
+- id: abdullah
+  name: Abdullah
+  role: Senior Software Engineer
+  description: Kod yazar, hata ayıklar ve terminal komutlarını çalıştırır.
+  provider: openrouter
+  model: nvidia/nemotron-3-ultra-550b-a55b:free
+  temperature: 0.5
+  max_tokens: 1024
+  tags: []
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   is_active: true
   permissions:
     file_system: true
     terminal_cmd: true
     web_search: true
+<<<<<<< HEAD
     system_admin: false
   base_url: https://api.groq.com/openai/v1
   api_key: ""
@@ -172,10 +199,33 @@ agents:
   name: DevOps & Yayın Yöneticisi
   role: CI/CD & Build Pipeline Specialist
   description: Bağımlılık sürüm kilitlemelerini, cross-platform derleme scriptlerini ve paketlemeyi yönetir.
+=======
+    system_admin: true
+  base_url: https://openrouter.ai/api/v1
+  api_key: enc::gAAAAABqeZ1iopVgoRodBcd0Kj9uurG-IR0mQE45Kp1Lf6fxrS4jYL42764pREzy9OE8n-ZNroM6QzZ377aj4P_Kl4BgIIIWhhLWGZzuW1gu5M8wYMXGkeSJTnmqBhXhjDzTckj1XqnaAsqq0Sm2jFYMpa4YIb1is-18LiqYol7AHioazWBKXo4=
+  system_prompt: Sen deneyimli bir yazılım geliştiricisin. Sana verilen kodlama görevlerini yerine getir, kod yaz ve terminal komutlarıyla test et.
+  image:
+    enabled: false
+    provider: openai
+    model: dall-e-3
+  video:
+    enabled: false
+    provider: openai
+    model: sora-1
+  audio:
+    enabled: false
+    provider: openai
+    model: whisper-1
+- id: mimar
+  name: Mimar
+  role: Sistem Mimarı
+  description: Sistem tasarımı, veritabanı ve mimari kararlar alır.
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   provider: groq
   model: llama-3.3-70b-versatile
   temperature: 0.3
   max_tokens: 2048
+<<<<<<< HEAD
   tags: [swarm, devops, release]
   is_active: true
   permissions:
@@ -201,11 +251,15 @@ agents:
   temperature: 0.4
   max_tokens: 2048
   tags: [swarm, research, memory]
+=======
+  tags: [mimari, tasarim]
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   is_active: true
   permissions:
     file_system: true
     terminal_cmd: false
     web_search: true
+<<<<<<< HEAD
     system_admin: false
   base_url: https://api.groq.com/openai/v1
   api_key: ""
@@ -220,16 +274,58 @@ agents:
   name: Sistem İzleme & Telemetri Ajanı
   role: Log Analytics & Performance Monitor
   description: Sistem kaynaklarını (CPU/RAM), log akışlarını ve LLM yanıt sürelerini izler.
+=======
+  soul: mimar.txt
+- id: elestirmen
+  name: Eleştirmen
+  role: Kod ve Tasarım İnceleyici
+  description: Kodları ve mimari planları inceler, güvenlik ve performans hatalarını bulur.
+  provider: groq
+  model: llama-3.3-70b-versatile
+  temperature: 0.1
+  max_tokens: 2048
+  tags: [qa, guvenlik, inceleme]
+  is_active: true
+  permissions:
+    file_system: true
+    terminal_cmd: false
+    web_search: false
+  soul: elestirmen.txt
+- id: fikir-uzmani
+  name: Fikir Uzmanı
+  role: Alternatif Çözüm Üretici
+  description: Karşılaşılan sorunlara alternatif yaklaşımlar ve yenilikçi fikirler sunar.
+  provider: groq
+  model: llama-3.3-70b-versatile
+  temperature: 0.8
+  max_tokens: 2048
+  tags: [beyin-firtinasi, arge]
+  is_active: true
+  permissions:
+    file_system: true
+    terminal_cmd: false
+    web_search: true
+  soul: fikir_uzmani.txt
+- id: testci
+  name: Testçi
+  role: Kalite Güvence ve Test Uzmanı
+  description: Unit ve integration testleri yazar, test kapsamını denetler.
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   provider: groq
   model: llama-3.3-70b-versatile
   temperature: 0.2
   max_tokens: 2048
+<<<<<<< HEAD
   tags: [swarm, monitoring, telemetry]
+=======
+  tags: [test, qa]
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   is_active: true
   permissions:
     file_system: true
     terminal_cmd: true
     web_search: false
+<<<<<<< HEAD
     system_admin: false
   base_url: https://api.groq.com/openai/v1
   api_key: ""
@@ -310,3 +406,6 @@ agents:
     Görevin:
     1. Ekran görüntülerindeki gereksiz masaüstü alt/üst görev çubuklarını ve kenarlıkları PIL/Pillow 'Image.crop()' ile kırpmak.
     2. Odaklanmış temiz UI görsellerini 'README.md' dokümantasyonu için teslim etmek.
+=======
+  soul: testci.txt
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)

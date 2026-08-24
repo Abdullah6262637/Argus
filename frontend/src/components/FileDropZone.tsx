@@ -1,5 +1,3 @@
-// FileDropZone: drag-drop ile vector store'a ingest (Material Symbols)
-
 import { useCallback, useState } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
@@ -51,7 +49,7 @@ export function FileDropZone({ agentId, onIngested }: FileDropZoneProps) {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5 animate-fade-in-down">
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -63,10 +61,10 @@ export function FileDropZone({ agentId, onIngested }: FileDropZoneProps) {
           setDragOver(false);
           handleFiles(e.dataTransfer.files);
         }}
-        className={`border-2 border-dashed rounded-lg p-4 text-center transition cursor-pointer ${
+        className={`relative rounded-2xl p-6 text-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer group overflow-hidden ${
           dragOver
-            ? 'border-brand-accent bg-brand-accent/10 text-brand-accent'
-            : 'border-brand-border text-brand-muted hover:border-brand-borderStrong'
+            ? 'bg-brand-accent/15 ring-2 ring-brand-accent/40 shadow-xl shadow-brand-accent/10 scale-[1.01]'
+            : 'bg-brand-panelAlt/50 hover:bg-brand-panelAlt/80 hover:shadow-lg active:scale-[0.995]'
         }`}
       >
         <label className="cursor-pointer block">
@@ -77,36 +75,65 @@ export function FileDropZone({ agentId, onIngested }: FileDropZoneProps) {
             onChange={(e) => handleFiles(e.target.files)}
             accept=".pdf,.docx,.xlsx,.csv,.html,.htm,.txt,.md,.json"
           />
-          <Icon
-            name="cloud_upload"
-            size={28}
-            weight={400}
-            className={`mb-1 ${dragOver ? 'text-brand-accent' : 'text-brand-mutedSoft'}`}
-          />
-          <div className="text-xs flex items-center justify-center gap-1">
-            <strong>Dosya bırak</strong> veya
-            <span className="underline">tıkla</span>
+
+          {/* Avatar & Icon with subtle hover float */}
+          <div
+            className={`w-12 h-12 mx-auto mb-3 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+              dragOver
+                ? 'bg-brand-accent text-brand-bg scale-110 shadow-lg shadow-brand-accent/30'
+                : 'bg-brand-bg/60 text-brand-mutedSoft group-hover:bg-brand-accent/15 group-hover:text-brand-accent group-hover:scale-105'
+            }`}
+          >
+            <Icon
+              name="cloud_upload"
+              size={24}
+              weight={500}
+              className="transition-transform duration-300 group-hover:-translate-y-0.5"
+            />
           </div>
-          <div className="text-[10px] mt-1 opacity-70">
-            PDF / DOCX / XLSX / CSV / HTML / TXT / MD — chunk + embed + memory'e yazılır
+
+          {/* Heading */}
+          <div className="text-xs font-semibold text-brand-text flex items-center justify-center gap-1.5">
+            <span>Dosyaları buraya bırak</span>
+            <span className="text-brand-mutedSoft font-normal">veya</span>
+            <span className="px-2 py-0.5 rounded-lg bg-brand-accent/15 text-brand-accent text-[11px] font-bold group-hover:bg-brand-accent group-hover:text-brand-bg transition-all duration-300 shadow-sm">
+              Gözat
+            </span>
+          </div>
+
+          {/* Subtitle Format Badges */}
+          <div className="flex items-center justify-center gap-1 flex-wrap mt-2.5">
+            {['PDF', 'DOCX', 'XLSX', 'CSV', 'HTML', 'TXT', 'MD', 'JSON'].map((fmt) => (
+              <span
+                key={fmt}
+                className="text-[9.5px] font-mono font-medium px-1.5 py-0.5 rounded-md bg-brand-bg/40 text-brand-mutedSoft/90 tracking-tight"
+              >
+                {fmt}
+              </span>
+            ))}
+          </div>
+
+          <div className="text-[10px] text-brand-mutedSoft mt-2 font-mono opacity-80">
+            Chunk · Embed · Vector Memory Store
           </div>
         </label>
       </div>
 
+      {/* Ingest Progress List */}
       {items.length > 0 && (
-        <ul className="space-y-1 max-h-40 overflow-y-auto">
+        <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
           {items.map((it, i) => (
             <li
               key={i}
-              className={`text-[11px] px-2 py-1 rounded border ${
+              className={`text-[11px] px-3 py-2 rounded-xl transition-all animate-slide-in-right flex items-center justify-between gap-3 ${
                 it.state === 'done'
-                  ? 'border-brand-success/30 bg-brand-success/5 text-brand-success'
+                  ? 'bg-brand-success/10 text-brand-success'
                   : it.state === 'error'
-                    ? 'border-brand-danger/30 bg-brand-danger/5 text-brand-danger'
-                    : 'border-brand-border bg-brand-panel text-brand-muted'
+                    ? 'bg-brand-danger/10 text-brand-danger'
+                    : 'bg-brand-panelAlt/80 text-brand-textSoft'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
                 <Icon
                   name={
                     it.state === 'uploading'
@@ -117,19 +144,20 @@ export function FileDropZone({ agentId, onIngested }: FileDropZoneProps) {
                           ? 'error'
                           : 'pending'
                   }
-                  size={13}
-                  weight={500}
+                  size={15}
+                  weight={550}
                   filled={it.state === 'done' || it.state === 'error'}
-                  className={it.state === 'uploading' ? 'animate-spin-slow' : ''}
+                  className={it.state === 'uploading' ? 'animate-spin-slow text-brand-accent' : ''}
                 />
-                <span className="truncate flex-1">{it.filename}</span>
-                {it.chunks != null && (
-                  <span className="text-brand-mutedSoft font-mono text-[10px]">
-                    {it.chunks} chunk
-                  </span>
-                )}
+                <span className="truncate font-medium">{it.filename}</span>
               </div>
-              {it.error && <div className="mt-0.5 truncate">{it.error}</div>}
+
+              {it.chunks != null && (
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-brand-bg/50 text-brand-success flex-shrink-0 tabular-nums">
+                  {it.chunks} chunk
+                </span>
+              )}
+              {it.error && <div className="text-[10px] text-brand-danger truncate">{it.error}</div>}
             </li>
           ))}
         </ul>

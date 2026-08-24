@@ -38,7 +38,7 @@ interface CommandPaletteProps {
   onShowShortcuts?: () => void;
 }
 
-export function CommandPalette({
+export default function CommandPalette({
   open,
   onClose,
   agents,
@@ -457,9 +457,9 @@ export function CommandPalette({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl bg-brand-panel border border-brand-borderStrong rounded-lg shadow-2xl overflow-hidden animate-command-palette-in"
+        className="w-full max-w-xl bg-brand-panel rounded-2xl shadow-2xl overflow-hidden animate-command-palette-in"
       >
-        <div className="flex items-center gap-2 px-3 py-2.5 border-b border-brand-border">
+        <div className="flex items-center gap-2.5 px-4 py-3 bg-brand-panelAlt/50">
           <Icon name="search" size={18} className="text-brand-accent" />
           <input
             ref={inputRef}
@@ -469,12 +469,12 @@ export function CommandPalette({
             placeholder="Komut ara... (örn. yeni ajan, ayarlar)"
             className="flex-1 bg-transparent border-none outline-none text-sm text-brand-text placeholder:text-brand-mutedSoft"
           />
-          <kbd className="text-[10px] text-brand-mutedSoft border border-brand-border rounded px-1.5 py-0.5">
+          <kbd className="text-[10px] text-brand-mutedSoft bg-brand-panelAlt px-2 py-0.5 rounded-md font-mono font-semibold">
             ESC
           </kbd>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto py-1">
+        <div className="max-h-[60vh] overflow-y-auto pb-2 pt-0">
           {filtered.length === 0 && (
             <div className="text-xs text-brand-mutedSoft text-center py-6">
               Eşleşen komut yok
@@ -482,7 +482,7 @@ export function CommandPalette({
           )}
           {Object.entries(groups).map(([groupName, cmds]) => (
             <div key={groupName}>
-              <div className="text-[10px] uppercase tracking-wider text-brand-mutedSoft px-3 py-1.5 sticky top-0 bg-brand-panel">
+              <div className="text-[10px] uppercase tracking-wider text-brand-mutedSoft px-4 py-1.5 sticky top-0 bg-brand-panel z-10 font-bold shadow-sm">
                 {groupName}
               </div>
               {cmds.map((cmd) => {
@@ -496,10 +496,10 @@ export function CommandPalette({
                       setTimeout(() => cmd.run(), 0);
                     }}
                     onMouseEnter={() => setActiveIndex(idx)}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition ${
+                    className={`w-full flex items-center gap-2.5 px-4 py-2 text-sm transition ${
                       active
-                        ? 'bg-brand-accent/15 text-brand-text'
-                        : 'text-brand-textSoft hover:bg-brand-bg/40'
+                        ? 'bg-brand-accent/15 text-brand-text font-medium'
+                        : 'text-brand-textSoft hover:bg-brand-panelAlt/50'
                     }`}
                   >
                     <Icon
@@ -509,7 +509,7 @@ export function CommandPalette({
                     />
                     <span className="flex-1 text-left truncate">{cmd.label}</span>
                     {cmd.shortcut && (
-                      <kbd className="text-[10px] text-brand-mutedSoft border border-brand-border rounded px-1.5 py-0.5 font-mono">
+                      <kbd className="text-[10px] text-brand-mutedSoft bg-brand-panelAlt/80 px-2 py-0.5 rounded-md font-mono">
                         {cmd.shortcut}
                       </kbd>
                     )}
@@ -520,17 +520,17 @@ export function CommandPalette({
           ))}
         </div>
 
-        <div className="px-3 py-2 border-t border-brand-border bg-brand-bg/30 text-[10px] text-brand-mutedSoft flex items-center gap-3">
+        <div className="px-4 py-2.5 bg-brand-panelAlt/40 text-[10px] text-brand-mutedSoft flex items-center gap-3">
           <span className="inline-flex items-center gap-1">
-            <kbd className="border border-brand-border rounded px-1">↑↓</kbd> gez
+            <kbd className="bg-brand-panelAlt rounded px-1.5 py-0.5 font-mono">↑↓</kbd> gez
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="border border-brand-border rounded px-1">↵</kbd> seç
+            <kbd className="bg-brand-panelAlt rounded px-1.5 py-0.5 font-mono">↵</kbd> seç
           </span>
           <span className="inline-flex items-center gap-1">
-            <kbd className="border border-brand-border rounded px-1">ESC</kbd> kapat
+            <kbd className="bg-brand-panelAlt rounded px-1.5 py-0.5 font-mono">ESC</kbd> kapat
           </span>
-          <span className="ml-auto">{filtered.length} komut</span>
+          <span className="ml-auto font-mono">{filtered.length} komut</span>
         </div>
       </div>
     </div>

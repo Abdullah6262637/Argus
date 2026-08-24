@@ -322,7 +322,7 @@ class AgentManager:
         # Izin verilen alanlar
         allowed = {
             "name", "role", "description", "provider", "model",
-            "system_prompt", "base_url", "api_key",
+            "system_prompt", "soul_file", "base_url", "api_key",
             "temperature", "max_tokens", "tags", "is_active",
             "image", "video", "audio", "permissions",
         }

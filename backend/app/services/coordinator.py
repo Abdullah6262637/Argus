@@ -74,7 +74,7 @@ class CoordinatorDecision:
     self_handled: bool     # primary == 'self'
 
 
-_JSON_RE = re.compile(r"\{[\s\S]*\}", re.MULTILINE)
+_JSON_RE = re.compile(r"\{[\s\S]*?\}", re.MULTILINE)
 
 
 class CoordinatorService:

@@ -6,6 +6,7 @@ from typing import Dict, Optional
 
 from app.config import get_settings
 from app.services.llm.base import BaseLLMProvider, LLMError
+from app.services.llm.utils import is_placeholder_key
 
 _cache: Dict[str, BaseLLMProvider] = {}
 
@@ -59,17 +60,11 @@ def get_provider(
 
     settings = get_settings()
 
-    def _is_placeholder(k: Optional[str]) -> bool:
-        if not k:
-            return True
-        low = k.lower()
-        return "xxxxxxxxxx" in low or "placeholder" in low or "your-key" in low
-
     if provider_name == "openai":
         from app.services.llm.openai_provider import OpenAIProvider
 
         env_key = settings.openai_api_key
-        effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
+        effective_key = api_key if api_key else (env_key if not is_placeholder_key(env_key) else None)
         provider: BaseLLMProvider = OpenAIProvider(
             api_key=effective_key, model=model, base_url=base_url, provider_name="openai"
         )
@@ -77,7 +72,7 @@ def get_provider(
         from app.services.llm.anthropic_provider import AnthropicProvider
 
         env_key = settings.anthropic_api_key
-        effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
+        effective_key = api_key if api_key else (env_key if not is_placeholder_key(env_key) else None)
         provider = AnthropicProvider(
             api_key=effective_key, model=model, base_url=base_url
         )
@@ -108,15 +103,20 @@ def get_provider(
         # Sprint 4.1: Google Gemini / Google AI Studio
         from app.services.llm.gemini_provider import GeminiProvider
         env_key = settings.gemini_api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-        effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
+        effective_key = api_key if api_key else (env_key if not is_placeholder_key(env_key) else None)
         provider = GeminiProvider(api_key=effective_key, model=model)
     elif provider_name in _OPENAI_COMPATIBLE_PROVIDERS:
         # Sprint 4.3: Groq / Mistral / DeepSeek / xAI / OpenRouter / SambaNova / Cerebras / Fireworks / Together
         from app.services.llm.openai_provider import OpenAIProvider
         meta = _OPENAI_COMPATIBLE_PROVIDERS[provider_name]
         effective_base_url = base_url or meta["base_url"]
+<<<<<<< HEAD
         env_key = getattr(settings, meta["env_key"], None) or getattr(settings, meta["env_key"].lower(), None) or os.environ.get(meta["env_key"])
         effective_key = api_key if api_key else (env_key if not _is_placeholder(env_key) else None)
+=======
+        env_key = os.environ.get(meta["env_key"])
+        effective_key = api_key if api_key else (env_key if not is_placeholder_key(env_key) else None)
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
         if not effective_key:
             raise LLMError(
                 f"{provider_name} icin API key gerekli (.env: {meta['env_key']} veya ajan ayarlarinda)"

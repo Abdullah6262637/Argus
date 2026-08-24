@@ -154,6 +154,11 @@ class TaskPlanner:
             return {}
 
         # 1) Direkt JSON parse dene
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
+
         cleaned = text.strip()
         # Markdown code block sar
         if cleaned.startswith("```"):
@@ -173,7 +178,17 @@ class TaskPlanner:
             except json.JSONDecodeError:
                 pass
 
-        logger.warning("Planner JSON parse edilemedi, ham metin: %s", text[:200])
+        # 3) Array fallback
+        array_match = re.search(r"\[[\s\S]*\]", text)
+        if array_match:
+            try:
+                data = json.loads(array_match.group(0))
+                if isinstance(data, list):
+                    return {"steps": data}
+            except json.JSONDecodeError:
+                pass
+
+        logger.error("Planner JSON parse edilemedi, ham metin: %s", text[:200])
         return {}
 
     def _build_steps(self, raw_steps: list, available_tools: List[str]) -> List[PlanStep]:

@@ -75,11 +75,11 @@ export function StepBehavior({
         desc="System prompt ajanin nasil konusacacağını belirler. Hazir bir SOUL dosyası seç ya da kendin yaz."
       />
 
-      <div className="rounded border border-brand-border bg-brand-bg/30 p-3">
+      <div className="rounded-xl bg-brand-panelAlt/40 p-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[11px] uppercase tracking-wider text-brand-mutedSoft inline-flex items-center gap-1.5">
             <Icon name="auto_stories" size={13} className="text-brand-accent" />
-            Hazir SOUL dosyasi
+            Hazır SOUL dosyası
           </span>
           <button
             type="button"
@@ -131,12 +131,12 @@ export function StepBehavior({
           value={systemPrompt}
           onChange={(e) => setSystemPrompt(e.target.value)}
           rows={10}
-          placeholder={`Ajanin kisiligi, kurallari, cikti bicimi...
+          placeholder={`Ajanın kişiliği, kuralları, çıktı biçimi...
 
-Ornek:
-- Sen deneyimli bir X uzmanisin.
-- Cevaplarin kisa ve net olmali.
-- Turkce konusursun.`}
+Örnek:
+- Sen deneyimli bir X uzmanısın.
+- Cevapların kısa ve net olmalı.
+- Türkçe konuşursun.`}
           className={inputCls + ' font-mono text-xs leading-relaxed resize-y min-h-[180px]'}
         />
       </Field>
@@ -153,12 +153,12 @@ Ornek:
             className="brand-slider my-2.5"
           />
           <div className="flex justify-between text-[10px] text-brand-mutedSoft mt-0.5">
-            <span>0 (tutarli)</span>
+            <span>0 (tutarlı)</span>
             <span>1 (dengeli)</span>
-            <span>2 (yaratici)</span>
+            <span>2 (yaratıcı)</span>
           </div>
         </Field>
-        <Field label="Max Tokens (cevap uzunlugu)">
+        <Field label="Max Tokens (cevap uzunluğu)">
           <input
             type="number"
             min={16}
@@ -170,17 +170,17 @@ Ornek:
         </Field>
       </div>
 
-      <Field label="Etiketler" hint="Virgulle ayir — kartta etiket olarak gorunur">
+      <Field label="Etiketler" hint="Virgülle ayır — kartta etiket olarak görünür">
         <input
           type="text"
           value={tagsText}
           onChange={(e) => setTagsText(e.target.value)}
-          placeholder="orn. kod, asistan, turkce"
+          placeholder="örn. kod, asistan, türkçe"
           className={inputCls}
         />
       </Field>
 
-      <label className="flex items-center justify-between gap-3 text-sm text-brand-text cursor-pointer p-3 border border-brand-border bg-brand-bg/30 rounded hover:border-brand-borderStrong transition">
+      <label className="flex items-center justify-between gap-3 text-sm text-brand-text cursor-pointer p-3.5 bg-brand-panelAlt/40 rounded-xl transition">
         <span className="flex flex-col">
           <span className="font-semibold text-brand-text">Ajan Durumu</span>
           <span className="text-xs text-brand-mutedSoft">Aktif (ajan listede görünür ve kullanılabilir olur)</span>

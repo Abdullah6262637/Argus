@@ -16,6 +16,7 @@ mod compress;
 mod fs_ops;
 mod text;
 mod sandbox;
+mod errors;
 
 use pyo3::prelude::*;
 

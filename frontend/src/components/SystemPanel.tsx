@@ -6,6 +6,7 @@ import type {
   ScheduledTask,
   ScheduledTaskCreate} from '@/types';
 import { Icon } from './Icon';
+import { CustomSelect } from './CustomSelect';
 
 interface SystemPanelProps {
   agents: AgentInfo[];
@@ -149,10 +150,10 @@ export function SystemPanel({
   const errorCount = logs.filter((l) => l.level === 'error').length;
 
   return (
-    <aside className={`relative h-full flex-shrink-0 border-l bg-brand-panel flex flex-col transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'w-80 border-brand-border opacity-100' : 'w-0 border-transparent opacity-0'}`}>
+    <aside className={`relative h-full flex-shrink-0 bg-brand-panel flex flex-col transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'w-80 opacity-100' : 'w-0 opacity-0'}`}>
       <div className={`w-80 h-full flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-8'}`}>
       {/* ---------- Tab Bar ---------- */}
-      <div className="border-b border-brand-border bg-brand-panel">
+      <div className="bg-brand-panel">
         <div className="flex items-stretch px-2 pt-2 gap-1">
           {(Object.keys(TAB_CONFIG) as Tab[]).map((t) => {
             const cfg = TAB_CONFIG[t];
@@ -173,10 +174,10 @@ export function SystemPanel({
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`flex-1 h-9 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold rounded-md transition-all duration-200 active:scale-95 ${
+                className={`flex-1 h-9 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold rounded-lg transition-all duration-200 active:scale-95 ${
                   isActive
                     ? 'bg-brand-accent/15 text-brand-accent'
-                    : 'text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt'
+                    : 'text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt/50'
                 }`}
               >
                 <Icon
@@ -206,7 +207,7 @@ export function SystemPanel({
           <button
             onClick={onToggle}
             title="Sistem Panelini Kapat"
-            className="w-9 h-9 inline-flex items-center justify-center text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt rounded-md transition-all duration-200 active:scale-95 flex-shrink-0"
+            className="w-9 h-9 inline-flex items-center justify-center text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt rounded-lg transition-all duration-200 active:scale-95 flex-shrink-0"
           >
             <Icon name="arrow_forward" size={16} />
           </button>
@@ -221,7 +222,7 @@ export function SystemPanel({
           </div>
         )}
         {error && (
-          <div className="p-3 text-xs text-brand-danger bg-brand-danger/5 rounded-md border border-brand-danger/25">
+          <div className="p-3 text-xs text-brand-danger bg-brand-danger/5 rounded-xl">
             {error}
           </div>
         )}
@@ -234,7 +235,7 @@ export function SystemPanel({
                 <button
                   onClick={() => setShowNewTask(true)}
                   disabled={agents.length === 0}
-                  className="w-full h-10 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-lg border border-dashed border-brand-border text-brand-mutedSoft hover:text-brand-accent hover:border-brand-accent/60 hover:bg-brand-accent/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+                  className="w-full h-10 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-xl bg-brand-panelAlt/60 text-brand-mutedSoft hover:text-brand-accent hover:bg-brand-accent/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
                 >
                   <Icon name="add_circle" size={15} weight={550} filled />
                   {agents.length === 0
@@ -301,11 +302,11 @@ export function SystemPanel({
       </div>
 
       {/* ---------- Alt Bar: Yenile ---------- */}
-      <div className="p-2 border-t border-brand-border">
+      <div className="p-2">
         <button
           onClick={loadAll}
           disabled={loading}
-          className="w-full h-8 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold rounded-md border border-brand-border text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt hover:border-brand-borderStrong disabled:opacity-50 transition-all active:scale-95"
+          className="w-full h-8 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold rounded-lg bg-brand-panelAlt/60 text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt disabled:opacity-50 transition-all active:scale-95"
         >
           <Icon
             name="refresh"
@@ -341,16 +342,14 @@ function TaskCard({
 }) {
   return (
     <div
-      className={`rounded-lg border bg-brand-panelAlt p-2.5 space-y-2 transition-all hover:border-brand-borderStrong ${
-        task.enabled
-          ? 'border-brand-border'
-          : 'border-brand-border opacity-60'
+      className={`rounded-xl bg-brand-panelAlt/50 p-3 space-y-2.5 transition-all hover:bg-brand-panelAlt/80 ${
+        task.enabled ? '' : 'opacity-60'
       }`}
     >
       {/* Başlık + durum */}
       <div className="flex items-start gap-2">
         <div
-          className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${
+          className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
             task.enabled
               ? 'bg-brand-success/15 text-brand-success'
               : 'bg-brand-panelAlt text-brand-mutedSoft'
@@ -370,7 +369,7 @@ function TaskCard({
           <div className="text-[10px] text-brand-mutedSoft mt-0.5 flex items-center gap-1">
             <Icon name="smart_toy" size={10} weight={500} />
             <span className="truncate">{agentName}</span>
-            <span className="text-brand-border">·</span>
+            <span className="text-brand-mutedSoft">·</span>
             <span
               className={`font-semibold ${
                 task.enabled ? 'text-brand-success' : 'text-brand-mutedSoft'
@@ -383,7 +382,7 @@ function TaskCard({
       </div>
 
       {/* Cron rozet */}
-      <div className="rounded-md bg-brand-bg border border-brand-border px-2 py-1.5">
+      <div className="rounded-lg bg-brand-bg/60 px-2.5 py-1.5">
         <div className="flex items-center gap-1.5">
           <Icon
             name="schedule"
@@ -420,18 +419,18 @@ function TaskCard({
         </div>
       )}
       {task.last_result && (
-        <div className="text-[10px] text-brand-mutedSoft italic line-clamp-2 px-2 py-1 border-l-2 border-brand-accent/40 bg-brand-bg/40 rounded-r">
+        <div className="text-[10px] text-brand-mutedSoft italic line-clamp-2 px-2 py-1 bg-brand-bg/60 rounded-lg">
           “{task.last_result}”
         </div>
       )}
 
       {/* Aksiyonlar */}
-      <div className="flex gap-1 pt-0.5">
+      <div className="flex gap-1.5 pt-0.5">
         <button
           onClick={onRun}
           disabled={running}
           title="Şimdi çalıştır"
-          className="flex-1 h-7 inline-flex items-center justify-center gap-1 text-[10.5px] font-semibold rounded-md bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 transition-all active:scale-95"
+          className="flex-1 h-7 inline-flex items-center justify-center gap-1 text-[10.5px] font-semibold rounded-lg bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 transition-all active:scale-95 shadow-sm"
         >
           {running ? (
             <Icon
@@ -447,7 +446,7 @@ function TaskCard({
         <button
           onClick={onToggle}
           title={task.enabled ? 'Duraklat' : 'Etkinleştir'}
-          className="h-7 w-7 inline-flex items-center justify-center rounded-md border border-brand-border text-brand-textSoft hover:text-brand-text hover:bg-brand-panel transition-all active:scale-95"
+          className="h-7 w-7 inline-flex items-center justify-center rounded-lg bg-brand-panelAlt/60 text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
         >
           <Icon
             name={task.enabled ? 'pause' : 'play_arrow'}
@@ -459,7 +458,7 @@ function TaskCard({
         <button
           onClick={onDelete}
           title="Sil"
-          className="h-7 w-7 inline-flex items-center justify-center rounded-md border border-brand-danger/30 text-brand-danger hover:bg-brand-danger/10 transition-all active:scale-95"
+          className="h-7 w-7 inline-flex items-center justify-center rounded-lg bg-brand-danger/10 text-brand-danger hover:bg-brand-danger/20 transition-all active:scale-95"
         >
           <Icon name="delete" size={13} weight={550} />
         </button>
@@ -498,7 +497,7 @@ function LogCard({ log }: { log: LogEntry }) {
 
   return (
     <div
-      className={`group transition-colors ${
+      className={`group transition-colors rounded-lg ${
         open ? 'bg-brand-panelAlt/40' : 'hover:bg-brand-panelAlt/60'
       }`}
     >
@@ -506,7 +505,7 @@ function LogCard({ log }: { log: LogEntry }) {
         type="button"
         onClick={() => hasPayload && setOpen((v) => !v)}
         disabled={!hasPayload}
-        className="w-full flex items-center gap-2 px-2 py-1.5 text-left disabled:cursor-default"
+        className="w-full flex items-center gap-2 px-2.5 py-1.5 text-left disabled:cursor-default"
       >
         <span
           className={`w-1.5 h-1.5 rounded-full ${c.dot} flex-shrink-0`}
@@ -541,8 +540,8 @@ function LogCard({ log }: { log: LogEntry }) {
         )}
       </button>
       {open && hasPayload && (
-        <div className="px-2 pb-2 pl-7 animate-fade-in-up">
-          <pre className="text-[10px] font-mono text-brand-textSoft bg-brand-bg/60 border border-brand-border rounded-md px-2 py-1.5 overflow-x-auto whitespace-pre-wrap break-words max-h-40">
+        <div className="px-2.5 pb-2 pl-7 animate-fade-in-up">
+          <pre className="text-[10px] font-mono text-brand-textSoft bg-brand-bg/60 rounded-lg px-2.5 py-2 overflow-x-auto whitespace-pre-wrap break-words max-h-40">
             {JSON.stringify(parsedPayload, null, 2)}
           </pre>
         </div>
@@ -570,10 +569,10 @@ function FilterSegment({
   return (
     <button
       onClick={onClick}
-      className={`h-7 px-2.5 inline-flex items-center gap-1.5 rounded-md text-[10.5px] font-semibold transition-all active:scale-95 flex-1 min-w-0 justify-center ${
+      className={`h-7 px-2.5 inline-flex items-center gap-1.5 rounded-lg text-[10.5px] font-semibold transition-all active:scale-95 flex-1 min-w-0 justify-center ${
         active
           ? 'bg-brand-accent/15 text-brand-accent shadow-sm'
-          : 'text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt'
+          : 'text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt/60'
       }`}
     >
       {dotColor && (
@@ -643,7 +642,7 @@ function LogList({ logs }: { logs: LogEntry[] }) {
   return (
     <div className="space-y-2">
       {/* Segmentli filtre kapsülü — Header.tsx aksiyon grubu tarzı */}
-      <div className="flex items-center bg-brand-bg/40 border border-brand-border rounded-lg p-0.5 gap-0.5">
+      <div className="flex items-center bg-brand-panelAlt/50 rounded-xl p-0.5 gap-0.5">
         {segments.map((s) => (
           <FilterSegment
             key={s.key}
@@ -663,25 +662,25 @@ function LogList({ logs }: { logs: LogEntry[] }) {
             name="search"
             size={12}
             weight={500}
-            className="absolute left-2 top-1/2 -translate-y-1/2 text-brand-mutedSoft pointer-events-none"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-mutedSoft pointer-events-none"
           />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Log ara..."
-            className="w-full h-7 bg-brand-bg border border-brand-border rounded-md pl-7 pr-2 text-[11px] text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent/20 transition-all"
+            className="w-full h-7 bg-brand-bg/60 rounded-lg pl-7 pr-2 text-[11px] text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:bg-brand-panelAlt transition-all"
           />
         </div>
       )}
 
       {/* Liste container */}
-      <div className="rounded-md border border-brand-border bg-brand-panel/40 overflow-hidden">
+      <div className="rounded-xl bg-brand-panelAlt/30 overflow-hidden">
         {filtered.length === 0 ? (
           <div className="text-center text-[11px] text-brand-mutedSoft py-6">
             Eşleşen log yok
           </div>
         ) : (
-          <div className="divide-y divide-brand-border/40">
+          <div className="space-y-0.5 p-1">
             {filtered.map((l) => (
               <LogCard key={l.id} log={l} />
             ))}
@@ -739,7 +738,7 @@ function NewTaskForm({
   };
 
   return (
-    <div className="rounded-lg border border-brand-accent/40 bg-brand-panelAlt p-3 space-y-2.5 animate-fade-in-up">
+    <div className="rounded-xl bg-brand-panelAlt/60 p-3.5 space-y-3 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h4 className="text-[11px] uppercase tracking-wider text-brand-accent font-bold inline-flex items-center gap-1.5">
           <Icon name="add_task" size={13} weight={600} filled />
@@ -748,7 +747,7 @@ function NewTaskForm({
         <button
           type="button"
           onClick={onCancel}
-          className="w-6 h-6 rounded-md flex items-center justify-center text-brand-muted hover:text-brand-text hover:bg-brand-bg/40 transition-all"
+          className="w-6 h-6 rounded-md flex items-center justify-center text-brand-muted hover:text-brand-text hover:bg-brand-panelAlt transition-all"
           title="İptal"
           aria-label="İptal"
         >
@@ -757,17 +756,16 @@ function NewTaskForm({
       </div>
 
       <Field label="Ajan" icon="smart_toy">
-        <select
+        <CustomSelect
           value={agentId}
-          onChange={(e) => setAgentId(e.target.value)}
-          className="w-full bg-brand-bg border border-brand-border rounded-md px-2 py-1.5 text-xs text-brand-text focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
-        >
-          {agents.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.name} ({a.provider}/{a.model})
-            </option>
-          ))}
-        </select>
+          onChange={(val) => setAgentId(val)}
+          options={agents.map((a) => ({
+            value: a.id,
+            label: a.name,
+            sublabel: `(${a.provider}/${a.model})`,
+            icon: 'smart_toy',
+          }))}
+        />
       </Field>
 
       <Field label="Görev Adı" icon="label">
@@ -775,7 +773,7 @@ function NewTaskForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="örn. Günlük özet"
-          className="w-full bg-brand-bg border border-brand-border rounded-md px-2 py-1.5 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
+          className="w-full bg-brand-bg/90 rounded-xl px-2.5 py-1.5 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:ring-1 focus:ring-brand-accent/40 transition-all"
         />
       </Field>
 
@@ -784,7 +782,7 @@ function NewTaskForm({
           value={cron}
           onChange={(e) => setCron(e.target.value)}
           placeholder="0 9 * * *"
-          className="w-full bg-brand-bg border border-brand-border rounded-md px-2 py-1.5 text-xs font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all"
+          className="w-full bg-brand-bg/90 rounded-xl px-2.5 py-1.5 text-xs font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:ring-1 focus:ring-brand-accent/40 transition-all"
         />
         <div className="text-[10px] text-brand-mutedSoft mt-1 italic">
           {describeCron(cron)}
@@ -795,10 +793,10 @@ function NewTaskForm({
               key={p.expr}
               type="button"
               onClick={() => setCron(p.expr)}
-              className={`text-[10px] px-1.5 py-1 rounded-md border transition-all inline-flex items-center gap-1 ${
+              className={`text-[10px] px-2 py-1 rounded-lg transition-all inline-flex items-center gap-1.5 ${
                 cron === p.expr
-                  ? 'border-brand-accent bg-brand-accent/10 text-brand-accent'
-                  : 'border-brand-border text-brand-mutedSoft hover:text-brand-text hover:border-brand-borderStrong'
+                  ? 'bg-brand-accent/15 text-brand-accent font-semibold'
+                  : 'bg-brand-panelAlt/60 text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt'
               }`}
             >
               <Icon name={p.icon} size={10} weight={500} />
@@ -814,7 +812,7 @@ function NewTaskForm({
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Ajanın yapacağı görev..."
           rows={3}
-          className="w-full bg-brand-bg border border-brand-border rounded-md px-2 py-1.5 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 transition-all resize-none"
+          className="w-full bg-brand-bg/90 rounded-xl px-2.5 py-1.5 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:ring-1 focus:ring-brand-accent/40 transition-all resize-none"
         />
       </Field>
 
@@ -822,14 +820,14 @@ function NewTaskForm({
         <button
           onClick={submit}
           disabled={!canSubmit}
-          className="flex-1 h-8 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-md bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 shadow-sm"
+          className="flex-1 h-8 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-lg bg-brand-accent text-brand-bg hover:bg-brand-accentDim disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 shadow-sm"
         >
           <Icon name="check" size={14} weight={650} />
           Oluştur
         </button>
         <button
           onClick={onCancel}
-          className="h-8 px-3 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-md border border-brand-border text-brand-textSoft hover:text-brand-text hover:bg-brand-bg/40 transition-all active:scale-95"
+          className="h-8 px-3 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-lg bg-brand-panelAlt/60 text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
         >
           İptal
         </button>

@@ -65,7 +65,15 @@ def _write_master_key(key: bytes) -> bool:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(key)
         try:
-            os.chmod(p, 0o600)
+            import sys
+            if sys.platform == "win32":
+                import subprocess
+                subprocess.run(
+                    ["icacls", str(p), "/inheritance:r", "/grant:r", f"{os.getlogin()}:(R,W)"],
+                    capture_output=True, check=False,
+                )
+            else:
+                os.chmod(p, 0o600)
         except Exception:
             pass
         return True

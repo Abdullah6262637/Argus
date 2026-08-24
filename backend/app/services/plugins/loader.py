@@ -44,7 +44,13 @@ _BLOCKED_MODULES: Set[str] = {
 # Tamamen yasakli top-level moduller
 _BLOCKED_TOPLEVEL: Set[str] = {
     "ctypes",
-    "_ctypes"}
+    "_ctypes",
+    "subprocess",
+    "pty",
+    "shlex",
+    "socket",
+    "multiprocessing",
+}
 
 # Yasakli builtin cagrilar
 _BLOCKED_CALLS: Set[str] = {
@@ -52,7 +58,13 @@ _BLOCKED_CALLS: Set[str] = {
     "exec",
     "compile",
     "__import__",
-    "open",  # plugin'ler dosya I/O yapmasin -- file_tools kullansinlar
+    "open",
+    "getattr",
+    "setattr",
+    "delattr",
+    "globals",
+    "locals",
+    "vars",
 }
 
 
@@ -105,6 +117,10 @@ def _scan_ast(source: str, filename: str) -> Tuple[bool, str]:
                     full = ".".join(reversed(parts))
                     if full in _BLOCKED_MODULES:
                         errors.append(f"Yasakli cagri: {full}()")
+        # Tehlikeli dunder attribute erisimleri
+        elif isinstance(node, ast.Attribute):
+            if node.attr in ("__import__", "__builtins__", "__subclasses__", "__class__", "__bases__", "__globals__", "__code__"):
+                errors.append(f"Yasakli attribute erisimi: .{node.attr}")
 
     if errors:
         return False, "; ".join(errors[:5])

@@ -22,7 +22,7 @@ export function ConfirmDialog({
   title,
   message,
   confirmLabel = 'Onayla',
-  cancelLabel = 'Iptal',
+  cancelLabel = 'İptal',
   variant = 'default',
   onConfirm,
   onCancel,
@@ -49,80 +49,76 @@ export function ConfirmDialog({
     !!requireTypeText && typedText.trim() !== requireTypeText.trim();
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-backdrop-in">
-      <div className="w-full max-w-md rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl overflow-hidden animate-modal-in">
-        {/* Baslik */}
-        <div
-          className={`px-5 py-3 border-b border-brand-border flex items-center gap-3 ${
-            isDanger ? 'bg-brand-danger/10' : 'bg-brand-panelAlt'
-          }`}
-        >
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-backdrop-in select-none">
+      <div className="w-full max-w-md rounded-2xl bg-brand-panel shadow-2xl p-6 relative overflow-hidden transition-all animate-scale-in">
+        {/* Baslik & Ikon */}
+        <div className="flex items-start gap-3.5">
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
               isDanger
-                ? 'bg-brand-danger/20 text-brand-danger'
+                ? 'bg-brand-danger/15 text-brand-danger'
                 : 'bg-brand-accent/15 text-brand-accent'
             }`}
           >
             <Icon
               name={isDanger ? 'warning' : 'info'}
-              size={22}
+              size={20}
               filled
             />
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-brand-text">{title}</h3>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-semibold text-brand-text leading-tight">{title}</h3>
+            <div className="mt-2 text-xs text-brand-textSoft leading-relaxed">{message}</div>
           </div>
         </div>
 
-        {/* Icerik */}
-        <div className="p-5 space-y-3 text-sm text-brand-textSoft leading-relaxed">
-          <div>{message}</div>
+        {/* Detaylar */}
+        {details && (
+          <div className="mt-4 p-3.5 rounded-xl bg-brand-panelAlt/80 text-xs font-mono text-brand-mutedSoft overflow-x-auto select-text">
+            {details}
+          </div>
+        )}
 
-          {details && (
-            <div className="rounded border border-brand-border bg-brand-panelAlt p-3 text-xs text-brand-muted">
-              {details}
+        {/* Metin Onayi */}
+        {requireTypeText && (
+          <div className="space-y-1.5 mt-4">
+            <div className="text-xs text-brand-textSoft">
+              Devam etmek için aşağıya{' '}
+              <code className="text-brand-accent bg-brand-panelAlt px-1.5 py-0.5 rounded font-mono">
+                {requireTypeText}
+              </code>{' '}
+              yazınız:
             </div>
-          )}
+            <input
+              type="text"
+              value={typedText}
+              onChange={(e) => onTypedTextChange?.(e.target.value)}
+              placeholder={requireTypeText}
+              className="w-full bg-brand-bg rounded-xl px-3.5 py-2 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:ring-1 focus:ring-brand-accent transition font-mono"
+              autoFocus
+            />
+          </div>
+        )}
 
-          {requireTypeText && (
-            <div className="space-y-1.5 pt-2">
-              <div className="text-xs text-brand-textSoft">
-                Devam etmek icin asagiya{' '}
-                <code className="text-brand-accent bg-brand-panelAlt px-1.5 py-0.5 rounded font-mono">
-                  {requireTypeText}
-                </code>{' '}
-                yaz:
-              </div>
-              <input
-                type="text"
-                value={typedText}
-                onChange={(e) => onTypedTextChange?.(e.target.value)}
-                placeholder={requireTypeText}
-                className="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent transition font-mono"
-                autoFocus
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Aksiyonlar */}
-        <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-brand-border bg-brand-panelAlt">
+        {/* Aksiyon Butonlari */}
+        <div className="flex items-center justify-end gap-2.5 mt-6">
           {!hideCancel && (
             <button
+              type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text hover:border-brand-borderStrong transition"
+              className="h-9 px-4 rounded-xl text-xs font-medium text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
             >
               {cancelLabel}
             </button>
           )}
           <button
+            type="button"
             onClick={onConfirm}
             disabled={confirmDisabled}
-            className={`px-5 py-2 text-sm rounded font-semibold transition disabled:opacity-40 disabled:cursor-not-allowed ${
+            className={`h-9 px-5 rounded-xl text-xs font-semibold transition-all active:scale-95 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed ${
               isDanger
-                ? 'bg-brand-danger text-white hover:bg-brand-danger/80'
-                : 'bg-brand-accent text-brand-bg hover:bg-brand-accentDim'
+                ? 'bg-brand-danger text-white hover:bg-brand-danger/90'
+                : 'bg-brand-accent text-brand-userText hover:bg-brand-accentDim'
             }`}
           >
             {confirmLabel}

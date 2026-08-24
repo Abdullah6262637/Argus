@@ -125,6 +125,11 @@ const FALLBACK_MODELS: Record<string, ModelInfoOut[]> = {
     { id: 'deepseek-r1-distill-llama-70b', label: 'DeepSeek R1 Distill Llama 70B' }
   ],
   openrouter: [
+    { id: 'nvidia/llama-3.1-nemotron-70b-instruct', label: 'NVIDIA: Llama 3.1 Nemotron 70B' },
+    { id: 'nvidia/llama-3.1-nemotron-70b-instruct:free', label: 'NVIDIA: Llama 3.1 Nemotron 70B (Free)' },
+    { id: 'nvidia/nemotron-3-ultra-550b-a55b:free', label: 'NVIDIA: Nemotron-3 Ultra 550B (Free)' },
+    { id: 'nvidia/nemotron-3-super-120b-a12b:free', label: 'NVIDIA: Nemotron-3 Super 120B (Free)' },
+    { id: 'nvidia/nemotron-3-nano-omni:free', label: 'NVIDIA: Nemotron-3 Nano Omni (Free)' },
     { id: 'openai/gpt-5.6-sol', label: 'OpenAI: GPT-5.6 Sol (Reasoning Flagship)' },
     { id: 'openai/gpt-5.6-terra', label: 'OpenAI: GPT-5.6 Terra (Balanced)' },
     { id: 'openai/gpt-5.6-luna', label: 'OpenAI: GPT-5.6 Luna (Lightweight)' },
@@ -529,19 +534,32 @@ export function AgentForm({
       }}
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 ${isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'}`}
     >
+<<<<<<< HEAD
       <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-lg border border-brand-borderStrong bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
         {/* Minimalist background without ambient glow */}
         <div className="absolute inset-0 pointer-events-none z-0 bg-brand-panel" />
+=======
+      <div className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-2xl bg-brand-panel shadow-2xl relative overflow-hidden ${isClosing ? 'animate-modal-out' : 'animate-modal-in'}`}>
+        {/* Ambient Glow Background Effect */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div 
+            className={`absolute -top-40 -left-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
+          />
+          <div 
+            className={`absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-gradient-to-br ${STEP_GLOWS[step]} blur-[80px] transition-all duration-700 ease-out`} 
+          />
+        </div>
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
 
         {/* Baslik + Adim gostergesi */}
-        <div className="relative z-10 px-6 py-4 border-b border-brand-border bg-brand-panelAlt/90 backdrop-blur-[2px]">
+        <div className="relative z-10 px-6 pt-5 pb-3 bg-brand-panelAlt/90 backdrop-blur-[2px]">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-semibold text-brand-text tracking-wide">
-                {isEditing ? 'Ajani Duzenle' : 'Yeni Ajan Olustur'}
+                {isEditing ? 'Ajanı Düzenle' : 'Yeni Ajan Oluştur'}
               </h2>
               <p className="text-[11px] text-brand-muted mt-0.5">
-                Adim {step + 1} / {STEPS.length} — {STEPS[step]}
+                Adım {step + 1} / {STEPS.length} — {STEPS[step]}
               </p>
             </div>
             <button
@@ -556,7 +574,7 @@ export function AgentForm({
         </div>
 
         {/* Icerik */}
-        <div className="relative z-10 h-[480px] overflow-y-auto p-6 border-b border-brand-border/60">
+        <div className="relative z-10 h-[480px] overflow-y-auto p-6">
           <div key={step} className="animate-step-in">
             {step === 0 && (
               <Step1Basic
@@ -642,7 +660,7 @@ export function AgentForm({
           </div>
 
           {error && (
-            <div className="mt-4 p-3 text-xs text-brand-danger bg-brand-danger/10 border border-brand-danger/40 rounded">
+            <div className="mt-4 p-3 text-xs text-brand-danger bg-brand-danger/10 rounded">
               {error}
             </div>
           )}
@@ -652,15 +670,15 @@ export function AgentForm({
         <div className="relative z-10 flex items-center justify-between gap-2 px-6 py-4 bg-brand-panelAlt/90 backdrop-blur-[2px]">
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text hover:border-brand-borderStrong transition"
+            className="px-4 py-2 text-sm rounded bg-brand-panelAlt text-brand-textSoft hover:text-brand-text transition"
           >
-            Iptal
+            İptal
           </button>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setStep((s) => (Math.max(0, s - 1) as StepIdx))}
               disabled={step === 0}
-              className="px-4 py-2 text-sm rounded border border-brand-border text-brand-textSoft hover:text-brand-text disabled:opacity-30 transition"
+              className="px-4 py-2 text-sm rounded bg-brand-panelAlt text-brand-textSoft hover:text-brand-text disabled:opacity-30 transition"
             >
               Geri
             </button>
@@ -670,7 +688,7 @@ export function AgentForm({
                 disabled={!canGoNext()}
                 className="px-5 py-2 text-sm rounded bg-brand-accent text-brand-bg font-semibold hover:bg-brand-accentDim disabled:opacity-40 transition"
               >
-                Ileri
+                İleri
               </button>
             ) : (
               <button
@@ -681,8 +699,8 @@ export function AgentForm({
                 {submitting
                   ? 'Kaydediliyor...'
                   : isEditing
-                    ? 'Degisiklikleri Kaydet'
-                    : 'Ajani Olustur'}
+                    ? 'Değişiklikleri Kaydet'
+                    : 'Ajanı Oluştur'}
               </button>
             )}
           </div>
@@ -691,6 +709,15 @@ export function AgentForm({
     </div>
   );
 }
+
+const SHORT_STEPS = [
+  'Temel',
+  'LLM',
+  'Medya',
+  'Davranış',
+  'Yetkiler',
+  'Eklentiler'
+] as const;
 
 function Stepper({
   current,
@@ -702,47 +729,62 @@ function Stepper({
   canJumpTo: (i: number) => boolean;
 }) {
   return (
-    <div className="flex items-center gap-1 mt-3">
-      {STEPS.map((label, i) => {
-        const active = i === current;
-        const done = i < current;
-        const allowed = canJumpTo(i);
-        return (
-          <button
-            key={label}
-            type="button"
-            onClick={() => allowed && onJump(i)}
-            disabled={!allowed}
-            className={`flex-1 group transition-all duration-200 ${!allowed ? 'opacity-40 cursor-not-allowed' : ''}`}
-          >
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border transition ${
-                  active
-                    ? 'bg-brand-accent text-brand-bg border-brand-accent'
-                    : done
-                      ? 'bg-brand-accent/20 text-brand-accent border-brand-accent/40'
-                      : 'bg-brand-bg text-brand-muted border-brand-border'
-                }`}
-              >
-                {done ? <Icon name="check" size={14} weight={700} /> : i + 1}
-              </div>
-              <div
-                className={`text-[10px] uppercase tracking-wider font-semibold hidden md:block ${
-                  active ? 'text-brand-accent' : 'text-brand-muted'
-                }`}
-              >
-                {label}
-              </div>
-            </div>
-            {i < STEPS.length - 1 && (
-              <div
-                className={`h-px mt-3 ml-6 ${done ? 'bg-brand-accent/50' : 'bg-brand-border'}`}
-              />
-            )}
-          </button>
-        );
-      })}
+    <div className="mt-3.5 space-y-2">
+      {/* İnce Segmentli İlerleme Çubuğu */}
+      <div className="flex gap-1.5 w-full">
+        {STEPS.map((_, i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+              i < current
+                ? 'bg-brand-accent/80'
+                : i === current
+                  ? 'bg-brand-accent shadow-sm shadow-brand-accent/50'
+                  : 'bg-brand-panelAlt/60'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Simetrik Adım Sekmeleri */}
+      <div className="grid grid-cols-6 gap-1 bg-brand-bg/50 p-1 rounded-xl">
+        {STEPS.map((label, i) => {
+          const active = i === current;
+          const done = i < current;
+          const allowed = canJumpTo(i);
+          return (
+            <button
+              key={label}
+              type="button"
+              onClick={() => allowed && onJump(i)}
+              disabled={!allowed}
+              title={label}
+              className={`py-1.5 px-1 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                active
+                  ? 'bg-brand-accent/15 text-brand-accent font-bold shadow-sm'
+                  : done
+                    ? 'text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt/60'
+                    : 'text-brand-mutedSoft/50 cursor-not-allowed'
+              }`}
+            >
+              {done ? (
+                <Icon name="check_circle" size={13} className="text-brand-accent flex-shrink-0" filled />
+              ) : (
+                <span
+                  className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-mono flex-shrink-0 transition-colors ${
+                    active
+                      ? 'bg-brand-accent text-brand-bg font-bold'
+                      : 'bg-brand-panelAlt text-brand-muted'
+                  }`}
+                >
+                  {i + 1}
+                </span>
+              )}
+              <span className="truncate text-[11px] tracking-tight">{SHORT_STEPS[i]}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

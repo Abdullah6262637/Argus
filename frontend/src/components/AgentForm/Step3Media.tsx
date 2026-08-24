@@ -93,10 +93,10 @@ function MediaCapabilityBlock({
   const update = (patch: Partial<MediaCapabilityInput>) => onChange({ ...value, ...patch });
   return (
     <div
-      className={`rounded border p-3 transition ${
+      className={`rounded-xl p-3.5 transition ${
         value.enabled
-          ? 'border-brand-accent/40 bg-brand-panelAlt'
-          : 'border-brand-border bg-brand-bg/30'
+          ? 'bg-brand-panelAlt'
+          : 'bg-brand-panelAlt/40'
       }`}
     >
       <label className="flex items-center justify-between gap-2 cursor-pointer">

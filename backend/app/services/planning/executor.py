@@ -17,7 +17,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, AsyncIterator, Dict, List, Optional
 
 from app.services.agent_loop import AgentLoopResult, run_agent_loop
@@ -143,7 +143,7 @@ class PlanExecutor:
                 # (asagi dus)
 
             step.status = StepStatus.RUNNING
-            step.started_at = datetime.utcnow()
+            step.started_at = datetime.now(UTC)
             step.attempts += 1
             total_steps_run += 1
 
@@ -196,7 +196,7 @@ class PlanExecutor:
                 logger.exception("Step %d agent_loop hatasi", step.id)
                 step.status = StepStatus.FAILED
                 step.error = str(exc)
-                step.completed_at = datetime.utcnow()
+                step.completed_at = datetime.now(UTC)
                 yield PlanEvent("step_failed", {
                     "plan_id": plan.id,
                     "step": step.to_dict(),
@@ -228,7 +228,7 @@ class PlanExecutor:
 
             if decision.verdict == ReflectionVerdict.PASS:
                 step.status = StepStatus.COMPLETED
-                step.completed_at = datetime.utcnow()
+                step.completed_at = datetime.now(UTC)
                 accumulated_context.append(
                     f"[Adim #{step.id} - {step.title}]\n{loop_result.final_content[:500]}"
                 )
@@ -254,7 +254,7 @@ class PlanExecutor:
                 else:
                     step.status = StepStatus.FAILED
                     step.error = f"Max retry asildi: {decision.reason}"
-                    step.completed_at = datetime.utcnow()
+                    step.completed_at = datetime.now(UTC)
                     yield PlanEvent("step_failed", {
                         "plan_id": plan.id,
                         "step": step.to_dict()})
@@ -267,7 +267,7 @@ class PlanExecutor:
                 if replan_count >= self.max_replan_count:
                     step.status = StepStatus.FAILED
                     step.error = "Max replan asildi"
-                    step.completed_at = datetime.utcnow()
+                    step.completed_at = datetime.now(UTC)
                     plan.status = PlanStatus.FAILED
                     plan.error = step.error
                     yield PlanEvent("plan_failed", {"plan": plan.to_dict()})
@@ -276,7 +276,7 @@ class PlanExecutor:
                 replan_count += 1
                 # Mevcut step'i COMPLETED gibi tut, kalan step'leri yenile
                 step.status = StepStatus.COMPLETED
-                step.completed_at = datetime.utcnow()
+                step.completed_at = datetime.now(UTC)
                 accumulated_context.append(
                     f"[Adim #{step.id} - {step.title}]\n{loop_result.final_content[:500]}"
                 )
@@ -317,7 +317,7 @@ class PlanExecutor:
             else:  # FAIL
                 step.status = StepStatus.FAILED
                 step.error = decision.reason
-                step.completed_at = datetime.utcnow()
+                step.completed_at = datetime.now(UTC)
                 yield PlanEvent("step_failed", {
                     "plan_id": plan.id,
                     "step": step.to_dict()})
@@ -328,7 +328,7 @@ class PlanExecutor:
 
         # Tum step'ler tamamlandi
         plan.status = PlanStatus.COMPLETED
-        plan.completed_at = datetime.utcnow()
+        plan.completed_at = datetime.now(UTC)
         # Final ozet: son step'in result'i + diger step ozetleri
         plan.final_summary = self._build_final_summary(plan)
 
@@ -426,7 +426,7 @@ class PlanExecutor:
         tasks: Dict[int, asyncio.Task] = {}
         for step in group:
             step.status = StepStatus.RUNNING
-            step.started_at = datetime.utcnow()
+            step.started_at = datetime.now(UTC)
             step.attempts += 1
             yield PlanEvent("step_started", {
                 "plan_id": plan.id,
@@ -447,16 +447,22 @@ class PlanExecutor:
         # Tum task'lar bitene kadar event'leri stream et
         pending_tasks = set(tasks.values())
         while pending_tasks:
-            try:
-                evt = await asyncio.wait_for(event_queue.get(), timeout=0.2)
-                yield evt
-            except asyncio.TimeoutError:
-                done = {t for t in pending_tasks if t.done()}
-                pending_tasks -= done
-                if not pending_tasks:
-                    while not event_queue.empty():
-                        yield await event_queue.get()
-                    break
+            get_event_task = asyncio.create_task(event_queue.get())
+            wait_tasks = pending_tasks | {get_event_task}
+            
+            done, _ = await asyncio.wait(
+                wait_tasks, return_when=asyncio.FIRST_COMPLETED
+            )
+            
+            if get_event_task in done:
+                yield get_event_task.result()
+            else:
+                get_event_task.cancel()
+            
+            pending_tasks = {t for t in pending_tasks if not t.done()}
+            
+        while not event_queue.empty():
+            yield await event_queue.get()
 
         # Sonuclari topla
         local_tokens = 0
@@ -468,7 +474,7 @@ class PlanExecutor:
                 step.result = loop_result.final_content
                 step.tool_calls = [tc.to_dict() for tc in loop_result.tool_calls]
                 step.status = StepStatus.COMPLETED
-                step.completed_at = datetime.utcnow()
+                step.completed_at = datetime.now(UTC)
                 step.reflection = "PASS: paralel grup (auto)"
                 accumulated_context.append(
                     f"[Adim #{step.id} - {step.title}]\n{loop_result.final_content[:500]}"
@@ -478,15 +484,59 @@ class PlanExecutor:
                     "step": step.to_dict(),
                     "parallel": True})
             except Exception as exc:
-                logger.exception("Paralel step %d hatasi", step.id)
-                step.status = StepStatus.FAILED
-                step.error = str(exc)
-                step.completed_at = datetime.utcnow()
-                yield PlanEvent("step_failed", {
-                    "plan_id": plan.id,
-                    "step": step.to_dict(),
-                    "error": str(exc),
-                    "parallel": True})
+                logger.warning("Paralel step %d hatasi, retry edilecek: %s", step.id, exc)
+                success = False
+                for attempt in range(1, self.retry_limit + 1):
+                    step.attempts += 1
+                    yield PlanEvent("step_retry", {
+                        "plan_id": plan.id,
+                        "step_id": step.id,
+                        "attempt": step.attempts,
+                        "parallel": True})
+                    try:
+                        step_prompt = self._build_step_prompt(plan, step, accumulated_context)
+                        loop_result = await run_agent_loop(
+                            agent,
+                            history,
+                            step_prompt,
+                            max_steps=self.step_max_steps,
+                            on_event=make_callback(step.id),
+                            memory_context=self.memory_context,
+                        )
+                        # We use a try/except inside just in case total_tokens is unbound in outer scope
+                        try:
+                            if loop_result and loop_result.total_tokens:
+                                total_tokens += loop_result.total_tokens
+                        except NameError:
+                            pass
+                        step.result = loop_result.final_content
+                        step.tool_calls = [tc.to_dict() for tc in loop_result.tool_calls]
+                        step.status = StepStatus.COMPLETED
+                        step.completed_at = datetime.now(UTC)
+                        step.reflection = f"PASS: paralel grup retry {attempt}"
+                        accumulated_context.append(
+                            f"[Adim #{step.id} - {step.title}]\n{loop_result.final_content[:500]}"
+                        )
+                        yield PlanEvent("step_completed", {
+                            "plan_id": plan.id,
+                            "step": step.to_dict(),
+                            "parallel": True})
+                        success = True
+                        break
+                    except Exception as retry_exc:
+                        logger.warning("Paralel step %d retry %d hatasi: %s", step.id, attempt, retry_exc)
+                        exc = retry_exc
+
+                if not success:
+                    logger.exception("Paralel step %d tum retry'lar basarisiz", step.id)
+                    step.status = StepStatus.FAILED
+                    step.error = str(exc)
+                    step.completed_at = datetime.now(UTC)
+                    yield PlanEvent("step_failed", {
+                        "plan_id": plan.id,
+                        "step": step.to_dict(),
+                        "error": str(exc),
+                        "parallel": True})
 
     # ---------- Yardimci ----------
 

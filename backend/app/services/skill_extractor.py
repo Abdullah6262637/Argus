@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import select
@@ -59,7 +59,7 @@ async def record_successful_chain(
 
         if rec:
             rec.success_count += 1
-            rec.last_used_at = datetime.utcnow()
+            rec.last_used_at = datetime.now(UTC)
             if not rec.is_macro and rec.success_count >= MACRO_PROMOTION_THRESHOLD:
                 rec.is_macro = True
                 logger.info("Skill macro'ya yukseltildi: %s (count=%d)", name, rec.success_count)
@@ -80,7 +80,7 @@ async def record_successful_chain(
             success_count=1,
             is_macro=False,
             is_active=True,
-            last_used_at=datetime.utcnow(),
+            last_used_at=datetime.now(UTC),
         )
         session.add(new_rec)
         await session.flush()

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
+import { CustomSelect } from './CustomSelect';
 import { THEMES, type ThemeId } from '@/hooks/useTheme';
 import type { ProviderName } from '@/types';
 
@@ -36,7 +37,7 @@ const TEMPLATE_AGENTS: TemplateAgent[] = [
   { id: 'tutor', name: 'Eğitmen', enName: 'Tutor', icon: 'school', desc: 'Konuları sade örneklerle öğretir', enDesc: 'Teaches topics clearly with simple examples', provider: 'openai', model: 'gpt-4o-mini' }
 ];
 
-export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardProps) {
+export default function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardProps) {
   const [lang, setLang] = useState<'tr' | 'en'>('tr');
   const [step, setStep] = useState(0);
   
@@ -355,7 +356,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                       value={openaiKey}
                       onChange={e => setOpenaiKey(e.target.value)}
                       placeholder="sk-proj-..."
-                      className="w-full bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition pr-16"
+                      className="w-full bg-brand-bg border border-brand-border rounded-lg pl-3 pr-16 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition"
                     />
                     <button
                       type="button"
@@ -379,7 +380,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                       value={anthropicKey}
                       onChange={e => setAnthropicKey(e.target.value)}
                       placeholder="sk-ant-api03-..."
-                      className="w-full bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition pr-16"
+                      className="w-full bg-brand-bg border border-brand-border rounded-lg pl-3 pr-16 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition"
                     />
                     <button
                       type="button"
@@ -403,7 +404,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                       value={geminiKey}
                       onChange={e => setGeminiKey(e.target.value)}
                       placeholder="AIzaSy..."
-                      className="w-full bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition pr-16"
+                      className="w-full bg-brand-bg border border-brand-border rounded-lg pl-3 pr-16 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition"
                     />
                     <button
                       type="button"
@@ -427,7 +428,7 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                       value={openrouterKey}
                       onChange={e => setOpenrouterKey(e.target.value)}
                       placeholder="sk-or-v1-..."
-                      className="w-full bg-brand-bg border border-brand-border rounded-lg px-3 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition pr-16"
+                      className="w-full bg-brand-bg border border-brand-border rounded-lg pl-3 pr-16 py-2 text-xs text-brand-text focus:outline-none focus:border-brand-accent transition"
                     />
                     <button
                       type="button"
@@ -464,16 +465,16 @@ export function SetupWizard({ theme, onChangeTheme, onFinished }: SetupWizardPro
                     {lang === 'tr' ? 'Seçilen tüm ajanların LLM sağlayıcısını topluca günceller.' : 'Updates the LLM provider for all chosen agents instantly.'}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <select
+                <div className="flex items-center gap-2 min-w-[180px]">
+                  <CustomSelect
                     value={bulkProvider}
-                    onChange={(e) => setBulkProvider(e.target.value as ProviderName)}
-                    className="bg-brand-bg border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-brand-text focus:outline-none focus:border-brand-accent"
-                  >
-                    <option value="openai">OpenAI</option>
-                    <option value="anthropic">Anthropic</option>
-                    <option value="local">Ollama / LM Studio</option>
-                  </select>
+                    onChange={(val) => setBulkProvider(val as ProviderName)}
+                    options={[
+                      { value: 'openai', label: 'OpenAI' },
+                      { value: 'anthropic', label: 'Anthropic' },
+                      { value: 'local', label: 'Ollama / LM Studio' },
+                    ]}
+                  />
                   <button
                     type="button"
                     onClick={handleBulkProvider}
@@ -645,9 +646,33 @@ function ThemePalette({ themeId }: { themeId: ThemeId }) {
       { color: '#34d399', label: 'Vurgu' },
       { color: '#a3c4b3', label: 'İkincil' },
     ],
+    'mono-light': [
+      { color: '#ffffff', label: 'Arka plan' },
+      { color: '#f8fafc', label: 'Panel' },
+      { color: '#0f172a', label: 'Vurgu' },
+      { color: '#64748b', label: 'İkincil' },
+    ],
+    'midnight-light': [
+      { color: '#f4f8fd', label: 'Arka plan' },
+      { color: '#ffffff', label: 'Panel' },
+      { color: '#2563eb', label: 'Vurgu' },
+      { color: '#64748b', label: 'İkincil' },
+    ],
+    'sunset-light': [
+      { color: '#fff9f5', label: 'Arka plan' },
+      { color: '#ffffff', label: 'Panel' },
+      { color: '#ea580c', label: 'Vurgu' },
+      { color: '#8c6a58', label: 'İkincil' },
+    ],
+    'forest-light': [
+      { color: '#f4fbf7', label: 'Arka plan' },
+      { color: '#ffffff', label: 'Panel' },
+      { color: '#059669', label: 'Vurgu' },
+      { color: '#4e6b5d', label: 'İkincil' },
+    ],
   };
 
-  const swatches = palettes[themeId];
+  const swatches = palettes[themeId] || palettes.mono;
 
   return (
     <div className="flex gap-1.5 items-center">

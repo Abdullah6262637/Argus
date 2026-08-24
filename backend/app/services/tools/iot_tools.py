@@ -1,5 +1,6 @@
 """IoT & Hardware Tools - FAZ 7"""
 from __future__ import annotations
+_FEATURE_ENABLED = False
 import logging
 from typing import Any, Dict
 from app.services.tools.base import BaseTool, PermissionKey, ToolContext, ToolResult

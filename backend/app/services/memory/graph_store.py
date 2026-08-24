@@ -56,7 +56,8 @@ class KnowledgeGraph:
             path = self._path
             if path.exists():
                 try:
-                    data = json.loads(path.read_text(encoding="utf-8"))
+                    content = await asyncio.to_thread(path.read_text, encoding="utf-8")
+                    data = json.loads(content)
                     for node in data.get("nodes", []):
                         nid = node.pop("id", None)
                         if nid:
@@ -90,10 +91,8 @@ class KnowledgeGraph:
                     {"source": u, "target": v, **dict(self._graph.edges[u, v])}
                     for u, v in self._graph.edges
                 ]}
-            path.write_text(
-                json.dumps(data, ensure_ascii=False, indent=2, default=str),
-                encoding="utf-8",
-            )
+            dumped = json.dumps(data, ensure_ascii=False, indent=2, default=str)
+            await asyncio.to_thread(path.write_text, dumped, encoding="utf-8")
 
     async def add_entity(self, name: str, entity_type: str = "concept", **props: Any) -> None:
         await self.load()

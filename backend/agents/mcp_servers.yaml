@@ -24,7 +24,11 @@ servers:
   - -y
   - '@modelcontextprotocol/server-sqlite'
   - --db-path
+<<<<<<< HEAD
   - ./data/app.db
+=======
+  - c:/Users/HP/Desktop/Argus/backend/data/argus.db
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
 - name: brave-search
   enabled: false
   description: Brave Search API ile web arama.

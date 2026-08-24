@@ -1,7 +1,7 @@
 // Electron main process - Argus masaustu uygulamasi
 // React UI'i bir BrowserWindow icinde yukler; dev modda Vite server'ini, prod modda dist/index.html'i kullanir.
 
-const { app, BrowserWindow, shell, Menu, globalShortcut, dialog } = require('electron');
+const { app, BrowserWindow, shell, Menu, globalShortcut, dialog, ipcMain } = require('electron');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
@@ -17,6 +17,13 @@ try {
 const isDev = !app.isPackaged;
 const DEV_URL = process.env.VITE_DEV_URL || 'http://localhost:5173';
 
+// Ultra Performance GPU Acceleration Switches
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+app.commandLine.appendSwitch('enable-smooth-scrolling');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+
 let mainWindow = null;
 let backendProc = null;
 
@@ -27,7 +34,7 @@ let backendProc = null;
  * - Prod: PyInstaller ile paketlenmis argus-backend.exe (varsa)
  *         yoksa sistem python'una fallback (ARGUS_PYTHON env override)
  */
-function startBackend() {
+async function startBackend() {
   if (
     process.env.ARGUS_NO_BACKEND === '1' ||
     process.env.UMTALAGENT_NO_BACKEND === '1' || // geriye donuk uyum
@@ -63,7 +70,14 @@ function startBackend() {
             path.join(backendDir, 'argus-backend', 'argus-backend'),
             path.join(backendDir, 'argus-backend')];
 
-    const pyinstallerExe = candidates.find((p) => fs.existsSync(p));
+    let pyinstallerExe = undefined;
+    for (const p of candidates) {
+      try {
+        await fs.promises.access(p, fs.constants.F_OK);
+        pyinstallerExe = p;
+        break;
+      } catch (err) {}
+    }
 
     if (pyinstallerExe) {
       exe = pyinstallerExe;
@@ -81,9 +95,13 @@ function startBackend() {
     }
   }
 
-  if (path.isAbsolute(exe) && !fs.existsSync(exe)) {
-    console.warn('[electron] Backend executable bulunamadi:', exe);
-    return;
+  if (path.isAbsolute(exe)) {
+    try {
+      await fs.promises.access(exe, fs.constants.F_OK);
+    } catch (err) {
+      console.warn('[electron] Backend executable bulunamadi:', exe);
+      return;
+    }
   }
 
   console.log('[electron] backend baslatiliyor:', exe, args.join(' '), '@', backendDir);
@@ -93,7 +111,7 @@ function startBackend() {
   if (!isDev) {
     try {
       const userData = app.getPath('userData');
-      fs.mkdirSync(userData, { recursive: true });
+      await fs.promises.mkdir(userData, { recursive: true });
       const logPath = path.join(userData, 'backend.log');
       const out = fs.openSync(logPath, 'a');
       stdio = ['ignore', out, out];
@@ -126,16 +144,24 @@ function createMainWindow() {
     height: 900,
     minWidth: 1100,
     minHeight: 700,
+<<<<<<< HEAD
     backgroundColor: '#0f172a',
     title: 'Argus - Çoklu Ajan Sistemi',
     frame: false,
     autoHideMenuBar: true,
+=======
+    backgroundColor: '#0b1120',
+    title: 'Argus - Çoklu Ajan Sistemi',
+    frame: false,
+    hasShadow: true,
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      backgroundThrottling: false,
     },
   });
 
@@ -154,7 +180,13 @@ function createMainWindow() {
     mainWindow.loadURL(DEV_URL).catch(() => {
       mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
     });
+<<<<<<< HEAD
     mainWindow.webContents.openDevTools({ mode: 'detach' });
+=======
+    if (process.env.ARGUS_DEVTOOLS === '1') {
+      mainWindow.webContents.openDevTools({ mode: 'detach' });
+    }
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   }
@@ -209,7 +241,7 @@ function buildMenu() {
 
 function registerGlobalHotkey() {
   // FAZ 8.3: Global hotkey - Ctrl+Shift+Space ile pencereyi öne getir
-  const accelerator = process.env.UMTALAGENT_HOTKEY || 'CommandOrControl+Shift+Space';
+  const accelerator = process.env.ARGUS_HOTKEY || process.env.UMTALAGENT_HOTKEY || 'CommandOrControl+Shift+Space';
   try {
     const ok = globalShortcut.register(accelerator, () => {
       if (!mainWindow) {
@@ -282,12 +314,36 @@ function setupAutoUpdater() {
   }, 5000);
 }
 
-app.whenReady().then(() => {
-  startBackend();
+app.whenReady().then(async () => {
+  await startBackend();
   buildMenu();
   createMainWindow();
   registerGlobalHotkey();
   setupAutoUpdater();
+  
+  ipcMain.handle('dialog:openFile', async (event, options) => {
+    const result = await dialog.showOpenDialog(mainWindow, options || {
+      properties: ['openFile'],
+      filters: [{ name: 'All Files', extensions: ['*'] }]
+    });
+    return result.canceled ? null : result.filePaths;
+  });
+
+  ipcMain.handle('dialog:saveFile', async (event, options) => {
+    const result = await dialog.showSaveDialog(mainWindow, options || {});
+    return result.canceled ? null : result.filePath;
+  });
+
+  ipcMain.handle('app:getVersion', () => {
+    return app.getVersion();
+  });
+
+  ipcMain.on('window:minimize', () => mainWindow?.minimize());
+  ipcMain.on('window:maximize', () => {
+    if (mainWindow?.isMaximized()) mainWindow.unmaximize();
+    else mainWindow?.maximize();
+  });
+  ipcMain.on('window:close', () => mainWindow?.close());
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createMainWindow();

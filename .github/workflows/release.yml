@@ -43,6 +43,12 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Build backend executable
+        run: |
+          cd backend
+          pip install pyinstaller
+          pyinstaller umtalagent.spec --clean --noconfirm
+
       - name: Package electron app
         working-directory: frontend
         run: npx electron-builder --win --x64 --publish never

@@ -40,10 +40,15 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
     gemini_api_key: str | None = None
+<<<<<<< HEAD
     SAMBANOVA_API_KEY: Optional[str] = None
     CEREBRAS_API_KEY: Optional[str] = None
     FIREWORKS_API_KEY: Optional[str] = None
     TOGETHER_API_KEY: Optional[str] = None
+=======
+    openrouter_api_key: str | None = None
+    groq_api_key: str | None = None
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
 
     # Guvenlik limitleri
     max_tokens_per_request: int = 2048

@@ -19,6 +19,9 @@ export function getModelLogo(model: string, provider: string): string {
   if (m.includes('llama')) {
     return '/models/llama.png?v=3';
   }
+  if (m.includes('nemotron')) {
+    return '/models/nvidia.png?v=3';
+  }
   if (m.includes('qwen')) {
     return '/models/qwen.png?v=3';
   }
@@ -53,6 +56,24 @@ export function getModelLogo(model: string, provider: string): string {
   if (p === 'fireworks') return '/providers/fireworks.png?v=3';
   if (p === 'together') return '/providers/together.png?v=3';
   if (p === 'local') return '/providers/local.png?v=3';
+  
+  return '/providers/local.png?v=3';
+}
+
+/**
+ * Dynamic helper to determine the logo for a specific provider.
+ */
+export function getProviderLogo(provider: string): string {
+  const p = (provider || '').toLowerCase();
+  if (p === 'openai') return '/providers/openai-official.png?v=3';
+  if (p === 'anthropic' || p === 'claude') return '/providers/anthropic.png?v=3';
+  if (p === 'gemini' || p === 'google' || p === 'googleaistudio') return '/providers/gemini.png?v=3';
+  if (p === 'openrouter') return '/providers/openrouter.png?v=3';
+  if (p === 'groq') return '/providers/groq.png?v=3';
+  if (p === 'deepseek') return '/providers/deepseek.png?v=3';
+  if (p === 'mistral') return '/providers/mistral.png?v=3';
+  if (p === 'xai' || p === 'grok') return '/providers/xai.png?v=3';
+  if (p === 'local' || p === 'ollama' || p === 'lmstudio') return '/providers/local.png?v=3';
   
   return '/providers/local.png?v=3';
 }

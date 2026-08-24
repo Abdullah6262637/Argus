@@ -66,6 +66,7 @@ export function useChat(agentId: string | null, mode: ChatMode = 'sse') {
     };
   }, []);
 
+  // Reserved for future conversation history feature
   const loadConversation = useCallback(async (id: number) => {
     setLoading(true);
     setError(null);
@@ -443,7 +444,7 @@ export function useChat(agentId: string | null, mode: ChatMode = 'sse') {
       setLastReflection(null);
 
       // Optimistic user mesaj
-      const tempUserId = -Date.now();
+      const tempUserId = -(Math.floor(Date.now() / 1000) % 10_000_000);
       const tempUser: ChatMessage = {
         id: tempUserId,
         conversation_id: conversationId ?? 0,
@@ -459,9 +460,25 @@ export function useChat(agentId: string | null, mode: ChatMode = 'sse') {
           await sendRest(content, tempUserId);
         }
       } catch (err) {
-        // AbortError -> kullanici iptal etti, sessizce dus
-        if (err instanceof DOMException && err.name === 'AbortError') {
-          setMessages((prev) => prev.filter((m) => m.id !== tempUserId));
+        // AbortError -> kullanıcı durdur butonuna bastı
+        const isAbort =
+          (err instanceof DOMException && err.name === 'AbortError') ||
+          (err instanceof Error && err.name === 'AbortError');
+        if (isAbort) {
+          const stoppedAssistantMsg: ChatMessage = {
+            id: -(Date.now() % 10_000_000) - 1,
+            conversation_id: conversationId ?? 0,
+            role: 'assistant',
+            content: 'Mesaj durduruldu.',
+            created_at: new Date().toISOString(),
+          };
+          setMessages((prev) => {
+            const userMsgExists = prev.some((m) => m.id === tempUserId);
+            if (userMsgExists) {
+              return [...prev, stoppedAssistantMsg];
+            }
+            return prev;
+          });
         } else {
           setError(err instanceof Error ? err.message : String(err));
           setMessages((prev) => prev.filter((m) => m.id !== tempUserId));

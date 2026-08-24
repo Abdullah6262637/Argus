@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import AsyncIterator, List, Optional, Tuple
 
 from sqlalchemy import select
@@ -33,6 +34,48 @@ from app.services.memory.auto_summarize import (
 from app.websocket import connection_manager
 
 logger = logging.getLogger(__name__)
+
+
+def is_simple_conversational_query(text: str) -> bool:
+    """Kısa selamlama, hal hatır veya tek atımlık basit sohbet isteklerinde
+    ağır multi-step planlama overhead'ini atlamak için tespit yapar."""
+    if not text:
+        return True
+
+    clean_t = text.strip()
+    # Kod bloğu, URL veya dosya/dizin yolu içeriyorsa planlama gerekebilir
+    if "```" in clean_t or "http://" in clean_t or "https://" in clean_t or "/" in clean_t or "\\" in clean_t:
+        return False
+
+    low = clean_t.lower()
+    norm = re.sub(r"[^\w\s]", "", low).strip()
+
+    # 1) Doğrudan selamlama ve kısa sohbet kelimeleri
+    greetings = {
+        "selam", "selamlar", "merhaba", "merhabalar", "sa", "as", "slm", "mrb",
+        "hey", "hi", "hello", "günaydın", "iyi günler", "iyi akşamlar", "iyi geceler",
+        "tünaydın", "nasılsın", "naber", "ne haber", "nasıl gidiyor", "kimsin",
+        "adın ne", "ne yapabilirsin", "yardım", "help", "teşekkürler", "teşekkür ederim",
+        "sağol", "eyvallah", "tşk", "thx", "thanks", "tamam", "ok", "olur", "peki",
+        "görüşürüz", "bye", "hoşça kal", "kolay gelsin", "harika", "süper", "anladım"
+    }
+    if norm in greetings:
+        return True
+
+    # 2) Çok kısa ifadeler (<= 4 kelime ve <= 35 karakter) ve belirgin eylem/araç fiilleri içermeyenler
+    words = norm.split()
+    if len(words) <= 4 and len(norm) <= 35:
+        action_keywords = {
+            "ara", "araştır", "bul", "yaz", "oluştur", "kodla", "çalıştır", "sil", "indir",
+            "hesapla", "listele", "analiz", "dosya", "tara", "oku", "search", "find",
+            "write", "create", "code", "run", "delete", "download", "calc", "list",
+            "analyze", "file", "read", "fetch", "get", "post", "sql", "db", "bash",
+            "komut", "pdf", "resim", "görsel", "çiz", "grafik", "test", "düzelt", "fix"
+        }
+        if not any(w in action_keywords for w in words):
+            return True
+
+    return False
 
 
 async def _get_or_create_conversation(
@@ -135,7 +178,7 @@ async def send_message(
         content=user_content,
     )
     session.add(user_msg)
-    await session.flush()
+    await session.commit()
 
     # 3) Gecmis yukle (yeni user mesaj haric)
     history = await _load_history(session, conv.id, settings.max_history_messages)
@@ -310,7 +353,7 @@ async def send_message_streaming(
         content=user_content,
     )
     session.add(user_msg)
-    await session.flush()
+    await session.commit()
 
     # 3) Gecmis
     history = await _load_history(session, conv.id, settings.max_history_messages)
@@ -353,7 +396,9 @@ async def send_message_streaming(
     all_tool_calls: List[dict] = []
 
     try:
-        if use_planning:
+        should_plan = use_planning and not is_simple_conversational_query(user_content)
+
+        if should_plan:
             try:
                 plan = await planner.create_plan(
                     user_content,
@@ -389,7 +434,7 @@ async def send_message_streaming(
             async for evt in executor.execute_streaming(plan, agent, chat_history):
                 # WS broadcast
                 await ws_emit(evt.type, {**evt.data, "conversation_id": conv.id})
-                # SSE'ye yiel et
+                # SSE'ye yield et
                 yield evt
                 if evt.type == "tool_call_completed":
                     all_tool_calls.append(evt.data)
@@ -399,7 +444,7 @@ async def send_message_streaming(
             final_content = plan.final_summary or "(Plan tamamlandi.)"
 
         else:
-            # Eski tek-shot davranis (planning olmadan)
+            # Hizli Dogrudan Sohbet (Fast-Path: Agir planlama ve reflection gerektirmeyen istekler)
             loop_result = await run_agent_loop(
                 agent, chat_history, user_content,
                 max_steps=8,

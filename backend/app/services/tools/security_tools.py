@@ -11,7 +11,7 @@ import asyncio
 import logging
 import socket
 import ssl
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict, List
 
 from app.services.tools.base import BaseTool, ToolContext, ToolResult
@@ -209,7 +209,9 @@ class SSLCertCheckTool(BaseTool):
         days_left = None
         try:
             exp = datetime.strptime(not_after, "%b %d %H:%M:%S %Y %Z")
-            days_left = (exp - datetime.utcnow()).days
+            if exp.tzinfo is None:
+                exp = exp.replace(tzinfo=UTC)
+            days_left = (exp - datetime.now(UTC)).days
         except Exception:
             pass
 

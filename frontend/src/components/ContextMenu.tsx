@@ -54,7 +54,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
   return createPortal(
     <div
       ref={menuRef}
-      className="fixed z-[9999] min-w-[200px] rounded-md border border-brand-borderStrong bg-brand-panel shadow-2xl py-1 text-brand-text animate-context-menu-in"
+      className="fixed z-[9999] min-w-[200px] rounded-xl bg-brand-panel shadow-2xl py-1.5 text-brand-text animate-context-menu-in"
       style={{ left: clampedX, top: clampedY }}
       onContextMenu={(e) => e.preventDefault()}
     >
@@ -63,7 +63,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
           return (
             <div
               key={entry.id}
-              className="my-1 mx-2 border-t border-brand-border"
+              className="my-1 h-px bg-brand-panelAlt/50"
             />
           );
         }

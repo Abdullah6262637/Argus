@@ -389,16 +389,23 @@ export const api = {
   listMcpServers: (): Promise<{
     servers: Array<{
       name: string;
-      enabled: boolean;
+      config_enabled: boolean;
+      runtime_status: string;
+      tool_count: number;
+      error: string | null;
+      connected_at: string | null;
+      description: string;
       command: string[];
-      args?: string[];
-      env?: Record<string, string>;
     }>;
   }> => http('/mcp/servers'),
   toggleMcpServer: (name: string, enabled: boolean): Promise<{
-    name: string;
+    ok: boolean;
+    server_name: string;
     enabled: boolean;
     message: string;
+    tool_count: number;
+    tools: string[];
+    error: string | null;
   }> => http(`/mcp/servers/${encodeURIComponent(name)}/toggle`, {
     method: 'POST',
     body: JSON.stringify({ enabled })}),

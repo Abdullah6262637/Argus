@@ -124,7 +124,12 @@ OPENROUTER_MODELS: List[ModelInfo] = [
     {"id": "openai/gpt-4o", "label": "GPT-4o (OR)"},
     {"id": "google/gemini-2.0-flash-exp", "label": "Gemini 2.0 Flash (OR)"},
     {"id": "meta-llama/llama-3.3-70b-instruct", "label": "Llama 3.3 70B (OR)"},
-    {"id": "deepseek/deepseek-r1", "label": "DeepSeek R1 (OR)"}]
+    {"id": "deepseek/deepseek-r1", "label": "DeepSeek R1 (OR)"},
+    {"id": "nvidia/llama-3.1-nemotron-70b-instruct", "label": "NVIDIA: Llama 3.1 Nemotron 70B"},
+    {"id": "nvidia/llama-3.1-nemotron-70b-instruct:free", "label": "NVIDIA: Llama 3.1 Nemotron 70B (Free)"},
+    {"id": "nvidia/nemotron-3-ultra-550b-a55b:free", "label": "NVIDIA: Nemotron-3 Ultra 550B (Free)"},
+    {"id": "nvidia/nemotron-3-super-120b-a12b:free", "label": "NVIDIA: Nemotron-3 Super 120B (Free)"},
+    {"id": "nvidia/nemotron-3-nano-omni:free", "label": "NVIDIA: Nemotron-3 Nano Omni (Free)"}]
 
 SAMBANOVA_MODELS: List[ModelInfo] = [
     {"id": "Meta-Llama-3.3-70B-Instruct", "label": "Meta Llama 3.3 70B (SambaNova - 1000+ t/s)"},

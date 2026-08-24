@@ -17,7 +17,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict, Optional
 
 from sqlalchemy import select
@@ -232,7 +232,7 @@ class ApprovalService:
             approval.status = status
             approval.reason = reason
             approval.decided_by = decided_by
-            approval.decided_at = datetime.utcnow()
+            approval.decided_at = datetime.now(UTC)
             if modified_arguments is not None:
                 approval.arguments_json = json.dumps(modified_arguments, ensure_ascii=False, default=str)
         return True

@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict
 
 from app.config import get_settings
@@ -76,7 +76,7 @@ def setup_logging() -> None:
         from pathlib import Path
         logs_dir = settings.data_dir / "logs"
         logs_dir.mkdir(parents=True, exist_ok=True)
-        file_path = logs_dir / f"app-{datetime.utcnow().strftime('%Y-%m-%d')}.jsonl"
+        file_path = logs_dir / f"app-{datetime.now(UTC).strftime('%Y-%m-%d')}.jsonl"
         fh = logging.FileHandler(str(file_path), encoding="utf-8")
         fh.setFormatter(JsonFormatter())
         fh.setLevel(logging.INFO)

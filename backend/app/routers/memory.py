@@ -121,6 +121,7 @@ async def ingest_file_endpoint(
 
     # Geçici dosyaya yaz
     suffix = Path(file.filename).suffix or ".bin"
+    tmp_path = None
     try:
         content = await file.read()
         if not content:
@@ -148,7 +149,8 @@ async def ingest_file_endpoint(
         return result
     finally:
         try:
-            Path(tmp_path).unlink(missing_ok=True)  # type: ignore[arg-type]
+            if tmp_path:
+                Path(tmp_path).unlink(missing_ok=True)  # type: ignore[arg-type]
         except Exception:
             pass
 

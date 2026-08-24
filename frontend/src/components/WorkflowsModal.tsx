@@ -43,7 +43,7 @@ steps:
     prompt: "Outline'a göre 1000 kelimelik makale yaz:\\n{{ steps.outline.result }}"
 `;
 
-export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
+export default function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
   const [mode, setMode] = useState<Mode>('run');
   const [workflows, setWorkflows] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -234,15 +234,15 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-backdrop-in">
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-backdrop-in">
       <div 
         style={{ height: `${contentHeight}px` }}
-        className="bg-brand-bg border border-brand-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex overflow-hidden animate-modal-in transition-[height] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]"
+        className="bg-brand-bg rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex overflow-hidden animate-modal-in transition-[height] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]"
       >
         {/* ============ Sol Sidebar: Workflow Listesi ============ */}
-        <aside className="w-64 flex-shrink-0 border-r border-brand-border bg-brand-panel flex flex-col">
+        <aside className="w-64 flex-shrink-0 bg-brand-panel flex flex-col">
           {/* Sidebar Header */}
-          <div className="px-3.5 py-3 border-b border-brand-border flex items-center justify-between">
+          <div className="px-3.5 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div>
                 <h3 className="text-[12px] font-semibold text-brand-text leading-tight">
@@ -267,19 +267,19 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
 
           {/* Arama */}
           {workflows.length > 0 && (
-            <div className="px-3 py-2 border-b border-brand-border">
+            <div className="px-3 py-2">
               <div className="relative">
                 <Icon
                   name="search"
                   size={13}
                   weight={500}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 text-brand-mutedSoft pointer-events-none"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-mutedSoft pointer-events-none"
                 />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Ara..."
-                  className="w-full h-7 bg-brand-bg border border-brand-border rounded-md pl-7 pr-2 text-[11px] text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent/20 transition-all"
+                  className="w-full h-7 bg-brand-bg/60 rounded-lg pl-7 pr-2 text-[11px] text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:bg-brand-panelAlt transition-all"
                 />
               </div>
             </div>
@@ -351,7 +351,7 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
                     }}
                     className={`group w-full text-left px-2.5 py-2 rounded-md transition-all flex items-center gap-2 relative overflow-hidden ${
                       active
-                        ? 'bg-brand-accent/10 ring-1 ring-brand-accent/40'
+                        ? 'bg-brand-accent/12'
                         : 'hover:bg-brand-panelAlt'
                     }`}
                   >
@@ -393,13 +393,13 @@ export function WorkflowsModal({ open, onClose }: WorkflowsModalProps) {
         {/* ============ Sağ Ana İçerik ============ */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Üst Header */}
-          <div className="h-12 px-4 border-b border-brand-border flex items-center justify-between bg-brand-panel">
+          <div className="h-12 px-4 flex items-center justify-between bg-brand-panel">
             <div className="flex items-center gap-2.5">
               <h2 className="text-sm font-semibold text-brand-text">
                 {mode === 'run' ? 'Workflow Çalıştır' : isNew ? 'Yeni Workflow' : `${editName}`}
               </h2>
               {/* Mod toggle */}
-              <div className="flex items-center bg-brand-bg/50 border border-brand-border rounded-md p-0.5">
+              <div className="flex items-center bg-brand-panelAlt/50 rounded-lg p-0.5 gap-0.5">
                 <ModeButton
                   active={mode === 'run'}
                   onClick={() => setMode('run')}
@@ -537,8 +537,8 @@ function RunPanel({
   return (
     <div className="space-y-4 max-w-3xl">
       {/* Workflow başlık kartı */}
-      <div className="rounded-lg border border-brand-border bg-brand-panel/40 p-3 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent flex-shrink-0">
+      <div className="rounded-xl bg-brand-panelAlt/40 p-3.5 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center text-brand-accent flex-shrink-0">
           <Icon name="schema" size={18} weight={550} filled />
         </div>
         <div className="flex-1 min-w-0">
@@ -551,7 +551,7 @@ function RunPanel({
         </div>
         <button
           onClick={onEdit}
-          className="h-8 px-2.5 inline-flex items-center gap-1.5 text-[11px] font-semibold rounded-md border border-brand-border text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
+          className="h-8 px-3 inline-flex items-center gap-1.5 text-[11px] font-semibold rounded-lg bg-brand-panelAlt/60 text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
         >
           <Icon name="edit" size={13} weight={550} />
           Düzenle
@@ -569,7 +569,7 @@ function RunPanel({
           onChange={(e) => onInputsChange(e.target.value)}
           rows={6}
           spellCheck={false}
-          className="w-full bg-brand-panel border border-brand-border rounded-md px-3 py-2 text-xs font-mono text-brand-text leading-relaxed focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/15 transition-all"
+          className="w-full bg-brand-bg/90 rounded-xl px-3 py-2.5 text-xs font-mono text-brand-text leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-accent/40 transition-all"
           placeholder='{\n  "topic": "..."\n}'
         />
       </FormField>
@@ -601,20 +601,20 @@ function RunPanel({
       {/* Sonuç */}
       {result && (
         <div className="space-y-3 animate-fade-in-up">
-          <div className="rounded-lg border border-brand-border bg-brand-panel/40 overflow-hidden">
+          <div className="rounded-xl bg-brand-panelAlt/40 overflow-hidden">
             {/* Result header */}
             <div
-              className={`px-3.5 py-2.5 flex items-center gap-2.5 border-b border-brand-border ${
+              className={`px-3.5 py-2.5 flex items-center gap-2.5 ${
                 result.success
-                  ? 'bg-brand-success/5'
-                  : 'bg-brand-danger/5'
+                  ? 'bg-brand-success/10'
+                  : 'bg-brand-danger/10'
               }`}
             >
               <div
                 className={`w-7 h-7 rounded-md flex items-center justify-center ${
                   result.success
-                    ? 'bg-brand-success/15 text-brand-success'
-                    : 'bg-brand-danger/15 text-brand-danger'
+                    ? 'bg-brand-success/20 text-brand-success'
+                    : 'bg-brand-danger/20 text-brand-danger'
                 }`}
               >
                 <Icon
@@ -665,7 +665,7 @@ function RunPanel({
                   <Icon name="output" size={10} weight={500} />
                   Final Çıktı
                 </div>
-                <pre className="mx-3.5 mb-3 px-3 py-2 rounded-md bg-brand-bg/60 border border-brand-border font-mono text-[11px] text-brand-textSoft max-h-64 overflow-y-auto whitespace-pre-wrap break-words">
+                <pre className="mx-3.5 mb-3 px-3 py-2 rounded-xl bg-brand-bg/60 font-mono text-[11px] text-brand-textSoft max-h-64 overflow-y-auto whitespace-pre-wrap break-words">
                   {result.final_output}
                 </pre>
               </div>
@@ -678,7 +678,7 @@ function RunPanel({
                   <Icon name="format_list_numbered" size={10} weight={500} />
                   Adımlar
                 </div>
-                <div className="divide-y divide-brand-border">
+                <div className="space-y-0.5">
                   {result.steps.map((s, i) => (
                     <StepRow key={s.id} step={s} index={i + 1} />
                   ))}
@@ -766,7 +766,7 @@ function StepRow({
             </div>
           )}
           {step.result && (
-            <pre className="text-[11px] font-mono text-brand-textSoft bg-brand-bg/60 border border-brand-border rounded px-2 py-1.5 max-h-32 overflow-y-auto whitespace-pre-wrap break-words">
+            <pre className="text-[11px] font-mono text-brand-textSoft bg-brand-bg/60 rounded px-2 py-1.5 max-h-32 overflow-y-auto whitespace-pre-wrap break-words">
               {step.result}
             </pre>
           )}
@@ -816,7 +816,7 @@ function EditPanel({
           onChange={(e) => onEditNameChange(e.target.value)}
           placeholder="örn. arastir_ve_yaz"
           disabled={!isNew}
-          className="w-full bg-brand-panel border border-brand-border rounded-md px-3 py-2 text-sm font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/15 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="w-full bg-brand-bg/90 rounded-xl px-3 py-2 text-sm font-mono text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:ring-1 focus:ring-brand-accent/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         />
       </FormField>
 
@@ -826,9 +826,9 @@ function EditPanel({
         icon="code"
         hint="{{ inputs.x }} ve {{ steps.id.result }} değişkenlerini kullanabilirsin"
       >
-        <div className="rounded-md border border-brand-border bg-brand-panel overflow-hidden focus-within:border-brand-accent focus-within:ring-2 focus-within:ring-brand-accent/15 transition-all">
+        <div className="rounded-xl bg-brand-bg/90 overflow-hidden focus-within:ring-1 focus-within:ring-brand-accent/40 transition-all">
           {/* Editor toolbar */}
-          <div className="px-3 py-1.5 border-b border-brand-border flex items-center justify-between bg-brand-panelAlt/40">
+          <div className="px-3 py-1.5 flex items-center justify-between bg-brand-panelAlt/40">
             <div className="flex items-center gap-1.5 text-[10px] text-brand-mutedSoft font-mono">
               <Icon name="data_object" size={11} weight={500} />
               <span>YAML</span>
@@ -848,7 +848,7 @@ function EditPanel({
 
       {/* Hata / Başarı mesajı */}
       {error && (
-        <div className="p-2.5 text-[11px] rounded-lg border border-brand-danger/40 bg-brand-danger/5 text-brand-danger flex items-start gap-2">
+        <div className="p-2.5 text-[11px] rounded-lg bg-brand-danger/5 text-brand-danger flex items-start gap-2">
           <Icon
             name="error"
             size={13}
@@ -860,14 +860,14 @@ function EditPanel({
         </div>
       )}
       {saved && (
-        <div className="p-2.5 text-[11px] rounded-lg border border-brand-success/40 bg-brand-success/5 text-brand-success flex items-center gap-2 animate-fade-in-up">
+        <div className="p-2.5 text-[11px] rounded-lg bg-brand-success/5 text-brand-success flex items-center gap-2 animate-fade-in-up">
           <Icon name="check_circle" size={13} weight={550} filled />
           Kaydedildi
         </div>
       )}
 
       {/* Aksiyon butonları */}
-      <div className="flex items-center gap-2 pt-2 border-t border-brand-border">
+      <div className="flex items-center gap-2 pt-2">
         <button
           onClick={onSave}
           disabled={saving || !editName.trim() || !editContent.trim()}
@@ -885,7 +885,7 @@ function EditPanel({
         {!isNew && editName && (
           <button
             onClick={onDelete}
-            className="h-9 px-3 inline-flex items-center gap-1.5 text-xs font-semibold rounded-lg border border-brand-danger/30 text-brand-danger hover:bg-brand-danger/10 transition-all active:scale-95"
+            className="h-9 px-3 inline-flex items-center gap-1.5 text-xs font-semibold rounded-lg bg-brand-danger/10 text-brand-danger hover:bg-brand-danger/20 transition-all active:scale-95"
           >
             <Icon name="delete" size={14} weight={550} />
             Sil

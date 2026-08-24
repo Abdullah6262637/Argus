@@ -29,7 +29,9 @@ export default {
           success: "var(--brand-success)"}},
       fontFamily: {
         sans: [
-          'Inter',
+          '"Plus Jakarta Sans"',
+          'Geist',
+          'Geist Sans',
           '-apple-system',
           'BlinkMacSystemFont',
           'Segoe UI',
@@ -48,7 +50,9 @@ export default {
           'Liberation Mono',
           'monospace'],
         display: [
-          'Inter',
+          '"Plus Jakarta Sans"',
+          'Geist',
+          'Geist Sans',
           '-apple-system',
           'BlinkMacSystemFont',
           'sans-serif']},

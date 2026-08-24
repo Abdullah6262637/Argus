@@ -31,7 +31,7 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
 def _to_message_out(m: Message) -> MessageOut:
-    role = m.role.value if hasattr(m.role, "value") else str(m.role)
+    role = m.role.value
     return MessageOut(
         id=m.id,
         conversation_id=m.conversation_id,
@@ -156,7 +156,7 @@ async def delete_conversation(
 @router.get("/{conversation_id}/export")
 async def export_conversation(
     conversation_id: int,
-    format: Literal["md", "json"] = Query("md", description="md = Markdown, json = JSON"),
+    export_format: Literal["md", "json"] = Query("md", description="md = Markdown, json = JSON"),
     session: AsyncSession = Depends(get_session),
 ):
     """Sohbeti Markdown veya JSON olarak indir."""
@@ -177,7 +177,7 @@ async def export_conversation(
 
     fname_base = f"conversation_{conv.id}_{(conv.title or 'untitled').replace(' ', '_')[:40]}"
 
-    if format == "json":
+    if export_format == "json":
         payload = {
             "id": conv.id,
             "agent_id": conv.agent_id,
@@ -187,7 +187,7 @@ async def export_conversation(
             "messages": [
                 {
                     "id": m.id,
-                    "role": m.role.value if hasattr(m.role, "value") else str(m.role),
+                    "role": m.role.value,
                     "content": m.content,
                     "tokens": m.tokens,
                     "provider": m.provider,
@@ -210,7 +210,7 @@ async def export_conversation(
     lines.append(f"- **Mesaj sayisi:** {len(msgs)}\n")
     lines.append("---\n")
     for m in msgs:
-        role = m.role.value if hasattr(m.role, "value") else str(m.role)
+        role = m.role.value
         ts = m.created_at.strftime("%H:%M:%S") if m.created_at else ""
         if role == "user":
             header = f"### 👤 Kullanici · {ts}"

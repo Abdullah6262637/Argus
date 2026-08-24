@@ -2,6 +2,23 @@ import { useEffect, useState } from 'react';
 import { Icon } from '../Icon';
 import { StepHeading } from './FormComponents';
 import type { AgentPermissions } from '@/types';
+import {
+  ReadonlyIcon,
+  ResearcherIcon,
+  WriterIcon,
+  DeveloperIcon,
+  FullIcon,
+  CustomIcon,
+} from '../icons/PermissionIcons';
+
+const PRESET_ICONS: Record<string, React.ComponentType<any>> = {
+  readonly: ReadonlyIcon,
+  researcher: ResearcherIcon,
+  writer: WriterIcon,
+  developer: DeveloperIcon,
+  full: FullIcon,
+  custom: CustomIcon,
+};
 
 export interface ToolHint {
   name: string;
@@ -164,36 +181,34 @@ export function Step5Permissions({
   };
 
   return (
-    <div className="space-y-4 max-w-2xl mx-auto animate-step-in">
+    <div className="space-y-6 max-w-2xl mx-auto animate-step-in">
       <StepHeading
-        title="Guvenlik ve Izinler"
-        desc="Hazir bir izin profili sec ya da Ozel ile detayli ayar yap."
+        title="Güvenlik ve İzinler"
+        desc="Hazır bir izin profili seç ya da Özel ile detaylı ayar yap."
       />
-
-      {/* Preset secici */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
         {PERMISSION_PRESETS.map((p) => {
           const isActive = selectedPresetId === p.id;
+          const PresetIcon = PRESET_ICONS[p.id] || CustomIcon;
           return (
             <button
               key={p.id}
               type="button"
               onClick={() => applyPreset(p.id)}
-              className={`text-left rounded-xl border p-3.5 transition-all duration-300 active:scale-[0.97] flex items-start gap-3 shadow-sm ${
+              className={`text-left rounded-2xl p-4 transition-all duration-200 active:scale-[0.98] flex items-start gap-3.5 ${
                 isActive
-                  ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
-                  : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
+                  ? 'bg-brand-accent/[0.08] text-brand-text shadow-sm'
+                  : 'bg-brand-panelAlt/30 hover:bg-brand-panelAlt/60 text-brand-text'
               }`}
-              title={p.desc}
             >
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
-                isActive ? 'bg-brand-accent/10 border border-brand-accent/20 text-brand-accent' : 'bg-brand-panel border border-brand-border/40 text-brand-textSoft'
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
+                isActive ? 'bg-brand-accent/20 text-brand-accent' : 'bg-brand-panelAlt text-brand-mutedSoft'
               }`}>
-                <Icon name={p.icon} size={16} weight={550} />
+                <PresetIcon size={18} filled={isActive} />
               </div>
-              <div className="min-w-0">
-                <div className="text-[12px] font-bold text-brand-text leading-tight">{p.label}</div>
-                <div className="text-[10px] text-brand-textSoft mt-1 leading-normal">{p.desc}</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-bold text-brand-text leading-tight">{p.label}</div>
+                <div className="text-[11px] text-brand-textSoft mt-1.5 leading-normal">{p.desc}</div>
               </div>
             </button>
           );
@@ -201,27 +216,26 @@ export function Step5Permissions({
         <button
           type="button"
           onClick={() => applyPreset('custom')}
-          className={`text-left rounded-xl border p-3.5 transition-all duration-300 active:scale-[0.97] flex items-start gap-3 shadow-sm ${
+          className={`text-left rounded-2xl p-4 transition-all duration-200 active:scale-[0.98] flex items-start gap-3.5 ${
             selectedPresetId === 'custom'
-              ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
-              : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
+              ? 'bg-brand-accent/[0.08] text-brand-text shadow-sm'
+              : 'bg-brand-panelAlt/30 hover:bg-brand-panelAlt/60 text-brand-text'
           }`}
         >
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
-            selectedPresetId === 'custom' ? 'bg-brand-accent/10 border border-brand-accent/20 text-brand-accent' : 'bg-brand-panel border border-brand-border/40 text-brand-textSoft'
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
+            selectedPresetId === 'custom' ? 'bg-brand-accent/20 text-brand-accent' : 'bg-brand-panelAlt text-brand-mutedSoft'
           }`}>
-            <Icon name="tune" size={16} weight={550} />
+            <CustomIcon size={18} />
           </div>
-          <div className="min-w-0">
-            <div className="text-[12px] font-bold text-brand-text leading-tight">Ozel Yapılandırma</div>
-            <div className="text-[10px] text-brand-textSoft mt-1 leading-normal">İzinleri tek tek elle belirleyin</div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-brand-text leading-tight">Özel Yapılandırma</div>
+            <div className="text-[11px] text-brand-textSoft mt-1.5 leading-normal">İzinleri tek tek elle belirleyin</div>
           </div>
         </button>
       </div>
 
-      {/* Custom mode: kategori detaylari */}
       {selectedPresetId === 'custom' && (
-        <div className="space-y-3">
+        <div className="space-y-3.5 pt-2">
           {PERMISSION_CATEGORIES.map((cat) => (
             <PermissionBlock
               key={cat.key}
@@ -236,33 +250,30 @@ export function Step5Permissions({
         </div>
       )}
 
-      {/* Preset mode: ozet */}
       {selectedPresetId !== 'custom' && (
-        <div className="rounded border border-brand-border bg-brand-bg/30 p-3 space-y-2">
-          <div className="text-[10px] uppercase tracking-wider text-brand-mutedSoft">
-            Bu profil su izinleri verir:
+        <div className="rounded-2xl bg-brand-panelAlt/15 p-4.5 space-y-3.5">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-brand-mutedSoft">
+            Bu profil şu izinleri verir:
           </div>
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-2 gap-3.5">
             {PERMISSION_CATEGORIES.map((cat) => {
               const on = permissions[cat.key];
               return (
-                <div
-                  key={cat.key}
-                  className={`flex items-center gap-2 text-xs rounded px-2 py-1.5 border ${
-                    on
-                      ? 'border-brand-success/30 bg-brand-success/5 text-brand-text'
-                      : 'border-brand-border bg-brand-bg/40 text-brand-mutedSoft'
-                  }`}
-                >
-                  <Icon name={on ? 'check_circle' : 'cancel'} size={14} className={on ? 'text-brand-success' : 'text-brand-mutedSoft'} />
-                  <Icon name={cat.icon} size={13} />
-                  <span className="truncate">{cat.title}</span>
+                <div key={cat.key} className="flex items-center gap-2.5 py-1 text-xs">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    on ? 'bg-brand-success/12 text-brand-success' : 'bg-brand-panelAlt text-brand-mutedSoft'
+                  }`}>
+                    <Icon name={on ? 'check' : 'close'} size={11} weight={600} />
+                  </div>
+                  <span className={`font-semibold truncate ${on ? 'text-brand-text' : 'text-brand-mutedSoft'}`}>
+                    {cat.title}
+                  </span>
                 </div>
               );
             })}
           </div>
-          <div className="text-[10px] text-brand-mutedSoft pt-1 border-t border-brand-border">
-            Ince ayar yapmak istersen <strong>Ozel</strong>'i sec.
+          <div className="text-[11.5px] text-brand-mutedSoft pt-2 mt-1.5 opacity-80">
+            İnce ayar yapmak istersen <strong>Özel Yapılandırma</strong>'yı seç.
           </div>
         </div>
       )}
@@ -290,11 +301,11 @@ function PermissionBlock({
 
   return (
     <div
-      className={`rounded border p-3 transition-all duration-300 ${
+      className={`rounded-xl p-3.5 transition-all duration-300 ${
         enabled
-          ? 'border-brand-accent/40 bg-brand-panelAlt shadow-md shadow-brand-accent/5'
-          : 'border-brand-border bg-brand-bg/30'
-      } hover:border-brand-borderStrong`}
+          ? 'bg-brand-panelAlt shadow-md shadow-brand-accent/5'
+          : 'bg-brand-panelAlt/40'
+      }`}
     >
       <label className="flex items-start justify-between gap-2 cursor-pointer text-brand-text">
         <div className="flex gap-3 min-w-0">
@@ -329,7 +340,7 @@ function PermissionBlock({
       </label>
 
       {/* Tool listesi (chip + tooltip) */}
-      <div className={`mt-2 pt-2 border-t border-brand-border/60 transition ${enabled ? 'opacity-100' : 'opacity-50'}`}>
+      <div className={`mt-2 pt-2 transition ${enabled ? 'opacity-100' : 'opacity-50'}`}>
         <div className="text-[10px] uppercase tracking-wider text-brand-mutedSoft mb-1.5">
           Bu kategori asagidaki tool'lara erisim verir:
         </div>

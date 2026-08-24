@@ -9,6 +9,7 @@ from app.models.audit import AuditEntry
 from app.models.feedback import MessageFeedback, FeedbackRating
 from app.models.skill import SkillRecord
 from app.models.prompt_version import PromptVersion
+from app.models.dream import DreamRecord
 
 __all__ = [
     "Conversation",
@@ -23,4 +24,5 @@ __all__ = [
     "MessageFeedback",
     "FeedbackRating",
     "SkillRecord",
-    "PromptVersion"]
+    "PromptVersion",
+    "DreamRecord"]

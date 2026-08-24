@@ -4,6 +4,14 @@ import { Icon } from './Icon';
 import { ScreenshotViewer } from './ScreenshotViewer';
 import { api } from '@/api/client';
 import { getModelLogo } from '../utils/modelHelper';
+import {
+  TokenIcon,
+  LikeIcon,
+  DislikeIcon,
+  CopyIcon,
+  CheckIcon,
+  SpeakerIcon,
+} from './icons/MessageActionIcons';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -64,31 +72,20 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
 
   return (
     <div
-      className={`relative rounded-lg overflow-hidden border text-[11px] transition-all duration-200 ${
-        tc.ok
-          ? 'border-brand-success/30 bg-brand-success/[0.03] hover:border-brand-success/50'
-          : 'border-brand-danger/30 bg-brand-danger/[0.03] hover:border-brand-danger/50'
-      }`}
+      className="relative rounded-xl overflow-hidden text-[11px] bg-brand-panelAlt/40 transition-all duration-200"
       role="region"
       aria-label={`Tool call: ${tc.name}`}
     >
-      {/* Sol kenar durum çizgisi */}
-      <div
-        className={`absolute left-0 top-[6px] bottom-[6px] w-[2px] rounded-full ${
-          tc.ok ? 'bg-brand-success/60' : 'bg-brand-danger/60'
-        }`}
-      />
-
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={handleKeyDown}
-        className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-black/5 transition-all duration-150 rounded-lg"
+        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 text-left hover:bg-brand-panelAlt/60 transition-all duration-150 rounded-xl"
         aria-expanded={open}
         aria-label={`${tc.name} tool call details, ${tc.ok ? 'successful' : 'failed'}`}
       >
         {/* Tool ikonu */}
-        <div className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-md ${
+        <div className={`flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-lg ${
           tc.ok ? 'bg-brand-success/10 text-brand-success' : 'bg-brand-danger/10 text-brand-danger'
         }`}>
           <Icon name={icon} size={13} aria-hidden="true" />
@@ -96,22 +93,23 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
 
         {/* Tool adı + argüman özeti */}
         <div className="flex-1 min-w-0">
-          <span className={`block font-mono font-semibold text-[11px] leading-tight ${
-            tc.ok ? 'text-brand-success' : 'text-brand-danger'
-          }`}>{tc.name}</span>
-          {argSummary && (
-            <span className="block text-brand-muted truncate font-mono text-[9.5px] leading-tight mt-0.5">{argSummary}</span>
-          )}
+          <div className="flex items-baseline gap-1.5 truncate">
+            <span className={`font-medium text-[11.5px] leading-snug ${
+              tc.ok ? 'text-brand-text' : 'text-brand-danger'
+            }`}>{tc.name}</span>
+            {argSummary && (
+              <span className="text-brand-mutedSoft/60 truncate font-mono text-[9.5px]">{argSummary}</span>
+            )}
+          </div>
         </div>
 
         {/* Sağ: süre + durum ikonu + expand */}
-        <span className="ml-auto flex items-center gap-2 text-brand-mutedSoft flex-shrink-0">
-          <span className="font-mono tabular-nums text-[10px]">{tc.duration_ms}ms</span>
+        <span className="ml-auto flex items-center gap-1.5 text-brand-mutedSoft flex-shrink-0">
+          <span className="font-mono tabular-nums text-[10px] text-brand-mutedSoft">{tc.duration_ms}ms</span>
           <Icon
-            name={tc.ok ? 'check_circle' : 'cancel'}
-            size={14}
-            weight={500}
-            filled
+            name={tc.ok ? 'check' : 'close'}
+            size={13}
+            weight={600}
             className={tc.ok ? 'text-brand-success' : 'text-brand-danger'}
             aria-hidden="true"
           />
@@ -127,7 +125,7 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
 
       {/* Sprint 1.5: Inline ekran goruntusu thumbnail (collapsed durumda bile gozuksun) */}
       {hasImage && !open && (
-        <div className="px-3 pb-2">
+        <div className="px-2.5 pb-2">
           <ScreenshotViewer imageB64={imageB64} imagePath={imagePath} alt={tc.name} />
         </div>
       )}
@@ -139,7 +137,7 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="px-3 pb-2.5 pt-1.5 space-y-2 border-t border-current/10">
+          <div className="px-2.5 pb-2 pt-1 space-y-1.5">
             {hasImage && (
               <div>
                 <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider font-semibold mb-1">
@@ -152,7 +150,7 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
               <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider font-semibold mb-1">
                 Argümanlar
               </div>
-              <pre className="font-mono text-[10px] bg-black/20 rounded-md p-2 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
+              <pre className="font-mono text-[10px] bg-brand-panelAlt/60 rounded-lg p-2 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
                 {JSON.stringify(tc.arguments, null, 2)}
               </pre>
             </div>
@@ -160,7 +158,7 @@ function ToolCallCard({ tc }: { tc: ToolCallInfo }) {
               <div className="text-brand-mutedSoft uppercase text-[9px] tracking-wider font-semibold mb-1">
                 Çıktı
               </div>
-              <pre className="font-mono text-[10px] bg-black/20 rounded-md p-2 overflow-x-auto whitespace-pre-wrap break-words max-h-48 leading-relaxed">
+              <pre className="font-mono text-[10px] bg-brand-panelAlt/60 rounded-lg p-2 overflow-x-auto whitespace-pre-wrap break-words max-h-48 leading-relaxed">
                 {tc.error ? `HATA: ${tc.error}` : tc.output || '(boş)'}
               </pre>
             </div>
@@ -180,6 +178,7 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
   // Sprint E.5: Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState<'up' | 'down' | null>(null);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Sprint E.5: TTS state
   const [ttsPlaying, setTtsPlaying] = useState(false);
@@ -188,6 +187,17 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
   const timeStr = new Date(message.created_at).toLocaleTimeString('tr-TR', {
     hour: '2-digit',
     minute: '2-digit'});
+
+  const handleCopy = async () => {
+    if (!message.content) return;
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Kopyalama hatasi:', err);
+    }
+  };
 
   const handleFeedback = async (rating: 'up' | 'down') => {
     if (feedbackLoading || feedbackGiven) return;
@@ -245,29 +255,21 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
       aria-label={`${isUser ? 'Kullanıcı' : agentName || 'Asistan'} mesajı`}
     >
       <div className={`flex flex-col max-w-[78%] ${isUser ? 'items-end' : 'items-start'}`}>
-        {/* Üst etiket: ajan adı (asistan) veya "Sen" (kullanıcı) */}
+        {/* Üst etiket: sade ve minimal ajan adı */}
         {isAssistant && agentName && (
-          <div className="flex items-center gap-1.5 px-1 mb-1">
-            <Icon
-              name="smart_toy"
-              size={11}
-              weight={550}
-              filled
-              className="text-brand-accent"
-              aria-hidden="true"
-            />
-            <span className="text-[10px] font-bold text-brand-accent uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 px-1 mb-1 opacity-80 select-none">
+            <span className="text-[10.5px] font-medium text-brand-textSoft tracking-tight">
               {agentName}
             </span>
           </div>
         )}
 
-        {/* Mesaj balonu */}
+        {/* Mesaj balonu — Çerçevesiz, sade ve simetrik modern yapı */}
         <div
-          className={`rounded-2xl px-4 py-2.5 transition-shadow ${
+          className={`rounded-2xl px-4 py-2.5 transition-all duration-200 select-text ${
             isUser
-              ? 'bg-brand-accent text-brand-bg rounded-br-md shadow-sm'
-              : 'bg-brand-panel text-brand-text rounded-bl-md border border-brand-border shadow-sm group-hover:shadow-md'
+              ? 'bg-brand-panelAlt text-brand-text shadow-none'
+              : 'bg-brand-panelAlt/70 text-brand-text shadow-none'
           }`}
         >
           {/* Mesaj içeriği */}
@@ -309,26 +311,19 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
           </time>
           {message.tokens != null && (
             <>
-              <span className="text-brand-border" aria-hidden="true">·</span>
+              <span className="text-brand-mutedSoft/40" aria-hidden="true">·</span>
               <span
-                className="inline-flex items-center gap-0.5 tabular-nums"
+                className="inline-flex items-center gap-1 tabular-nums"
                 title={`${message.tokens} token`}
               >
-                <Icon
-                  name="bolt"
-                  size={9}
-                  weight={500}
-                  filled
-                  className="text-brand-accent/70"
-                  aria-hidden="true"
-                />
-                {message.tokens}
+                <TokenIcon size={10} className="text-brand-accent/70 flex-shrink-0" />
+                <span>{message.tokens}</span>
               </span>
             </>
           )}
           {message.model && (
             <>
-              <span className="text-brand-border" aria-hidden="true">·</span>
+              <span className="text-brand-mutedSoft/40" aria-hidden="true">·</span>
               <span className="truncate max-w-[140px] inline-flex items-center gap-1" title={message.model}>
                 <img src={getModelLogo(message.model, (message as any).provider || '')} alt="" className="w-3 h-3 object-contain rounded-sm" />
                 <span>{message.model}</span>
@@ -336,17 +331,34 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
             </>
           )}
 
-          {/* Sprint E.5: Feedback butonları (sadece assistant mesajları için) */}
+          {/* Aksiyon butonları (Kopyala, Beğen, Beğenme, Sesli Oku) */}
           {isAssistant && message.content && (
             <>
-              <span className="text-brand-border" aria-hidden="true">·</span>
-              <div className="flex items-center gap-1" role="group" aria-label="Mesaj geri bildirimi">
+              <span className="text-brand-mutedSoft/40" aria-hidden="true">·</span>
+              <div className="flex items-center gap-0.5" role="group" aria-label="Mesaj aksiyonları">
+                {/* Kopyalama butonu */}
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  title={copied ? 'Kopyalandı!' : 'Metni Kopyala'}
+                  className="p-1 rounded text-brand-mutedSoft hover:text-brand-text transition-colors"
+                  aria-label="Metni kopyala"
+                >
+                  {copied ? (
+                    <CheckIcon size={11} className="text-brand-success" />
+                  ) : (
+                    <CopyIcon size={11} />
+                  )}
+                </button>
+
+                {/* Beğenme butonu */}
                 <button
                   type="button"
                   onClick={() => handleFeedback('up')}
                   onKeyDown={(e) => handleFeedbackKeyDown(e, 'up')}
                   disabled={feedbackLoading || feedbackGiven !== null}
-                  className={`p-0.5 rounded transition-colors ${
+                  title="Yararlı"
+                  className={`p-1 rounded transition-colors ${
                     feedbackGiven === 'up'
                       ? 'text-brand-success'
                       : 'text-brand-mutedSoft hover:text-brand-success'
@@ -354,14 +366,17 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
                   aria-label="Yararlı"
                   aria-pressed={feedbackGiven === 'up'}
                 >
-                  <Icon name="thumb_up" size={11} weight={feedbackGiven === 'up' ? 600 : 400} aria-hidden="true" />
+                  <LikeIcon size={11} filled={feedbackGiven === 'up'} />
                 </button>
+
+                {/* Beğenmeme butonu */}
                 <button
                   type="button"
                   onClick={() => handleFeedback('down')}
                   onKeyDown={(e) => handleFeedbackKeyDown(e, 'down')}
                   disabled={feedbackLoading || feedbackGiven !== null}
-                  className={`p-0.5 rounded transition-colors ${
+                  title="Yararlı değil"
+                  className={`p-1 rounded transition-colors ${
                     feedbackGiven === 'down'
                       ? 'text-brand-danger'
                       : 'text-brand-mutedSoft hover:text-brand-danger'
@@ -369,33 +384,27 @@ export function MessageBubble({ message, agentName }: MessageBubbleProps) {
                   aria-label="Yararlı değil"
                   aria-pressed={feedbackGiven === 'down'}
                 >
-                  <Icon name="thumb_down" size={11} weight={feedbackGiven === 'down' ? 600 : 400} aria-hidden="true" />
+                  <DislikeIcon size={11} filled={feedbackGiven === 'down'} />
+                </button>
+
+                {/* Sesli Oku butonu */}
+                <button
+                  type="button"
+                  onClick={handleTTS}
+                  onKeyDown={handleTTSKeyDown}
+                  disabled={ttsPlaying}
+                  title={ttsPlaying ? 'Ses çalınıyor' : 'Sesli oku'}
+                  className={`p-1 rounded transition-colors ${
+                    ttsPlaying
+                      ? 'text-brand-accent animate-pulse'
+                      : 'text-brand-mutedSoft hover:text-brand-accent'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  aria-label={ttsPlaying ? 'Ses çalınıyor' : 'Sesli oku'}
+                  aria-pressed={ttsPlaying}
+                >
+                  <SpeakerIcon size={11} filled={ttsPlaying} />
                 </button>
               </div>
-            </>
-          )}
-
-          {/* Sprint E.5: TTS butonu (sadece assistant mesajları için) */}
-          {isAssistant && message.content && (
-            <>
-              <span className="text-brand-border" aria-hidden="true">·</span>
-              <button
-                type="button"
-                onClick={handleTTS}
-                onKeyDown={handleTTSKeyDown}
-                disabled={ttsPlaying}
-                className="p-0.5 rounded transition-colors text-brand-mutedSoft hover:text-brand-accent disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label={ttsPlaying ? 'Ses çalınıyor' : 'Sesli oku'}
-                aria-pressed={ttsPlaying}
-              >
-                <Icon
-                  name={ttsPlaying ? 'volume_up' : 'volume_off'}
-                  size={11}
-                  weight={ttsPlaying ? 600 : 400}
-                  filled={ttsPlaying}
-                  aria-hidden="true"
-                />
-              </button>
             </>
           )}
         </div>
@@ -429,9 +438,7 @@ function ToolCallsCollapsible({
 
   return (
     <div
-      className={`${hasContent ? 'mt-3 pt-3 border-t' : ''} ${
-        isUser ? 'border-brand-bg/15' : 'border-brand-border'
-      }`}
+      className={hasContent ? 'mt-2.5 pt-2' : ''}
       role="region"
       aria-label="Kullanılan araçlar"
     >
@@ -443,7 +450,7 @@ function ToolCallsCollapsible({
         className={`group/btn w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10.5px] font-semibold transition-all duration-200 ${
           isUser
             ? 'text-brand-bg/85 hover:bg-brand-bg/10 hover:text-brand-bg'
-            : 'text-brand-textSoft hover:bg-brand-panelAlt hover:text-brand-text border border-brand-border/60 hover:border-brand-borderStrong'
+            : 'text-brand-textSoft hover:bg-brand-panelAlt hover:text-brand-text'
         }`}
         aria-expanded={open}
         aria-label={`${toolCalls.length} araç kullanıldı${errCount > 0 ? `, ${errCount} hata` : ''}`}
@@ -480,7 +487,7 @@ function ToolCallsCollapsible({
       {/* Tool kartları (smooth height slide transition) */}
       <div 
         className={`grid transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          open ? 'grid-rows-[1fr] opacity-100 mt-2.5' : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
+          open ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0 mt-0 pointer-events-none'
         }`}
       >
         <div className="overflow-hidden space-y-1.5">

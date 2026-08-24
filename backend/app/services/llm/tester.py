@@ -61,11 +61,7 @@ def _extract_html_message(html: str) -> str:
     return clean[:200] if clean else "HTML yaniti"
 
 
-def _is_placeholder_key(k: Optional[str]) -> bool:
-    if not k:
-        return True
-    low = k.lower()
-    return "xxxxxxxxxx" in low or "placeholder" in low or "your-key" in low
+from app.services.llm.utils import is_placeholder_key
 
 
 def _guess_provider_mismatch(provider: str, base_url: Optional[str]) -> Optional[str]:
@@ -119,7 +115,7 @@ async def test_connection(
     }
 
     env_key = env_keys.get(provider_low)
-    if _is_placeholder_key(env_key):
+    if is_placeholder_key(env_key):
         env_key = None
 
     effective_key = api_key or env_key

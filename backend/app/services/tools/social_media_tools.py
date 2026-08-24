@@ -3,6 +3,7 @@ Sosyal medya platformları entegrasyonu.
 Twitter/X, Instagram, LinkedIn, Reddit
 """
 from __future__ import annotations
+_FEATURE_ENABLED = False
 
 import logging
 import os

@@ -3,6 +3,7 @@ Blockchain, kripto para ve Web3 işlemleri için tool'lar.
 Ethereum, Bitcoin, NFT, DeFi ve IPFS entegrasyonları.
 """
 from __future__ import annotations
+_FEATURE_ENABLED = False
 
 import logging
 from typing import Any, Dict

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 export type Density = 'compact' | 'cozy' | 'comfortable';
-export type FontSize = 'sm' | 'md' | 'lg';
+export type FontSize = 'sm' | 'md' | 'lg' | 'xl';
 
 const DENSITY_KEY = 'umtalagent.density';
 const FONT_KEY = 'umtalagent.fontSize';
@@ -23,7 +23,7 @@ function getInitialDensity(): Density {
 function getInitialFontSize(): FontSize {
   if (typeof window === 'undefined') return 'md';
   const saved = window.localStorage.getItem(FONT_KEY);
-  if (saved === 'sm' || saved === 'md' || saved === 'lg') return saved;
+  if (saved === 'sm' || saved === 'md' || saved === 'lg' || saved === 'xl') return saved;
   return 'md';
 }
 

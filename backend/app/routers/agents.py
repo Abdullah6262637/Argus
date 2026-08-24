@@ -269,7 +269,11 @@ async def get_models_catalog() -> ModelsCatalogOut:
     return ModelsCatalogOut(
         openai=to_out(MODELS_BY_PROVIDER.get("openai", [])),
         anthropic=to_out(MODELS_BY_PROVIDER.get("anthropic", [])),
+<<<<<<< HEAD
         local=to_out(MODELS_BY_PROVIDER.get("local", [])),
+=======
+        local=to_out(MODELS_BY_PROVIDER.get("local", []) or MODELS_BY_PROVIDER.get("ollama", [])),
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
         gemini=to_out(MODELS_BY_PROVIDER.get("gemini", [])),
         ollama=to_out(MODELS_BY_PROVIDER.get("ollama", [])),
         groq=to_out(MODELS_BY_PROVIDER.get("groq", [])),
@@ -277,10 +281,13 @@ async def get_models_catalog() -> ModelsCatalogOut:
         deepseek=to_out(MODELS_BY_PROVIDER.get("deepseek", [])),
         xai=to_out(MODELS_BY_PROVIDER.get("xai", [])),
         openrouter=to_out(MODELS_BY_PROVIDER.get("openrouter", [])),
+<<<<<<< HEAD
         sambanova=to_out(MODELS_BY_PROVIDER.get("sambanova", [])),
         cerebras=to_out(MODELS_BY_PROVIDER.get("cerebras", [])),
         fireworks=to_out(MODELS_BY_PROVIDER.get("fireworks", [])),
         together=to_out(MODELS_BY_PROVIDER.get("together", [])),
+=======
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
     )
 
 

@@ -124,7 +124,7 @@ async def run_task_now(
         raise HTTPException(status_code=400, detail="Ajan mevcut degil")
 
     try:
-        _, _, assistant_msg = await send_message(
+        _, _, assistant_msg, _ = await send_message(
             session, task.agent_id, task.prompt
         )
     except Exception as exc:

@@ -1,84 +1,147 @@
 /* ============================================================
-   Animations & Transition Effects
+   Argus Ultra-Performance GPU-Accelerated Animations
+   Optimized: Zero CPU raster drops, hardware-accelerated transforms
    ============================================================ */
+
+/* Base GPU Compositing Class */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
 
 @keyframes fade-in-up {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 .animate-fade-in-up {
-  animation: fade-in-up 0.4s ease-out forwards;
+  animation: fade-in-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
-/* Tool card: soldan kayarak + blur'den gelir (kademeli cascade) */
+/* Composer: İlk mesajdan sonra ortadan aşağı pürüzsüz iniş animasyonu */
+@keyframes composer-dock {
+  0% {
+    opacity: 0.6;
+    transform: translateY(-16px) scale(0.98) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) translateZ(0);
+  }
+}
+.animate-composer-dock {
+  animation: composer-dock 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Tool card: soldan kayarak gelir */
 @keyframes tool-card-enter {
   0% {
     opacity: 0;
-    transform: translateX(-16px) scale(0.97);
-    filter: blur(4px);
-  }
-  60% {
-    opacity: 1;
-    filter: blur(0);
+    transform: translateX(-12px) scale(0.98) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1);
-    filter: blur(0);
+    transform: translateX(0) scale(1) translateZ(0);
   }
 }
 .animate-tool-card-enter {
-  opacity: 0;
-  animation: tool-card-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: tool-card-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
-/* Tool card: sagdan kayarak gelir (eski uyumluluk) */
+/* Tool card: sagdan kayarak gelir */
 @keyframes slide-in-right {
   0% {
     opacity: 0;
-    transform: translateX(24px);
+    transform: translateX(16px) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
 }
 .animate-slide-in-right {
-  animation: slide-in-right 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Tool aktif: sol kenarda ince neon çizgi animasyonu */
-@keyframes tool-progress-glow {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 0% 200%;
-  }
+  animation: slide-in-right 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Tool tamamlandı: status icon pop-in */
 @keyframes tool-status-pop {
   0% {
     opacity: 0;
-    transform: scale(0.3);
+    transform: scale(0.5) translateZ(0);
   }
-  60% {
-    transform: scale(1.15);
+  70% {
+    transform: scale(1.1) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateZ(0);
   }
 }
 .animate-tool-status-pop {
-  animation: tool-status-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: tool-status-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Modern Minimalist Thinking Animations (GPU-Optimized) */
+@keyframes spark-breathe {
+  0%, 100% {
+    transform: scale(0.95) translateZ(0);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.05) translateZ(0);
+    opacity: 1;
+  }
+}
+.animate-spark-breathe {
+  animation: spark-breathe 2.4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 1.8s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes thinking-dot {
+  0%, 80%, 100% {
+    transform: scale(0.7) translateZ(0);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+}
+.animate-thinking-dot-1 {
+  animation: thinking-dot 1.2s ease-in-out 0s infinite;
+  will-change: transform, opacity;
+}
+.animate-thinking-dot-2 {
+  animation: thinking-dot 1.2s ease-in-out 0.2s infinite;
+  will-change: transform, opacity;
+}
+.animate-thinking-dot-3 {
+  animation: thinking-dot 1.2s ease-in-out 0.4s infinite;
+  will-change: transform, opacity;
 }
 
 /* Shimmer (calisiyor durumu icin parlak yatay gecis) */
@@ -101,65 +164,54 @@
   animation: shimmer 1.8s linear infinite;
 }
 
-/* Pulse glow (aktif tool icin halo) */
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(var(--brand-accent-rgb, 255, 255, 255), 0.35);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(var(--brand-accent-rgb, 255, 255, 255), 0);
-  }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 1.6s ease-in-out infinite;
-}
-
 /* Spin (cark) */
 @keyframes spin-slow {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg) translateZ(0);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg) translateZ(0);
   }
 }
 .animate-spin-slow {
-  animation: spin-slow 2.4s linear infinite;
+  animation: spin-slow 2s linear infinite;
+  will-change: transform;
 }
 
 /* Tool tamamlandi icin kisa scale-pop */
 @keyframes scale-pop {
   0% {
-    transform: scale(0.85);
+    transform: scale(0.9) translateZ(0);
     opacity: 0;
   }
-  60% {
-    transform: scale(1.08);
+  70% {
+    transform: scale(1.05) translateZ(0);
     opacity: 1;
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) translateZ(0);
     opacity: 1;
   }
 }
 .animate-scale-pop {
-  animation: scale-pop 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: scale-pop 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Reflection card: yumusak fade-slide */
 @keyframes reflection-in {
   0% {
     opacity: 0;
-    transform: translateY(6px) scale(0.98);
+    transform: translateY(6px) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) translateZ(0);
   }
 }
 .animate-reflection-in {
-  animation: reflection-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: reflection-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Progress bar (calisiyor) */
@@ -199,273 +251,264 @@
   0%,
   60%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
     opacity: 0.4;
   }
   30% {
-    transform: translateY(-4px);
+    transform: translateY(-3px) translateZ(0);
     opacity: 1;
   }
 }
 .typing-dot {
   animation: typing-dot 1.2s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-/* Text shimmer — "Düşünüyor" yazısı için soldan sağa parıltı */
-@keyframes text-shimmer {
-  0% {
-    background-position: 200% 50%;
-  }
-  100% {
-    background-position: -200% 50%;
-  }
-}
-.animate-text-shimmer {
-  animation: text-shimmer 2.4s linear infinite;
-}
-
-/* Orb — minimal yumuşak nefes (çok hafif) */
-@keyframes orb-breathe {
-  0%,
-  100% {
-    opacity: 0.92;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-.animate-orb-breathe {
-  animation: orb-breathe 2.4s ease-in-out infinite;
-}
-
-/* Orb halo — etrafında dönen ışık efekti (Siri/ChatGPT tarzı) */
-@keyframes orb-halo {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.orb-halo {
-  position: absolute;
-  inset: -2px;
-  border-radius: 9999px;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(var(--brand-accent-rgb, 96, 165, 250), 0.6) 60deg,
-    transparent 120deg,
-    transparent 360deg
-  );
-  animation: orb-halo 2s linear infinite;
-  -webkit-mask:
-    radial-gradient(circle, transparent 60%, black 62%);
-  mask: radial-gradient(circle, transparent 60%, black 62%);
-}
-
-/* Yumuşak mesaj girişi — bir anda değil, kademeli */
+/* Yumuşak mesaj girişi */
 @keyframes message-in {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
-    filter: blur(4px);
-  }
-  50% {
-    filter: blur(2px);
+    transform: translateY(6px) translateZ(0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 .animate-message-in {
-  animation: message-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: message-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }
 
-/* Mesaj içerik tipping — soldan sağa "yazılıyor" hissi */
-@keyframes content-stream {
-  0% {
-    clip-path: inset(0 100% 0 0);
-    opacity: 0;
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-  }
-}
-.animate-content-stream {
-  animation: content-stream 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* ============================================================
-   Yeni Geçiş ve Açılış Animasyonları (Spring & Blur)
-   ============================================================ */
-
+/* Modal and Backdrop Transitions */
 @keyframes backdrop-in {
   from {
     opacity: 0;
-    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
-    backdrop-filter: blur(4px);
   }
 }
 
 @keyframes modal-in {
   from {
     opacity: 0;
-    transform: scale(0.94) translateY(12px);
+    transform: scale(0.96) translateY(8px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0) translateZ(0);
   }
 }
 
 @keyframes command-palette-in {
   from {
     opacity: 0;
-    transform: translateY(-20px) scale(0.97);
+    transform: translateY(-12px) scale(0.98) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) translateZ(0);
   }
 }
 
 .animate-backdrop-in {
-  animation: backdrop-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: backdrop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
 }
 
 .animate-modal-in {
-  animation: modal-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: modal-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .animate-command-palette-in {
-  animation: command-palette-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: command-palette-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Step transition inside forms */
 @keyframes step-in {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.99);
-    filter: blur(1.5px);
+    transform: translateY(6px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 .animate-step-in {
-  animation: step-in 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: step-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* System loading / fade-in stagger animations */
 @keyframes fade-in-down {
   from {
     opacity: 0;
-    transform: translateY(-16px);
+    transform: translateY(-10px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
 @keyframes fade-in-left {
   from {
     opacity: 0;
-    transform: translateX(-16px);
+    transform: translateX(-10px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
 }
 
 @keyframes fade-in-right {
   from {
     opacity: 0;
-    transform: translateX(16px);
+    transform: translateX(10px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) translateZ(0);
   }
 }
 
 .animate-fade-in-down {
-  animation: fade-in-down 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-down 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 .animate-fade-in-left {
-  animation: fade-in-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-left 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 .animate-fade-in-right {
-  animation: fade-in-right 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 .animate-stagger-1 {
-  animation-delay: 100ms;
+  animation-delay: 50ms;
 }
 
 .animate-stagger-2 {
-  animation-delay: 200ms;
+  animation-delay: 100ms;
 }
 
 .animate-stagger-3 {
-  animation-delay: 300ms;
+  animation-delay: 150ms;
 }
 
-/* Context Menu premium animation */
+/* Context Menu */
 @keyframes context-menu-in {
   from {
     opacity: 0;
-    transform: scale(0.94) translateY(-6px);
+    transform: scale(0.96) translateY(-4px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0) translateZ(0);
   }
 }
 
 .animate-context-menu-in {
-  animation: context-menu-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: context-menu-in 0.12s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Modal exit animations */
 @keyframes backdrop-out {
   from {
     opacity: 1;
-    backdrop-filter: blur(4px);
   }
   to {
     opacity: 0;
-    backdrop-filter: blur(0px);
   }
 }
 
 @keyframes modal-out {
   from {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0) translateZ(0);
   }
   to {
     opacity: 0;
-    transform: scale(0.95) translateY(12px);
+    transform: scale(0.96) translateY(8px) translateZ(0);
   }
 }
 
 .animate-backdrop-out {
-  animation: backdrop-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: backdrop-out 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
 }
 
 .animate-modal-out {
-  animation: modal-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: modal-out 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Tab entrance and exit */
+@keyframes tab-dock-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) translateZ(0);
+  }
+}
+
+@keyframes tab-dock-exit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1) translateZ(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95) translateZ(0);
+  }
+}
+
+.animate-tab-dock-enter {
+  animation: tab-dock-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-tab-dock-exit {
+  animation: tab-dock-exit 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Accordion smooth expansion */
+@keyframes accordion-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+.animate-accordion-open {
+  animation: accordion-open 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Reduced Motion Fallback for complete zero-lag on low-end hardware */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

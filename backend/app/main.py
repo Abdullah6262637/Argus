@@ -41,6 +41,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger("argus")
 
+_background_tasks: set = set()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -79,7 +81,9 @@ async def lifespan(app: FastAPI):
             except Exception as exc:  # pragma: no cover
                 logger.warning("Chromium auto-install hata: %s", exc)
 
-        _asyncio.create_task(_bg_install())
+        _task = _asyncio.create_task(_bg_install())
+        _background_tasks.add(_task)
+        _task.add_done_callback(_background_tasks.discard)
     except Exception as exc:  # pragma: no cover
         logger.warning("Chromium installer baslatilamadi: %s", exc)
 
@@ -121,7 +125,7 @@ def create_app() -> FastAPI:
     # yok zaten.
     app.add_middleware(
         CORSMiddleware,
-        allow_origin_regex=".*",
+        allow_origins=settings.cors_origins_list + ["null"],
         allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],

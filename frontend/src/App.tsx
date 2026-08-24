@@ -1,21 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, Suspense } from 'react';
 import { Header } from './components/Header';
 import { AgentList } from './components/AgentList';
 import { ChatWindow } from './components/ChatWindow';
 import { SystemPanel } from './components/SystemPanel';
 import { AgentForm } from './components/AgentForm';
 import { EmptyState } from './components/EmptyState';
-import { SettingsModal } from './components/SettingsModal';
 import { ConfirmDialog } from './components/ConfirmDialog';
-import { SetupWizard } from './components/SetupWizard';
 import { SplashScreen } from './components/SplashScreen';
 import { ResetScreen } from './components/ResetScreen';
 import { ApprovalDialog } from './components/ApprovalDialog';
-import { WorkflowsModal } from './components/WorkflowsModal';
-import { CommandPalette } from './components/CommandPalette';
-import { AgentInspectorModal } from './components/AgentInspectorModal';
-import { Icon } from './components/Icon';
-import { api } from './api/client';
+import { ConversationHistoryModal } from './components/ConversationHistoryModal';
+import KnowledgeGraphModal from './components/KnowledgeGraphModal';
+
 import { useAgents } from './hooks/useAgents';
 import { useChat } from './hooks/useChat';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -24,7 +20,20 @@ import { useAppearance } from './hooks/useAppearance';
 import { useApprovals } from './hooks/useApprovals';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useModal } from './context/ModalContext';
-import type { AgentCreate, WSMessage } from './types';
+import type { WSMessage } from './types';
+
+// The 4 new hooks
+import { useLayoutState } from './hooks/useLayoutState';
+import { useAgentActions } from './hooks/useAgentActions';
+import { useSystemSetup } from './hooks/useSystemSetup';
+import { useChatActions } from './hooks/useChatActions';
+
+// React.lazy components
+const SettingsModal = React.lazy(() => import('./components/SettingsModal'));
+const WorkflowsModal = React.lazy(() => import('./components/WorkflowsModal'));
+const CommandPalette = React.lazy(() => import('./components/CommandPalette'));
+const AgentInspectorModal = React.lazy(() => import('./components/AgentInspectorModal'));
+const SetupWizard = React.lazy(() => import('./components/SetupWizard'));
 
 export default function App() {
   const {
@@ -35,13 +44,15 @@ export default function App() {
     workflowsOpen,
     openWorkflows,
     closeWorkflows,
+    kgOpen,
+    kgAgentId,
+    closeKG,
     paletteOpen,
     setPaletteOpen,
     openPalette,
     closePalette,
     inspectorOpen,
     inspectorAgentId,
-    openInspector,
     closeInspector,
     formOpen,
     editingAgent,
@@ -56,68 +67,16 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [systemRefresh, setSystemRefresh] = useState(0);
 
-  const [formSubmitting, setFormSubmitting] = useState(false);
+  const {
+    agentListOpen,
+    systemPanelOpen,
+    toggleAgentList,
+    toggleSystemPanel,
+  } = useLayoutState();
 
-  const [agentListOpen, setAgentListOpen] = useState(() => {
-    try {
-      const saved = localStorage.getItem('argus_agent_list_open');
-      return saved !== 'false';
-    } catch {
-      return true;
-    }
-  });
-
-  const [systemPanelOpen, setSystemPanelOpen] = useState(() => {
-    try {
-      const saved = localStorage.getItem('argus_system_panel_open');
-      return saved !== 'false';
-    } catch {
-      return true;
-    }
-  });
-
-
-  const toggleAgentList = () => {
-    setAgentListOpen((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem('argus_agent_list_open', String(next));
-      } catch {}
-      return next;
-    });
-  };
-
-  const toggleSystemPanel = () => {
-    setSystemPanelOpen((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem('argus_system_panel_open', String(next));
-      } catch {}
-      return next;
-    });
-  };
   const { theme, setTheme } = useTheme();
   // Sprint E.6: density + font size
   const { setDensity, setFontSize } = useAppearance();
-
-  // Keyboard shortcuts moved to bottom to capture full state closures
-
-  // Akıllı Kurulum Sihirbazı Durumu
-  const [setupRequired, setSetupRequired] = useState<boolean | null>(null);
-  const [showSplash, setShowSplash] = useState(false);
-  const [showReset, setShowReset] = useState(false);
-  useEffect(() => {
-    api.getSetupStatus()
-      .then((status) => {
-        setSetupRequired(!status.initialized);
-      })
-      .catch(() => {
-        setSetupRequired(false);
-      });
-  }, []);
-
-  // Confirm state
-  const [typedText, setTypedText] = useState('');
 
   const selectedAgent = useMemo(
     () => agents.find((a) => a.id === selectedId) ?? null,
@@ -143,7 +102,7 @@ export default function App() {
       msg.type === 'tool_call_completed'
     ) {
       // SSE modunda zaten event tuketiliyor; REST modunda WS ile besle
-      chat.onToolEvent(msg);
+      chat.onToolEvent(msg as any);
     } else if (
       msg.type === 'approval_required' ||
       msg.type === 'approval_decided'
@@ -154,276 +113,71 @@ export default function App() {
 
   const ws = useWebSocket({ onMessage: handleWSMessage });
 
-  // --- Form ---
-  const openCreateForm = () => {
-    openForm(null);
-  };
+  const {
+    formSubmitting,
+    openCreateForm,
+    openEditForm,
+    handleSubmit,
+    handleDelete,
+    handleDuplicate,
+    handleExport,
+    handleToggleAgentActive,
+    handleTestConnection,
+  } = useAgentActions({
+    agents,
+    selectedId,
+    setSelectedId,
+    reload,
+    editingAgent,
+    openForm,
+    closeForm,
+    openConfirm,
+    closeConfirm,
+  });
 
-  const openEditForm = async (id: string) => {
-    try {
-      const detail = await api.getAgent(id);
-      openForm(detail);
-    } catch (err) {
-      openConfirm({
-        title: 'Hata',
-        message: 'Ajan detayi alinamadi.',
-        details: err instanceof Error ? err.message : String(err),
-        confirmLabel: 'Tamam',
-        hideCancel: true,
-        onConfirm: closeConfirm});
-    }
-  };
+  const {
+    setupRequired,
+    setSetupRequired,
+    showSplash,
+    setShowSplash,
+    showReset,
+    setShowReset,
+    deletedSize,
+    setDeletedSize,
+    typedText,
+    setTypedText,
+    handleRequestReset,
+  } = useSystemSetup({
+    closeSettings,
+    openConfirm,
+    closeConfirm,
+    reload,
+    setSelectedId,
+  });
 
-  const handleSubmit = async (payload: AgentCreate) => {
-    setFormSubmitting(true);
-    try {
-      if (editingAgent) {
-        await api.updateAgent(editingAgent.id, payload);
-      } else {
-        const created = await api.createAgent(payload);
-        setSelectedId(created.id);
-      }
-      await reload();
-      closeForm();
-    } finally {
-      setFormSubmitting(false);
-    }
-  };
+  const {
+    handleDeleteConversation,
+    handleExportChatMD,
+    handleClearConversations,
+    handleNewConversation,
+  } = useChatActions({
+    chat,
+    agents,
+    selectedId,
+    selectedAgent,
+    setSelectedId,
+    openConfirm,
+    closeConfirm,
+  });
 
-  // --- Ajan silme ---
-  const handleDelete = (id: string) => {
-    const agent = agents.find((a) => a.id === id);
-    if (!agent) return;
-    openConfirm({
-      title: 'Ajani sil',
-      message: (
-        <>
-          <strong className="text-brand-text">{agent.name}</strong> ajani
-          silinecek. Bu islem <strong className="text-brand-danger">geri alinamaz</strong>.
-        </>
-      ),
-      details: (
-        <div className="space-y-1">
-          <div>• Ajan listeden kaldirilir</div>
-          <div>• Baglı sohbet geçmişleri DB'de kalır (elle silinene kadar)</div>
-          <div>• agents.yaml dosyasindan kalici olarak silinir</div>
-        </div>
-      ),
-      variant: 'danger',
-      confirmLabel: 'Evet, Sil',
-      onConfirm: async () => {
-        try {
-          await api.deleteAgent(id);
-          if (selectedId === id) setSelectedId(null);
-          await reload();
-          closeConfirm();
-        } catch (err) {
-          closeConfirm();
-          openConfirm({
-            title: 'Silme basarisiz',
-            message: err instanceof Error ? err.message : String(err),
-            confirmLabel: 'Tamam',
-            onConfirm: closeConfirm});
-        }
-      }});
-  };
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [historyAgentId, setHistoryAgentId] = useState<string | null>(null);
 
-  const handleDuplicate = async (id: string) => {
-    try {
-      const copy = await api.duplicateAgent(id);
-      await reload();
-      setSelectedId(copy.id);
-    } catch (err) {
-      openConfirm({
-        title: 'Kopyalama basarisiz',
-        message: err instanceof Error ? err.message : String(err),
-        confirmLabel: 'Tamam',
-        onConfirm: closeConfirm});
-    }
-  };
-
-  const handleExport = async (id: string) => {
-    try {
-      const agent = agents.find((a) => a.id === id);
-      const data = await api.exportAgent(id, false);
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: 'application/json;charset=utf-8'});
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${agent?.id ?? id}.argus.json`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      openConfirm({
-        title: 'Disa aktarim basarisiz',
-        message: err instanceof Error ? err.message : String(err),
-        confirmLabel: 'Tamam',
-        onConfirm: closeConfirm});
-    }
-  };
-
-  const handleToggleAgentActive = async (id: string) => {
-    try {
-      const agent = agents.find((a) => a.id === id);
-      if (!agent) return;
-      await api.updateAgent(id, { is_active: !agent.is_active });
-      await reload();
-    } catch (err) {
-      openConfirm({
-        title: 'Guncelleme basarisiz',
-        message: err instanceof Error ? err.message : String(err),
-        confirmLabel: 'Tamam',
-        onConfirm: closeConfirm
-      });
-    }
-  };
-
-  const handleDeleteConversation = () => {
-    openConfirm({
-      title: 'Sohbeti Temizle',
-      message: 'Mevcut sohbet gecmisinizi temizlemek istediginizden emin misiniz? Bu islem geri alinamaz.',
-      confirmLabel: 'Evet, Temizle',
-      variant: 'danger',
-      onConfirm: () => {
-        chat.newConversation();
-        closeConfirm();
-      }
-    });
-  };
-
-  const handleExportChatMD = (id?: string) => {
-    const targetId = id || selectedId;
-    const targetAgent = agents.find((a) => a.id === targetId) || selectedAgent;
-    if (!targetAgent || chat.messages.length === 0) return;
-    let md = `# Sohbet Gecmisi — ${targetAgent.name} (${targetAgent.role || 'Uzman'})\n`;
-    md += `Tarih: ${new Date().toLocaleDateString('tr-TR')}\n\n`;
-    
-    chat.messages.forEach((msg) => {
-      const roleName = msg.role === 'user' ? 'Kullanici' : targetAgent.name;
-      md += `### 👤 ${roleName}\n\n${msg.content}\n\n`;
-      if (msg.tokens || msg.model) {
-        md += `*Metadata: ${msg.model ? `Model: ${msg.model}` : ''} ${msg.tokens ? `| Token: ${msg.tokens}` : ''}*\n\n`;
-      }
-      md += `---\n\n`;
-    });
-    
-    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Sohbet-${targetAgent.name}-${new Date().toISOString().slice(0, 10)}.md`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleTestConnection = async (id: string) => {
-    try {
-      openConfirm({
-        title: 'Bağlantı Test Ediliyor',
-        message: (
-          <div className="flex items-center gap-3 py-1">
-            <Icon name="progress_activity" size={16} className="animate-spin-slow text-brand-accent flex-shrink-0" />
-            <span>Ajan için LLM bağlantısı test ediliyor. Lütfen bekleyin...</span>
-          </div>
-        ),
-        confirmLabel: 'Kapat',
-        hideCancel: true,
-        onConfirm: closeConfirm
-      });
-      const detail = await api.getAgent(id);
-      const res = await api.testAgentConnection({
-        provider: detail.provider as any,
-        model: detail.model,
-        agent_id: id
-      });
-      if (res.ok) {
-        openConfirm({
-          title: 'Baglanti Basarili ✅',
-          message: `${detail.name} ajani, ${detail.provider} (${detail.model}) modeline basariyla baglandi. Gecikme: ${res.latency_ms || 120}ms.`,
-          confirmLabel: 'Tamam',
-          onConfirm: closeConfirm
-        });
-      } else {
-        openConfirm({
-          title: 'Baglanti Basarisiz ❌',
-          message: `${detail.name} baglanti testi basarisiz oldu: ${res.message || 'Bilinmeyen hata'}`,
-          confirmLabel: 'Tamam',
-          onConfirm: closeConfirm
-        });
-      }
-    } catch (err) {
-      openConfirm({
-        title: 'Baglanti Basarisiz ❌',
-        message: err instanceof Error ? err.message : String(err),
-        confirmLabel: 'Tamam',
-        onConfirm: closeConfirm
-      });
-    }
-  };
-
-  const handleClearConversations = (id: string) => {
-    setSelectedId(id);
-    openConfirm({
-      title: 'Sohbeti Temizle',
-      message: 'Bu ajanin mevcut sohbet oturumunu temizlemek istediginizden emin misiniz? Bu islem geri alinamaz.',
-      confirmLabel: 'Evet, Temizle',
-      variant: 'danger',
-      onConfirm: () => {
-        chat.newConversation();
-        closeConfirm();
-      }
-    });
-  };
-
-  const handleNewConversation = (id: string) => {
-    setSelectedId(id);
-    chat.newConversation();
-  };
-
-  const handleRequestReset = () => {
-    closeSettings();
-    openConfirm({
-      title: 'Sistemi sifirla',
-      message: (
-        <>
-          <strong className="text-brand-danger">Dikkat:</strong> Bu islem tum ajanlari,
-          sohbetleri, zamanlanmis gorevleri ve loglari <strong>kalici olarak</strong>{' '}
-          silecek ve kurulum sihirbazini yeniden acacak.
-        </>
-      ),
-      details: (
-        <div className="space-y-1">
-          <div>• Silinecek: tum ajanlar, tum mesajlar, tum gorevler, tum loglar</div>
-          <div>• Geri alinamaz</div>
-          <div>• Ayarlar (tema) korunur</div>
-        </div>
-      ),
-      variant: 'danger',
-      confirmLabel: 'Evet, SIFIRLA',
-      requireTypeText: 'SIFIRLA',
-      onConfirm: async () => {
-        closeConfirm();
-        setShowReset(true); // Show animated reset screen
-        try {
-          const res = await api.resetSystem();
-          setDeletedSize(res.deleted_size_mb);
-          await reload();
-          setSelectedId(null);
-        } catch (err) {
-          setShowReset(false);
-          openConfirm({
-            title: 'Sifirlama basarisiz',
-            message: err instanceof Error ? err.message : String(err),
-            confirmLabel: 'Tamam',
-            onConfirm: closeConfirm});
-        }
-      }});
-  };
+  const handleShowHistory = useCallback((agentId: string) => {
+    setSelectedId(agentId);
+    setHistoryAgentId(agentId);
+    setHistoryModalOpen(true);
+  }, [setSelectedId]);
 
   useKeyboardShortcuts({
     togglePalette: () => setPaletteOpen((v) => !v),
@@ -457,11 +211,9 @@ export default function App() {
         openEditForm(agents[idx].id);
       }
     }
-  }, [agents, selectedAgent, chat, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize, openSettings, openWorkflows]);
+  }, [agents, selectedAgent, chat.newConversation, reload, openCreateForm, openEditForm, setTheme, setDensity, setFontSize, openSettings, openWorkflows]);
 
   const hasAgents = agents.length > 0;
-
-  const [deletedSize, setDeletedSize] = useState<number | null>(null);
 
   // --- Akıllı Kurulum Sihirbazı ---
   // Reset screen overlay
@@ -491,15 +243,17 @@ export default function App() {
 
   if (setupRequired === true) {
     return (
-      <SetupWizard
-        theme={theme}
-        onChangeTheme={setTheme}
-        onFinished={() => {
-          setSetupRequired(false);
-          reload();
-          setShowSplash(true); // Show splash after setup completes
-        }}
-      />
+      <Suspense fallback={null}>
+        <SetupWizard
+          theme={theme}
+          onChangeTheme={setTheme}
+          onFinished={() => {
+            setSetupRequired(false);
+            reload();
+            setShowSplash(true); // Show splash after setup completes
+          }}
+        />
+      </Suspense>
     );
   }
 
@@ -533,10 +287,10 @@ export default function App() {
             isOpen={agentListOpen}
             onToggle={toggleAgentList}
             onToggleActive={handleToggleAgentActive}
-            onInspect={openInspector}
             onTestConnection={handleTestConnection}
             onClearConversations={handleClearConversations}
             onExportChatMD={handleExportChatMD}
+            onShowHistory={handleShowHistory}
           />
           <ChatWindow
             agent={selectedAgent}
@@ -572,44 +326,55 @@ export default function App() {
       />
 
       {/* Sprint A: Workflow Modal (Header'dan kolay erisim) */}
-      <WorkflowsModal
-        open={workflowsOpen}
-        onClose={closeWorkflows}
+      <Suspense fallback={null}>
+        <WorkflowsModal
+          open={workflowsOpen}
+          onClose={closeWorkflows}
+        />
+      </Suspense>
+
+      {/* Knowledge Graph Modal — Tüm Ekranı Kaplayan Üst Düzey Modal */}
+      <KnowledgeGraphModal
+        open={kgOpen}
+        onClose={closeKG}
+        agentId={kgAgentId || selectedId}
       />
 
       {/* Sprint E.7: Komut Paleti (Ctrl+K) */}
-      <CommandPalette
-        open={paletteOpen}
-        onClose={closePalette}
-        agents={agents}
-        onSelectAgent={setSelectedId}
-        onCreateAgent={openCreateForm}
-        onNewConversation={() => chat.newConversation()}
-        onOpenSettings={openSettings}
-        onOpenWorkflows={openWorkflows}
-        onReloadAgents={reload}
-        onChangeTheme={setTheme}
-        onChangeDensity={setDensity}
-        onChangeFontSize={setFontSize}
-        onEditAgent={(id) => {
-          openEditForm(id);
-        }}
-        onExportChat={() => {
-          if (selectedAgent) {
-            handleExport(selectedAgent.id);
-          }
-        }}
-        onDeleteAgent={handleDelete}
-        onDuplicateAgent={handleDuplicate}
-        onToggleAgentActive={handleToggleAgentActive}
-        onExportAgentConfig={handleExport}
-        onDeleteConversation={handleDeleteConversation}
-        onToggleSystemPanel={toggleSystemPanel}
-        onExportChatMD={handleExportChatMD}
-        onShowShortcuts={() => {
-          openSettings('about');
-        }}
-      />
+      <Suspense fallback={null}>
+        <CommandPalette
+          open={paletteOpen}
+          onClose={closePalette}
+          agents={agents}
+          onSelectAgent={setSelectedId}
+          onCreateAgent={openCreateForm}
+          onNewConversation={() => chat.newConversation()}
+          onOpenSettings={openSettings}
+          onOpenWorkflows={openWorkflows}
+          onReloadAgents={reload}
+          onChangeTheme={setTheme}
+          onChangeDensity={setDensity}
+          onChangeFontSize={setFontSize}
+          onEditAgent={(id) => {
+            openEditForm(id);
+          }}
+          onExportChat={() => {
+            if (selectedAgent) {
+              handleExport(selectedAgent.id);
+            }
+          }}
+          onDeleteAgent={handleDelete}
+          onDuplicateAgent={handleDuplicate}
+          onToggleAgentActive={handleToggleAgentActive}
+          onExportAgentConfig={handleExport}
+          onDeleteConversation={handleDeleteConversation}
+          onToggleSystemPanel={toggleSystemPanel}
+          onExportChatMD={handleExportChatMD}
+          onShowShortcuts={() => {
+            openSettings('about');
+          }}
+        />
+      </Suspense>
 
       {formOpen && (
         <AgentForm
@@ -621,25 +386,29 @@ export default function App() {
       )}
 
       {settingsOpen && (
-        <SettingsModal
-          theme={theme}
-          onChangeTheme={setTheme}
-          onClose={closeSettings}
-          onRequestReset={handleRequestReset}
-          initialTab={settingsTab}
-          onEditAgent={openEditForm}
-          onDeleteAgent={handleDelete}
-          onDuplicateAgent={handleDuplicate}
-          onReloadAgents={reload}
-        />
+        <Suspense fallback={null}>
+          <SettingsModal
+            theme={theme}
+            onChangeTheme={setTheme}
+            onClose={closeSettings}
+            onRequestReset={handleRequestReset}
+            initialTab={settingsTab}
+            onEditAgent={openEditForm}
+            onDeleteAgent={handleDelete}
+            onDuplicateAgent={handleDuplicate}
+            onReloadAgents={reload}
+          />
+        </Suspense>
       )}
 
-      <AgentInspectorModal
-        open={inspectorOpen}
-        onClose={closeInspector}
-        agentId={inspectorAgentId}
-        agents={agents}
-      />
+      <Suspense fallback={null}>
+        <AgentInspectorModal
+          open={inspectorOpen}
+          onClose={closeInspector}
+          agentId={inspectorAgentId}
+          agents={agents}
+        />
+      </Suspense>
 
       {confirmState && (
         <ConfirmDialog
@@ -660,6 +429,19 @@ export default function App() {
           hideCancel={confirmState.hideCancel}
         />
       )}
+
+      <ConversationHistoryModal
+        open={historyModalOpen}
+        onClose={() => setHistoryModalOpen(false)}
+        agent={agents.find((a) => a.id === historyAgentId) || selectedAgent}
+        currentConversationId={chat.conversationId}
+        onSelectConversation={(convId) => {
+          chat.loadConversation(convId);
+        }}
+        onNewConversation={() => {
+          chat.newConversation();
+        }}
+      />
     </div>
   );
 }

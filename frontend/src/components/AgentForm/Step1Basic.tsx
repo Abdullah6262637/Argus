@@ -105,10 +105,11 @@ export function Step1Basic({
               <button
                 type="button"
                 onClick={onClearTemplate}
-                className="text-[10px] text-brand-danger hover:underline inline-flex items-center gap-0.5"
+                className="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-brand-danger/90 hover:text-brand-danger bg-brand-danger/10 hover:bg-brand-danger/20 active:scale-95 transition-all duration-200 inline-flex items-center gap-1.5"
+                title="Şablon seçimini sıfırla"
               >
-                <Icon name="cancel" size={12} />
-                Şablonu İptal Et
+                <Icon name="close" size={13} weight={600} />
+                <span>Şablonu İptal Et</span>
               </button>
             )}
           </div>
@@ -128,10 +129,10 @@ export function Step1Basic({
                   key={tpl.id}
                   type="button"
                   onClick={() => onApplyTemplate(tpl)}
-                  className={`p-3.5 text-left text-xs rounded-xl border flex items-start gap-3 transition-all duration-300 active:scale-[0.97] shadow-sm ${
+                  className={`p-3.5 text-left text-xs rounded-xl flex items-start gap-3 transition-all duration-300 active:scale-[0.97] ${
                     isSelected
-                      ? 'border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/15'
-                      : 'border-brand-border bg-brand-panelAlt/30 hover:border-brand-borderStrong hover:bg-brand-panelAlt/50'
+                      ? 'bg-brand-accent/15'
+                      : 'bg-brand-panelAlt/60 hover:bg-brand-panelAlt'
                   }`}
                 >
                   <Icon
@@ -163,15 +164,15 @@ export function Step1Basic({
       )}
 
       <div className="space-y-3">
-        <Field label="Ajan Adi *" icon="smart_toy">
+        <Field label="Ajan Adı *" icon="smart_toy">
           <input
             type="text"
             required
             disabled={isEditing}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="orn. Kodcu Asistan"
-            className={`${inputCls} ${isEditing ? 'opacity-65 cursor-not-allowed bg-brand-panelAlt/35 border-brand-border' : ''}`}
+            placeholder="örn. Kodcu Asistan"
+            className={`${inputCls} ${isEditing ? 'opacity-65 cursor-not-allowed bg-brand-panelAlt/35' : ''}`}
           />
           {isEditing && (
             <span className="text-[10px] text-brand-mutedSoft block mt-1">

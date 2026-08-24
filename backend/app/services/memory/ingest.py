@@ -12,58 +12,77 @@ from app.services.memory.vector_store import vector_store
 logger = logging.getLogger(__name__)
 
 
-def chunk_text(
-    text: str,
-    *,
-    chunk_size: int = 800,
-    overlap: int = 120,
-) -> List[str]:
-    """Metni paragraf-aware overlap'li chunk'lara boler."""
-    if not text:
+def chunk_text(text: str, chunk_size: int = 800, overlap: int = 100) -> List[str]:
+    """Metni anlamsal sinirlara gore parcalar.
+    
+    Markdown basliklar, paragraf sinirlari ve kod bloklari
+    dogal bolunme noktalari olarak kullanilir.
+    """
+    if not text or not text.strip():
         return []
-    text = text.strip()
-    if len(text) <= chunk_size:
-        return [text]
-
-    # Once paragraflara bol
-    paragraphs = re.split(r"\n\s*\n", text)
-    chunks: List[str] = []
+    
+    # 1. Dogal sinirlarda bol
+    segments = _split_by_boundaries(text)
+    
+    # 2. Buyuk segmentleri chunk_size'a gore parcala
+    chunks = []
     current = ""
-    for p in paragraphs:
-        p = p.strip()
-        if not p:
-            continue
-        if len(current) + len(p) + 2 <= chunk_size:
-            current = (current + "\n\n" + p) if current else p
+    for seg in segments:
+        if len(current) + len(seg) <= chunk_size:
+            current += seg
         else:
-            if current:
-                chunks.append(current)
-            # Tek paragraf bile cok buyukse cumle bazli bol
-            if len(p) > chunk_size:
-                sentences = re.split(r"(?<=[.!?])\s+", p)
-                buf = ""
-                for s in sentences:
-                    if len(buf) + len(s) + 1 <= chunk_size:
-                        buf = (buf + " " + s) if buf else s
-                    else:
-                        if buf:
-                            chunks.append(buf)
-                        buf = s
-                current = buf
+            if current.strip():
+                chunks.append(current.strip())
+            if len(seg) > chunk_size:
+                # Cok buyuk segment - karakter bazli bol
+                for i in range(0, len(seg), chunk_size - overlap):
+                    part = seg[i:i + chunk_size]
+                    if part.strip():
+                        chunks.append(part.strip())
+                current = ""
             else:
-                current = p
-    if current:
-        chunks.append(current)
-
-    # Overlap ekle
+                current = seg
+    if current.strip():
+        chunks.append(current.strip())
+    
+    # 3. Overlap ekle
     if overlap > 0 and len(chunks) > 1:
-        overlapped: List[str] = [chunks[0]]
+        overlapped = [chunks[0]]
         for i in range(1, len(chunks)):
-            prev_tail = chunks[i - 1][-overlap:]
-            overlapped.append(prev_tail + "\n" + chunks[i])
+            prev_tail = chunks[i-1][-overlap:] if len(chunks[i-1]) > overlap else ""
+            overlapped.append(prev_tail + chunks[i])
         chunks = overlapped
-
+    
     return chunks
+
+
+def _split_by_boundaries(text: str) -> List[str]:
+    """Metni dogal sinirlara gore parcalar."""
+    import re
+    # Markdown basliklar, paragraf sinirlari ve kod bloklari
+    parts = []
+    # Kod bloklarini koru
+    code_pattern = re.compile(r'(```[\s\S]*?```)', re.MULTILINE)
+    last_end = 0
+    for m in code_pattern.finditer(text):
+        before = text[last_end:m.start()]
+        if before:
+            parts.extend(_split_prose(before))
+        parts.append(m.group(0))  # Kod bloku parcalanmaz
+        last_end = m.end()
+    remaining = text[last_end:]
+    if remaining:
+        parts.extend(_split_prose(remaining))
+    return parts
+
+
+def _split_prose(text: str) -> List[str]:
+    """Duz metni paragraf ve baslik sinirlarinda parcalar."""
+    import re
+    # Markdown basliklari ve cift satir sonu
+    pattern = re.compile(r'(?=^#{1,4} |\n\n)', re.MULTILINE)
+    segments = pattern.split(text)
+    return [s for s in segments if s and s.strip()]
 
 
 async def ingest_text(

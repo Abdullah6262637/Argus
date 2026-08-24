@@ -10,7 +10,7 @@ interface AgentInspectorModalProps {
   agents: AgentInfo[];
 }
 
-export function AgentInspectorModal({
+export default function AgentInspectorModal({
   open,
   onClose,
   agentId,

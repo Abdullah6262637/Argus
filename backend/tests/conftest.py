@@ -1,54 +1,41 @@
-"""Pytest fixtures - common test utilities."""
-from __future__ import annotations
-
-import os
-import sys
-import tempfile
-from pathlib import Path
-from typing import AsyncIterator, Iterator
-
 import pytest
-import pytest_asyncio
+from typing import AsyncGenerator
+from unittest.mock import AsyncMock
 
-# Backend root'u sys.path'e ekle (testler her yerden calisabilsin)
-BACKEND_DIR = Path(__file__).resolve().parent.parent
-if str(BACKEND_DIR) not in sys.path:
-    sys.path.insert(0, str(BACKEND_DIR))
+from fastapi.testclient import TestClient
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
-# Test izole DB: workspace dizininden bagimsiz, tempdir altina yaz
-_TEST_DB_DIR = Path(tempfile.gettempdir()) / "umtalagent-test-data"
-_TEST_DB_DIR.mkdir(parents=True, exist_ok=True)
-_TEST_DB_PATH = _TEST_DB_DIR / "test.db"
-os.environ.setdefault(
-    "DATABASE_URL",
-    f"sqlite+aiosqlite:///{_TEST_DB_PATH.as_posix()}",
-)
+from app.main import app
+from app.database import Base
 
+@pytest.fixture
+async def test_db() -> AsyncGenerator[AsyncSession, None]:
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
+    SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    async with SessionLocal() as session:
+        yield session
 
-@pytest_asyncio.fixture(autouse=True)
-async def init_test_db() -> None:
-    from app.database import init_db
-    await init_db()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+    
+    await engine.dispose()
 
+from httpx import AsyncClient, ASGITransport
 
-@pytest.fixture(scope="session")
-def temp_data_dir() -> Iterator[Path]:
-    """Test sirasinda kullanilacak izole veri klasoru."""
-    with tempfile.TemporaryDirectory(prefix="umtalagent-test-") as td:
-        path = Path(td)
-        os.environ["UMTAL_TEST_DATA_DIR"] = str(path)
-        yield path
+@pytest.fixture
+async def app_client() -> AsyncGenerator[AsyncClient, None]:
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://localhost:8000"
+    ) as client:
+        yield client
 
-
-@pytest_asyncio.fixture
-async def app_client() -> AsyncIterator["AsyncClient"]:  # type: ignore[name-defined]
-    """FastAPI app icin httpx AsyncClient."""
-    from httpx import ASGITransport, AsyncClient
-    from asgi_lifespan import LifespanManager
-
-    from app.main import app
-
-    async with LifespanManager(app):
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as client:
-            yield client
+@pytest.fixture
+def mock_llm_provider():
+    mock = AsyncMock()
+    mock.generate_response.return_value = "Mocked LLM Response"
+    return mock

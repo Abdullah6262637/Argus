@@ -388,3 +388,113 @@ class BlackboardGetTool(BaseTool):
             output=f"Blackboard['{key}'] = {value}",
             data={"key": key, "value": value}
         )
+class StartDebateTool(BaseTool):
+    name = "start_debate"
+    description = (
+        "Bir konu hakkinda baska bir ajanla (orn. Mimar veya Elestirmen) tartisma (debate) baslatir. "
+        "Bu arac hedefe konuyu iletir ve onun perspektifini alir."
+    )
+    permission = "none"
+    parameters = {
+        "type": "object",
+        "properties": {
+            "target_agent_id": {"type": "string", "description": "Tartismaya davet edilecek ajanin id'si."},
+            "topic": {"type": "string", "description": "Tartisma konusu veya savin (arguman)."}
+        },
+        "required": ["target_agent_id", "topic"]
+    }
+
+    async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        target_id = (args.get("target_agent_id") or "").strip()
+        topic = (args.get("topic") or "").strip()
+
+        if not target_id:
+            return ToolResult(ok=False, error="target_agent_id gerekli")
+        if target_id == context.agent_id:
+            return ToolResult(ok=False, error="Kendinle tartisamazsin")
+
+        chain: List[str] = list(context.extra.get("delegation_chain", []) or [])
+        if target_id in chain:
+            return ToolResult(ok=False, error=f"Dongu (Cycle) engellendi: {' -> '.join(chain + [target_id])}")
+
+        prompt = (
+            f"[TARTISMA DAVETI]: {context.agent_name} seni su konuda tartismaya davet ediyor:\n\n"
+            f"{topic}\n\n"
+            f"Lutfen bu savi kendi uzmanlik perspektifinden degerlendir, gerekiyorsa karsi arguman uret."
+        )
+        
+        # Yeniden DelegateToAgentTool cagirarak kodu tekrar kullanabiliriz.
+        delegate_tool = DelegateToAgentTool()
+        return await delegate_tool.execute(
+            {"agent_id": target_id, "prompt": prompt, "max_steps": 4},
+            context
+        )
+
+
+class RequestBrainstormTool(BaseTool):
+    name = "request_brainstorm"
+    description = "Fikir Uzmani ajandan (veya baska bir ajandan) bir konu hakkinda alternatif fikirler uretmesini ister."
+    permission = "none"
+    parameters = {
+        "type": "object",
+        "properties": {
+            "problem_statement": {"type": "string", "description": "Cozum aranan problem veya beyin firtinasi konusu."}
+        },
+        "required": ["problem_statement"]
+    }
+
+    async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        problem = (args.get("problem_statement") or "").strip()
+        if not problem:
+            return ToolResult(ok=False, error="problem_statement gerekli")
+
+        target_id = "fikir-uzmani"
+        if context.agent_id == target_id:
+            return ToolResult(ok=False, error="Sen zaten Fikir Uzmanisin, kendi icinde dusun.")
+
+        prompt = (
+            f"[BEYIN FIRTINASI TALEBI]: Su problem icin en az 3 farkli, yenilikci alternatif cozum uret, "
+            f"avantaj ve dezavantajlarini listele:\n\n{problem}"
+        )
+
+        delegate_tool = DelegateToAgentTool()
+        return await delegate_tool.execute(
+            {"agent_id": target_id, "prompt": prompt, "max_steps": 4},
+            context
+        )
+
+
+class ProposeCompromiseTool(BaseTool):
+    name = "propose_compromise"
+    description = (
+        "Ajanlar arasi tartismalarda anlasmaya varilan ortak karari resmilestirir ve "
+        "Shared Blackboard'a kaydeder."
+    )
+    permission = "none"
+    parameters = {
+        "type": "object",
+        "properties": {
+            "topic_key": {"type": "string", "description": "Kararin kaydedilecegi anahtar (orn. 'db_architecture')."},
+            "agreed_solution": {"type": "string", "description": "Uzlasilan cozumun detaylari."}
+        },
+        "required": ["topic_key", "agreed_solution"]
+    }
+
+    async def execute(self, args: Dict[str, Any], context: ToolContext) -> ToolResult:
+        key = (args.get("topic_key") or "").strip()
+        solution = (args.get("agreed_solution") or "").strip()
+
+        if not key or not solution:
+            return ToolResult(ok=False, error="Eksik parametreler")
+
+        # BlackboardSetTool'u cagir
+        bb_tool = BlackboardSetTool()
+        res = await bb_tool.execute({"key": f"uzlasma_{key}", "value": solution}, context)
+        
+        if res.ok:
+            return ToolResult(
+                ok=True,
+                output=f"UZLASMA KABUL EDILDI. Blackboard'a kaydedildi: uzlasma_{key}. Detaylar: {solution}",
+                data=res.data
+            )
+        return res

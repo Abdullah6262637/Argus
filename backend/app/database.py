@@ -24,6 +24,7 @@ engine = create_async_engine(
     _settings.database_url,
     echo=False,
     future=True,
+    connect_args={"timeout": 30} if "sqlite" in _settings.database_url else {},
 )
 
 from sqlalchemy import event
@@ -33,8 +34,12 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     import sqlite3
     if isinstance(dbapi_connection, sqlite3.Connection):
         cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA busy_timeout=30000")
         cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.execute("PRAGMA cache_size=-64000")  # 64MB RAM cache
+        cursor.execute("PRAGMA mmap_size=268435456")  # 256MB Memory-Mapped I/O
+        cursor.execute("PRAGMA temp_store=MEMORY")  # In-memory temporary tables
         cursor.close()
 
 AsyncSessionLocal = async_sessionmaker(
@@ -56,6 +61,7 @@ async def init_db() -> None:
         plan,
         approval,
         audit,
+        dream,
     )
 
     async with engine.begin() as conn:

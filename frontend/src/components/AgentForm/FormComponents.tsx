@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Icon } from '../Icon';
 
 export const inputCls =
-  'w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent transition';
+  'w-full bg-brand-bg/90 hover:bg-brand-bg focus:bg-brand-bg rounded-xl px-3.5 py-2.5 text-sm text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:ring-1 focus:ring-brand-accent/40 transition-all duration-200';
 
 export function StepHeading({ title, desc }: { title: string; desc: string }) {
   return (
@@ -80,7 +80,7 @@ export function CustomSelect<T extends string>({
           e.stopPropagation();
           if (!disabled) setIsOpen(!isOpen);
         }}
-        className="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text focus:outline-none focus:border-brand-accent transition flex items-center justify-between text-left disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-brand-bg/90 hover:bg-brand-bg rounded-xl px-3.5 py-2.5 text-sm text-brand-text focus:outline-none transition-all duration-200 flex items-center justify-between text-left disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
         <span className="truncate">{selectedOpt ? selectedOpt.label : placeholder}</span>
         <Icon
@@ -93,7 +93,7 @@ export function CustomSelect<T extends string>({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 mt-1 z-[80] bg-brand-panel border border-brand-borderStrong rounded-md shadow-xl max-h-60 overflow-y-auto py-1 animate-command-palette-in">
+        <div className="absolute left-0 right-0 mt-1.5 z-[80] bg-brand-panelAlt rounded-xl shadow-2xl max-h-60 overflow-y-auto py-1.5 animate-command-palette-in">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -104,10 +104,10 @@ export function CustomSelect<T extends string>({
                 setIsOpen(false);
                 onChange(opt.value);
               }}
-              className={`w-full px-3 py-2 text-left text-sm transition flex items-center justify-between ${
+              className={`w-full px-3.5 py-2 text-left text-sm transition flex items-center justify-between ${
                 value === opt.value
-                  ? 'bg-brand-accent/15 text-brand-accent font-semibold'
-                  : 'text-brand-textSoft hover:bg-brand-panelAlt hover:text-brand-text'
+                  ? 'bg-brand-accent/20 text-brand-accent font-semibold'
+                  : 'text-brand-textSoft hover:bg-brand-panel hover:text-brand-text'
               }`}
             >
               <span className="truncate">{opt.label}</span>
@@ -171,7 +171,7 @@ export function SearchableCustomSelect<T extends string>({
           e.stopPropagation();
           if (!disabled) setIsOpen(!isOpen);
         }}
-        className="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-sm text-brand-text focus:outline-none focus:border-brand-accent transition flex items-center justify-between text-left disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full bg-brand-bg/90 hover:bg-brand-bg rounded-xl px-3.5 py-2.5 text-sm text-brand-text focus:outline-none transition-all duration-200 flex items-center justify-between text-left disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
       >
         <span className="truncate">{selectedOpt ? selectedOpt.label : (value || placeholder)}</span>
         <Icon
@@ -184,8 +184,8 @@ export function SearchableCustomSelect<T extends string>({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 mt-1 z-[80] bg-brand-panel border border-brand-borderStrong rounded-md shadow-xl max-h-64 overflow-y-auto py-1 flex flex-col animate-command-palette-in">
-          <div className="px-2 py-1.5 border-b border-brand-border flex items-center gap-1.5 sticky top-0 bg-brand-panel z-10">
+        <div className="absolute left-0 right-0 mt-1.5 z-[80] bg-brand-panelAlt rounded-xl shadow-2xl max-h-64 overflow-y-auto py-1.5 flex flex-col animate-command-palette-in">
+          <div className="px-3 py-2 flex items-center gap-1.5 sticky top-0 bg-brand-panelAlt z-10">
             <Icon name="search" size={14} className="text-brand-mutedSoft flex-shrink-0" />
             <input
               type="text"
@@ -211,10 +211,10 @@ export function SearchableCustomSelect<T extends string>({
                   setIsOpen(false);
                   onChange(opt.value);
                 }}
-                className={`w-full px-3 py-2 text-left text-sm transition flex items-center justify-between ${
+                className={`w-full px-3.5 py-2 text-left text-sm transition flex items-center justify-between ${
                   value === opt.value
-                    ? 'bg-brand-accent/15 text-brand-accent font-semibold'
-                    : 'text-brand-textSoft hover:bg-brand-panelAlt hover:text-brand-text'
+                    ? 'bg-brand-accent/20 text-brand-accent font-semibold'
+                    : 'text-brand-textSoft hover:bg-brand-panel hover:text-brand-text'
                 }`}
               >
                 <span className="truncate">{opt.label}</span>
@@ -231,7 +231,7 @@ export function SearchableCustomSelect<T extends string>({
                   onCustomAdd(search.trim());
                   setIsOpen(false);
                 }}
-                className="w-full px-3 py-2 text-left text-xs text-brand-accent hover:bg-brand-panelAlt transition flex items-center gap-2 font-medium"
+                className="w-full px-3.5 py-2 text-left text-xs text-brand-accent hover:bg-brand-panel transition flex items-center gap-2 font-medium"
               >
                 <Icon name="add" size={12} />
                 <span className="truncate">"{search.trim()}" modelini kullan</span>
@@ -247,5 +247,67 @@ export function SearchableCustomSelect<T extends string>({
         </div>
       )}
     </div>
+  );
+}
+
+export function Checkbox({
+  checked,
+  onChange,
+  label,
+  description,
+  id,
+  disabled = false
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+  id?: string;
+  disabled?: boolean;
+}) {
+  return (
+    <label
+      htmlFor={id}
+      className={`inline-flex items-center gap-2.5 select-none cursor-pointer group ${
+        disabled ? 'opacity-40 cursor-not-allowed' : ''
+      }`}
+    >
+      <div className="relative flex items-center justify-center flex-shrink-0">
+        <input
+          type="checkbox"
+          id={id}
+          checked={checked}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked)}
+          className="sr-only peer"
+        />
+        <div
+          className={`w-4 h-4 rounded-md transition-all duration-200 flex items-center justify-center ${
+            checked
+              ? 'bg-brand-accent text-brand-bg shadow-sm shadow-brand-accent/20 scale-100'
+              : 'bg-brand-bg/90 border border-brand-border/60 group-hover:border-brand-accent/50 group-hover:bg-brand-bg'
+          }`}
+        >
+          {checked && (
+            <svg
+              className="w-3 h-3 stroke-current animate-step-in"
+              viewBox="0 0 12 10"
+              fill="none"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="1.5 5 4.5 8 10.5 1.5" />
+            </svg>
+          )}
+        </div>
+      </div>
+      {(label || description) && (
+        <div className="flex flex-col">
+          {label && <span className="text-xs font-medium text-brand-text group-hover:text-brand-textSoft transition-colors">{label}</span>}
+          {description && <span className="text-[11px] text-brand-mutedSoft leading-tight">{description}</span>}
+        </div>
+      )}
+    </label>
   );
 }

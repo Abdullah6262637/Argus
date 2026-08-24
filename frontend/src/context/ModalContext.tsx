@@ -25,6 +25,11 @@ interface ModalContextType {
   openWorkflows: () => void;
   closeWorkflows: () => void;
 
+  kgOpen: boolean;
+  kgAgentId: string | null;
+  openKG: (agentId?: string) => void;
+  closeKG: () => void;
+
   paletteOpen: boolean;
   setPaletteOpen: React.Dispatch<React.SetStateAction<boolean>>;
   openPalette: () => void;
@@ -52,6 +57,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [settingsTab, setSettingsTab] = useState<SettingsTabId>('agents');
 
   const [workflowsOpen, setWorkflowsOpen] = useState(false);
+  const [kgOpen, setKgOpen] = useState(false);
+  const [kgAgentId, setKgAgentId] = useState<string | null>(null);
+
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   const [inspectorOpen, setInspectorOpen] = useState(false);
@@ -77,6 +85,16 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   const openWorkflows = useCallback(() => setWorkflowsOpen(true), []);
   const closeWorkflows = useCallback(() => setWorkflowsOpen(false), []);
+
+  const openKG = useCallback((agentId?: string) => {
+    setKgAgentId(agentId || null);
+    setKgOpen(true);
+  }, []);
+
+  const closeKG = useCallback(() => {
+    setKgOpen(false);
+    setKgAgentId(null);
+  }, []);
 
   const openPalette = useCallback(() => setPaletteOpen(true), []);
   const closePalette = useCallback(() => setPaletteOpen(false), []);
@@ -122,6 +140,10 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         workflowsOpen,
         openWorkflows,
         closeWorkflows,
+        kgOpen,
+        kgAgentId,
+        openKG,
+        closeKG,
         paletteOpen,
         setPaletteOpen,
         openPalette,

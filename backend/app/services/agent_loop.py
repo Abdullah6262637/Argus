@@ -153,6 +153,7 @@ def _build_system_prompt(
 
 def _get_fallback_provider_info(primary_provider: str, primary_model: str) -> Optional[tuple[str, str]]:
     """Cevap alinamamasi durumunda API anahtari olan yedek LLM seceneklerini doner."""
+<<<<<<< HEAD
     import os
     from app.services.security.secrets import decrypt
 
@@ -174,6 +175,22 @@ def _get_fallback_provider_info(primary_provider: str, primary_model: str) -> Op
 
     # 3. Groq (Llama 3)
     groq_key = _get_key("GROQ_API_KEY")
+=======
+    from app.config import get_settings
+    settings = get_settings()
+    
+    # 1. Gemini
+    if settings.gemini_api_key and primary_provider != "gemini":
+        return "gemini", "gemini-1.5-flash"
+        
+    # 2. OpenRouter
+    openrouter_key = getattr(settings, "openrouter_api_key", None)
+    if openrouter_key and primary_provider != "openrouter":
+        return "openrouter", "meta-llama/llama-3-8b-instruct:free"
+
+    # 3. Groq
+    groq_key = getattr(settings, "groq_api_key", None)
+>>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
     if groq_key and primary_provider != "groq":
         return "groq", "llama3-8b-8192"
 
@@ -249,11 +266,26 @@ async def run_agent_loop(
                 tools=tools_schema if tools_schema else None,
             )
         except Exception as primary_exc:
-            logger.warning(
-                "Primary LLM provider %s (%s) failed: %s. Fallback checking...",
-                provider_name, agent.model, primary_exc
-            )
-            fallback_info = _get_fallback_provider_info(provider_name, agent.model)
+            import asyncio as _retry_asyncio
+            for _retry_attempt in range(2):
+                try:
+                    await _retry_asyncio.sleep(1.0 * (_retry_attempt + 1))
+                    response = await provider.chat(
+                        messages,
+                        temperature=agent.temperature,
+                        max_tokens=agent.max_tokens,
+                        tools=tools_schema if tools_schema else None,
+                    )
+                    break
+                except Exception as e:
+                    primary_exc = e
+                    continue
+            else:
+                logger.warning(
+                    "Primary LLM provider %s (%s) failed after retries: %s. Fallback checking...",
+                    provider_name, agent.model, primary_exc
+                )
+                fallback_info = _get_fallback_provider_info(provider_name, agent.model)
             if fallback_info:
                 fb_provider_name, fb_model = fallback_info
                 logger.info(
@@ -425,6 +457,10 @@ async def _emit(callback: Optional[ToolEventCallback], event_type: str, payload:
     if callback is None:
         return
     try:
-        await callback(event_type, payload)
+        import inspect
+        if inspect.iscoroutinefunction(callback):
+            await callback(event_type, payload)
+        else:
+            callback(event_type, payload)
     except Exception as exc:  # pragma: no cover
         logger.warning("Event callback hata: %s", exc)

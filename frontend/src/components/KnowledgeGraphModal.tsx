@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { api } from '@/api/client';
 import { Icon } from './Icon';
+import { KnowledgeIcon } from './icons/HeaderIcons';
+import { NodesIcon, EdgesIcon } from './icons/KnowledgeGraphIcons';
 
 interface KGNode {
   data: { id: string; label?: string; type?: string; [k: string]: unknown };
@@ -26,7 +28,7 @@ interface KnowledgeGraphModalProps {
 
 type ViewTab = 'nodes' | 'edges' | 'visual';
 
-export function KnowledgeGraphModal({
+export default function KnowledgeGraphModal({
   open,
   onClose,
   agentId}: KnowledgeGraphModalProps) {
@@ -105,9 +107,9 @@ export function KnowledgeGraphModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-backdrop-in">
-      <div className="bg-brand-bg border border-brand-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-modal-in">
+      <div className="bg-brand-bg rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-modal-in">
         {/* ============ Header ============ */}
-        <header className="px-5 py-3.5 border-b border-brand-border flex items-center justify-between bg-brand-panel">
+        <header className="px-5 py-3.5 flex items-center justify-between bg-brand-panel">
           <div className="flex items-center gap-3">
             <div>
               <h3 className="text-sm font-semibold text-brand-text leading-tight">
@@ -117,13 +119,13 @@ export function KnowledgeGraphModal({
                 <span className="font-mono tabular-nums">
                   {nodes.length} düğüm
                 </span>
-                <span className="text-brand-border">·</span>
+                <span className="text-brand-mutedSoft">·</span>
                 <span className="font-mono tabular-nums">
                   {edges.length} ilişki
                 </span>
                 {agentId && (
                   <>
-                    <span className="text-brand-border">·</span>
+                    <span className="text-brand-mutedSoft">·</span>
                     <code className="font-mono text-brand-accent">
                       {agentId}
                     </code>
@@ -142,7 +144,7 @@ export function KnowledgeGraphModal({
         </header>
 
         {/* ============ Üst Toolbar: Arama + İstatistik ============ */}
-        <div className="px-5 py-3 border-b border-brand-border bg-brand-panel/40">
+        <div className="px-5 py-3 bg-brand-panel/40">
           <div className="flex items-center gap-3">
             {/* Arama */}
             <div className="relative flex-1 max-w-md">
@@ -156,7 +158,7 @@ export function KnowledgeGraphModal({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Düğüm, tip veya id ara..."
-                className="w-full h-9 bg-brand-bg border border-brand-border rounded-md pl-8 pr-8 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/15 transition-all"
+                className="w-full h-9 bg-brand-bg/60 rounded-xl pl-8 pr-8 text-xs text-brand-text placeholder:text-brand-mutedSoft focus:outline-none focus:bg-brand-panelAlt focus:ring-1 focus:ring-brand-accent/40 transition-all"
               />
               {search && (
                 <button
@@ -178,7 +180,7 @@ export function KnowledgeGraphModal({
                 {nodeTypeStats.slice(0, 4).map(([type, count]) => (
                   <span
                     key={type}
-                    className="inline-flex items-center gap-1 h-6 px-2 rounded-md bg-brand-panelAlt border border-brand-border text-[10px] text-brand-textSoft font-mono"
+                    className="inline-flex items-center gap-1 h-6 px-2 rounded-lg bg-brand-panelAlt text-[10px] text-brand-textSoft font-mono"
                     title={`${count} düğüm`}
                   >
                     <span className="text-brand-mutedSoft">{type}</span>
@@ -192,25 +194,25 @@ export function KnowledgeGraphModal({
           </div>
 
           {/* Tab Toggle */}
-          <div className="flex items-center bg-brand-bg/40 border border-brand-border rounded-md p-0.5 mt-3 w-fit">
+          <div className="flex items-center bg-brand-panelAlt/50 rounded-xl p-0.5 mt-3 w-fit gap-0.5">
             <ViewTabBtn
               active={tab === 'nodes'}
               onClick={() => setTab('nodes')}
-              icon="circle"
+              icon={<NodesIcon size={12} filled={tab === 'nodes'} />}
               label="Düğümler"
               count={filteredNodes.length}
             />
             <ViewTabBtn
               active={tab === 'edges'}
               onClick={() => setTab('edges')}
-              icon="share"
+              icon={<EdgesIcon size={12} filled={tab === 'edges'} />}
               label="İlişkiler"
               count={filteredEdges.length}
             />
             <ViewTabBtn
               active={tab === 'visual'}
               onClick={() => setTab('visual')}
-              icon="hub"
+              icon={<KnowledgeIcon size={12} filled={tab === 'visual'} />}
               label="Görsel Grafik"
               count={nodes.length}
             />
@@ -233,7 +235,7 @@ export function KnowledgeGraphModal({
             )}
 
             {error && (
-              <div className="p-3 text-xs rounded-lg border border-brand-danger/40 bg-brand-danger/5 text-brand-danger flex items-start gap-2">
+              <div className="p-3 text-xs rounded-xl bg-brand-danger/5 text-brand-danger flex items-start gap-2">
                 <Icon
                   name="error"
                   size={14}
@@ -247,10 +249,8 @@ export function KnowledgeGraphModal({
 
             {!loading && !error && nodes.length === 0 && (
               <div className="flex flex-col items-center justify-center text-center py-16 gap-3">
-                <Icon
-                  name="hub"
+                <KnowledgeIcon
                   size={40}
-                  weight={300}
                   className="text-brand-mutedSoft"
                 />
                 <h3 className="text-sm font-semibold text-brand-text">
@@ -258,11 +258,11 @@ export function KnowledgeGraphModal({
                 </h3>
                 <p className="text-[11px] text-brand-mutedSoft max-w-md leading-relaxed">
                   Ajanlar{' '}
-                  <code className="px-1.5 py-0.5 rounded bg-brand-panelAlt border border-brand-border font-mono text-brand-accent text-[10px]">
+                  <code className="px-1.5 py-0.5 rounded bg-brand-panelAlt font-mono text-brand-accent text-[10px]">
                     kg_add_entity
                   </code>{' '}
                   ve{' '}
-                  <code className="px-1.5 py-0.5 rounded bg-brand-panelAlt border border-brand-border font-mono text-brand-accent text-[10px]">
+                  <code className="px-1.5 py-0.5 rounded bg-brand-panelAlt font-mono text-brand-accent text-[10px]">
                     kg_add_relation
                   </code>{' '}
                   araçlarıyla bilgi grafını büyütebilir.
@@ -311,9 +311,9 @@ export function KnowledgeGraphModal({
                     <button
                       key={id}
                       onClick={() => setSelectedNodeId(active ? null : id)}
-                      className={`group w-full text-left px-3 py-2 rounded-md transition-all flex items-center gap-2.5 relative ${
+                      className={`group w-full text-left px-3 py-2 rounded-lg transition-all flex items-center gap-2.5 relative ${
                         active
-                          ? 'bg-brand-accent/10 ring-1 ring-brand-accent/40'
+                          ? 'bg-brand-accent/12'
                           : 'hover:bg-brand-panelAlt'
                       }`}
                     >
@@ -321,7 +321,7 @@ export function KnowledgeGraphModal({
                         <span className="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full bg-brand-accent" />
                       )}
                       <div
-                        className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
                           active
                             ? 'bg-brand-accent/20 text-brand-accent'
                             : 'bg-brand-panelAlt text-brand-mutedSoft group-hover:text-brand-accent'
@@ -346,7 +346,7 @@ export function KnowledgeGraphModal({
                           <code className="font-mono truncate">{id}</code>
                           {type && (
                             <>
-                              <span className="text-brand-border">·</span>
+                              <span className="text-brand-mutedSoft">·</span>
                               <span className="font-mono">{type}</span>
                             </>
                           )}
@@ -397,11 +397,11 @@ export function KnowledgeGraphModal({
                   return (
                     <div
                       key={String(e.data.id)}
-                      className="px-3 py-2 rounded-md hover:bg-brand-panelAlt transition-colors group"
+                      className="px-3 py-2 rounded-lg hover:bg-brand-panelAlt transition-colors group"
                     >
                       <div className="flex items-center gap-2">
                         {/* Source */}
-                        <code className="text-[11px] font-mono text-brand-text bg-brand-panelAlt px-2 h-6 inline-flex items-center rounded border border-brand-border truncate max-w-[35%]">
+                        <code className="text-[11px] font-mono text-brand-text bg-brand-panelAlt px-2.5 h-6 inline-flex items-center rounded-lg truncate max-w-[35%]">
                           {String(e.data.source)}
                         </code>
                         {/* Relation */}
@@ -423,7 +423,7 @@ export function KnowledgeGraphModal({
                           />
                         </span>
                         {/* Target */}
-                        <code className="text-[11px] font-mono text-brand-text bg-brand-panelAlt px-2 h-6 inline-flex items-center rounded border border-brand-border truncate max-w-[35%]">
+                        <code className="text-[11px] font-mono text-brand-text bg-brand-panelAlt px-2.5 h-6 inline-flex items-center rounded-lg truncate max-w-[35%]">
                           {String(e.data.target)}
                         </code>
                       </div>
@@ -445,7 +445,7 @@ export function KnowledgeGraphModal({
 
           {/* Sağ: Detay Paneli (sadece node seçiliyse) */}
           {selectedNodeId && selectedNodeNeighbors && (
-            <aside className="w-72 flex-shrink-0 border-l border-brand-border bg-brand-panel overflow-y-auto p-3.5 space-y-3 animate-slide-in-right">
+            <aside className="w-72 flex-shrink-0 bg-brand-panel overflow-y-auto p-3.5 space-y-3 animate-slide-in-right">
               {/* Header */}
               <div className="flex items-center justify-between">
                 <div className="text-[10px] uppercase tracking-wider text-brand-mutedSoft font-bold inline-flex items-center gap-1.5">
@@ -470,7 +470,7 @@ export function KnowledgeGraphModal({
                 const label = String(n.data.label || n.data.id);
                 const type = String(n.data.type || '');
                 return (
-                  <div className="rounded-lg border border-brand-accent/30 bg-brand-accent/5 p-3">
+                  <div className="rounded-xl bg-brand-accent/10 p-3">
                     <div className="text-[12.5px] font-semibold text-brand-text leading-tight">
                       {label}
                     </div>
@@ -549,14 +549,14 @@ export function KnowledgeGraphModal({
         </div>
 
         {/* ============ Footer ============ */}
-        <footer className="px-5 py-2.5 border-t border-brand-border bg-brand-panel/40 flex items-center justify-between">
+        <footer className="px-5 py-2.5 bg-brand-panel/40 flex items-center justify-between">
           <div className="text-[10px] text-brand-mutedSoft inline-flex items-center gap-1.5">
             <Icon name="info" size={11} weight={500} />
             <span>Bir düğüme tıklayarak detayını görebilirsin</span>
           </div>
           <button
             onClick={onClose}
-            className="h-8 px-3 inline-flex items-center gap-1.5 text-[11px] font-semibold rounded-md border border-brand-border text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
+            className="h-8 px-3 inline-flex items-center gap-1.5 text-[11px] font-semibold rounded-lg bg-brand-panelAlt/60 text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all active:scale-95"
           >
             <Icon name="close" size={13} weight={550} />
             Kapat
@@ -579,7 +579,7 @@ function ViewTabBtn({
   count}: {
   active: boolean;
   onClick: () => void;
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   count: number;
 }) {
@@ -592,7 +592,7 @@ function ViewTabBtn({
           : 'text-brand-mutedSoft hover:text-brand-text hover:bg-brand-panelAlt'
       }`}
     >
-      <Icon name={icon} size={12} weight={550} filled={active} />
+      {icon}
       <span>{label}</span>
       <span
         className={`text-[9.5px] font-mono tabular-nums px-1.5 h-4 inline-flex items-center rounded ${

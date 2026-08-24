@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '../Icon';
-import { StepHeading, Field, CustomSelect, SearchableCustomSelect, inputCls } from './FormComponents';
+import { StepHeading, Field, CustomSelect, SearchableCustomSelect, inputCls, Checkbox } from './FormComponents';
 import { getModelLogo } from '../../utils/modelHelper';
 import type { ModelInfoOut, ProviderName, ConnectionTestResponse } from '@/types';
 
@@ -400,20 +400,20 @@ export function Step2LLM({
         <>
           {envKey && (
             envHasKey ? (
-              <div className="rounded border border-brand-success/40 bg-brand-success/5 p-2.5 text-[11px] text-brand-success flex items-start gap-2">
+              <div className="rounded-xl bg-brand-success/10 p-2.5 text-[11px] text-brand-success flex items-start gap-2">
                 <Icon name="check_circle" size={14} filled className="flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <strong>.env'de {envKey} hazir</strong> ({envMaskedKey ?? '••••'}). Bu ajan otomatik
-                  kullanacak; istersen asagiya farkli bir anahtar yapistirip override edebilirsin.
+                  <strong>.env'de {envKey} hazır</strong> ({envMaskedKey ?? '••••'}). Bu ajan otomatik
+                  kullanacak; istersen aşağıya farklı bir anahtar yapıştırıp override edebilirsin.
                 </div>
               </div>
             ) : (
-              <div className="rounded border border-brand-warning/40 bg-brand-warning/5 p-2.5 text-[11px] text-brand-warning flex items-start gap-2">
+              <div className="rounded-xl bg-brand-warning/10 p-2.5 text-[11px] text-brand-warning flex items-start gap-2">
                 <Icon name="warning" size={14} className="flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <strong>.env'de {envKey} yok</strong>. Asagiya buraya ozel bir anahtar yapistir
+                  <strong>.env'de {envKey} yok</strong>. Aşağıya buraya özel bir anahtar yapıştır
                   veya{' '}
-                  <span className="font-semibold">Ayarlar &rarr; API Anahtarlari</span> sekmesinden ekle.
+                  <span className="font-semibold">Ayarlar &rarr; API Anahtarları</span> sekmesinden ekle.
                 </div>
               </div>
             )
@@ -424,13 +424,13 @@ export function Step2LLM({
               type="text"
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
-              placeholder="Bos birak veya https://..."
+              placeholder="Boş bırak veya https://..."
               className={inputCls}
             />
           </Field>
 
           <Field
-            label={`API Anahtari${isEditing ? ' (bos birakirsan degismez)' : ' (bos = .env\'deki kullanilir)'}`}
+            label={`API Anahtarı${isEditing ? ' (boş bırakırsan değişmez)' : ' (boş = .env\'deki kullanılır)'}`}
             hint={
               isEditing && initial?.api_key_masked
                 ? `Mevcut: ${initial.api_key_masked}`
@@ -442,50 +442,44 @@ export function Step2LLM({
                 type={showApiKey ? 'text' : 'password'}
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder={isEditing ? '(degismesin)' : envHasKey ? '(.env\'deki kullanilacak)' : 'sk-...'}
-                className={inputCls + ' pr-16'}
+                placeholder={isEditing ? '(değişmesin)' : envHasKey ? '(.env\'deki kullanılacak)' : 'sk-...'}
+                className={`${inputCls.replace('px-3.5', 'pl-3.5')} pr-16`}
                 autoComplete="new-password"
               />
               <button
                 type="button"
                 onClick={() => setShowApiKey(!showApiKey)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-brand-muted hover:text-brand-text px-2 py-0.5 border border-brand-border rounded"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-brand-muted hover:text-brand-text px-2 py-0.5 bg-brand-panelAlt/80 rounded-md"
               >
-                {showApiKey ? 'Gizle' : 'Goster'}
+                {showApiKey ? 'Gizle' : 'Göster'}
               </button>
             </div>
             {isEditing && initial?.has_api_key && (
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
+              <div className="mt-2">
+                <Checkbox
                   id="clear-api-key"
                   checked={clearApiKey}
-                  onChange={(e) => setClearApiKey(e.target.checked)}
-                  className="rounded bg-brand-bg/50 border-brand-border text-brand-accent focus:ring-brand-accent/50"
+                  onChange={setClearApiKey}
+                  label={<span className="text-xs text-brand-danger font-medium">Kayıtlı API Anahtarını Sil (Varsayılana Dön)</span>}
                 />
-                <label htmlFor="clear-api-key" className="text-xs text-brand-danger font-medium cursor-pointer">
-                  Kayitli API Anahtarini Sil (Varsayilana Don)
-                </label>
               </div>
             )}
           </Field>
 
-          <div className="rounded border border-brand-border bg-brand-bg/50 p-3 space-y-3">
+          <div className="rounded-xl bg-brand-panelAlt/40 p-3 space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <div className="text-xs font-semibold text-brand-text">Baglantiyi Test Et</div>
+                <div className="text-xs font-semibold text-brand-text">Bağlantıyı Test Et</div>
                 <div className="text-[11px] text-brand-muted mt-0.5">
-                  Provider'a kucuk bir istek atip dogrula.
+                  Provider'a küçük bir istek atıp doğrula.
                 </div>
-                <label className="flex items-center gap-1.5 cursor-pointer mt-1.5 select-none">
-                  <input
-                    type="checkbox"
+                <div className="mt-2">
+                  <Checkbox
                     checked={verifySsl}
-                    onChange={(e) => setVerifySsl(e.target.checked)}
-                    className="rounded bg-brand-bg/50 border-brand-border text-brand-accent focus:ring-brand-accent/50 w-3.5 h-3.5"
+                    onChange={setVerifySsl}
+                    label={<span className="text-[11px] text-brand-mutedSoft font-medium">SSL Sertifikasını Doğrula</span>}
                   />
-                  <span className="text-[10px] text-brand-mutedSoft font-medium">SSL Sertifikasını Doğrula</span>
-                </label>
+                </div>
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -501,7 +495,7 @@ export function Step2LLM({
                     type="button"
                     onClick={() => onTest(true)}
                     disabled={testing || !model.trim()}
-                    className="text-xs px-3 py-1.5 rounded border border-brand-border text-brand-textSoft hover:text-brand-text disabled:opacity-40 transition whitespace-nowrap"
+                    className="text-xs px-3 py-1.5 rounded bg-brand-panelAlt text-brand-textSoft hover:text-brand-text disabled:opacity-40 transition whitespace-nowrap"
                     title=".env'deki anahtarla test eder"
                   >
                     .env ile
@@ -510,15 +504,15 @@ export function Step2LLM({
               </div>
             </div>
 
-            {/* Premium Connection Steps Tracer */}
+            {/* Minimal Connection Steps Tracer */}
             {testing && (
-              <div className="p-3 bg-brand-panelAlt/30 border border-brand-border rounded-xl space-y-2.5 animate-step-in">
-                <div className="text-[10px] uppercase tracking-wider text-brand-accent font-bold mb-1 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-ping" />
+              <div className="pt-3 space-y-3 animate-step-in">
+                <div className="text-[11px] uppercase tracking-wider text-brand-mutedSoft font-bold flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-accent" />
                   Bağlantı Sınaması Yapılıyor...
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-2.5 pl-3.5">
                   <TracerStep index={0} activeStep={activeStep} text="API Parametreleri ve biçim doğrulaması" />
                   <TracerStep index={1} activeStep={activeStep} text="Güvenli HTTP/HTTPS istemcisi oluşturulması" />
                   <TracerStep index={2} activeStep={activeStep} text="Sunucuya sınama paketi gönderilmesi (max_tokens: 32)" />
@@ -529,10 +523,10 @@ export function Step2LLM({
 
             {testResult && !testing && (
               <div
-                className={`rounded border text-[11px] p-2.5 space-y-1 ${
+                className={`rounded-xl text-[11px] p-2.5 space-y-1 ${
                   testResult.ok
-                    ? 'text-brand-success bg-brand-success/5 border-brand-success/30'
-                    : 'text-brand-danger bg-brand-danger/5 border-brand-danger/30'
+                    ? 'text-brand-success bg-brand-success/10'
+                    : 'text-brand-danger bg-brand-danger/10'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -549,8 +543,8 @@ export function Step2LLM({
                 </div>
                 <div className="opacity-90 break-words whitespace-pre-wrap">{testResult.message}</div>
                 {testResult.sample_response && (
-                  <div className="text-brand-muted border-t border-current/20 pt-1 mt-1">
-                    <span className="uppercase text-[10px] tracking-wider">Orneklem:</span>{' '}
+                  <div className="text-brand-muted pt-1 mt-1">
+                    <span className="uppercase text-[10px] tracking-wider">Örneklem:</span>{' '}
                     <span className="font-mono text-[10px]">{testResult.sample_response}</span>
                   </div>
                 )}
@@ -585,15 +579,15 @@ function TracerStep({ index, activeStep, text }: { index: number; activeStep: nu
       isActive ? 'text-brand-text font-semibold' : isCompleted ? 'text-brand-success/90' : 'text-brand-mutedSoft'
     }`}>
       {isCompleted && (
-        <Icon name="check_circle" size={14} filled className="text-brand-success animate-scale-in" />
+        <Icon name="check" size={14} className="text-brand-success animate-scale-in" />
       )}
       {isActive && (
         <Icon name="progress_activity" size={14} className="animate-spin text-brand-accent" />
       )}
       {isPending && (
-        <div className="w-3.5 h-3.5 rounded-full border border-brand-border flex items-center justify-center text-[9px] font-bold text-brand-mutedSoft">
+        <span className="w-3.5 h-3.5 flex items-center justify-center text-[10px] font-bold text-brand-mutedSoft">
           {index + 1}
-        </div>
+        </span>
       )}
       <span>{text}</span>
     </div>

@@ -5,10 +5,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Universal font setting - Plus Jakarta Sans everywhere */
+*, ::before, ::after {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, sans-serif;
+}
+
+/* Code & Mono overrides */
+code,
+kbd,
+pre,
+samp,
+.font-mono,
+[class*='font-mono'] {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}
+
 /* Google Material Symbols - taban stili */
 .material-symbols-outlined,
 .material-symbols-rounded {
-  font-family: 'Material Symbols Rounded', 'Material Symbols Outlined';
+  font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
   font-weight: normal;
   font-style: normal;
   line-height: 1;
@@ -28,7 +43,7 @@
 }
 
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: 'Material Symbols Outlined' !important;
 }
 
 html,
@@ -50,70 +65,106 @@ body {
   @apply font-mono text-[0.85em];
 }
 
-/* Form elemanlari icin native renk override */
-input[type='range'] {
-  height: 6px;
+/* ============================================================
+   Global Form & Input Theming
+   ============================================================ */
+input:not(.bg-transparent),
+textarea:not(.bg-transparent),
+select {
+  background-color: var(--brand-panel-alt);
+  color: var(--brand-text);
+  border-color: var(--brand-border);
 }
+
+input.bg-transparent,
+textarea.bg-transparent {
+  background-color: transparent !important;
+  color: var(--brand-text);
+}
+
+input:focus:not(.bg-transparent),
+textarea:focus:not(.bg-transparent),
+select:focus {
+  border-color: var(--brand-accent);
+  outline: none;
+}
+
 input::placeholder,
 textarea::placeholder {
   color: var(--brand-muted-soft);
 }
+
 select {
-  background-image: none;
-}
-select option {
-  background: var(--brand-bg);
+  background-color: var(--brand-panel-alt);
   color: var(--brand-text);
 }
 
-/* Range slider custom styling */
-.brand-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 6px;
-  background: var(--brand-border-strong);
-  border-radius: 9999px;
-  outline: none;
+select option {
+  background-color: var(--brand-panel);
+  color: var(--brand-text);
 }
 
-.brand-slider::-webkit-slider-thumb {
+/* Range Slider Custom Theming */
+input[type='range'] {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 100%;
+  height: 6px !important;
+  background: var(--brand-panel-alt) !important;
+  border: 1px solid var(--brand-border-strong) !important;
+  border-radius: 9999px !important;
+  outline: none !important;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  background: var(--brand-panel-alt);
+  border-radius: 9999px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  height: 16px !important;
+  width: 16px !important;
+  border-radius: 50% !important;
+  background: var(--brand-accent) !important;
+  cursor: pointer !important;
+  margin-top: -6px !important;
+  border: 2px solid var(--brand-panel) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px var(--brand-accent);
+}
+
+input[type='range']::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  background: var(--brand-panel-alt);
+  border-radius: 9999px;
+  border: 1px solid var(--brand-border-strong);
+}
+
+input[type='range']::-moz-range-thumb {
   height: 16px;
   width: 16px;
   border-radius: 50%;
   background: var(--brand-accent);
   cursor: pointer;
-  -webkit-appearance: none;
-  margin-top: -5px;
-  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--brand-panel);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
-.brand-slider::-webkit-slider-thumb:hover {
+input[type='range']::-moz-range-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 0 10px var(--brand-accent);
+  box-shadow: 0 0 8px var(--brand-accent);
 }
 
-.brand-slider::-moz-range-track {
-  width: 100%;
-  height: 6px;
-  cursor: pointer;
-  background: var(--brand-border-strong);
-  border-radius: 9999px;
-}
-
-.brand-slider::-moz-range-thumb {
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: var(--brand-accent);
-  cursor: pointer;
-  border: none;
-  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.brand-slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 10px var(--brand-accent);
-}
+/* Electron Titlebar */
+.app-region-drag { -webkit-app-region: drag; }
+.app-region-no-drag { -webkit-app-region: no-drag; }
