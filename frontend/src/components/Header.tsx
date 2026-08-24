@@ -1,5 +1,4 @@
 import { Icon } from './Icon';
-import { resolveAsset } from '../utils/modelHelper';
 
 interface HeaderProps {
   wsConnected: boolean;
@@ -11,15 +10,45 @@ interface HeaderProps {
 }
 
 function WindowControls() {
-  const isElectron = typeof window !== 'undefined' && !!(window as any).argus;
+  const isElectron = typeof window !== 'undefined' && (!!(window as any).argus || !!(window as any).openclaw);
   if (!isElectron) return null;
 
+  const handleMinimize = () => {
+    try {
+      (window as any).argus?.minimize?.() ||
+      (window as any).argus?.windowControls?.minimize?.() ||
+      (window as any).openclaw?.windowControls?.minimize?.();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleMaximize = () => {
+    try {
+      (window as any).argus?.maximize?.() ||
+      (window as any).argus?.windowControls?.maximize?.() ||
+      (window as any).openclaw?.windowControls?.maximize?.();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleClose = () => {
+    try {
+      (window as any).argus?.close?.() ||
+      (window as any).argus?.windowControls?.close?.() ||
+      (window as any).openclaw?.windowControls?.close?.();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
-    <div className="flex items-center gap-1 ml-2 pl-2 border-l border-brand-border select-none" style={{ WebkitAppRegion: 'no-drag' } as any}>
+    <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as any}>
       {/* Minimize */}
       <button
         type="button"
-        onClick={() => (window as any).argus?.minimize?.()}
+        onClick={handleMinimize}
         title="Simge Durumuna Küçült (-)"
         className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
       >
@@ -31,7 +60,7 @@ function WindowControls() {
       {/* Maximize / Restore */}
       <button
         type="button"
-        onClick={() => (window as any).argus?.maximize?.()}
+        onClick={handleMaximize}
         title="Ekranı Kapla / Geri Yükle (□)"
         className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-150 active:scale-90"
       >
@@ -43,7 +72,7 @@ function WindowControls() {
       {/* Close */}
       <button
         type="button"
-        onClick={() => (window as any).argus?.close?.()}
+        onClick={handleClose}
         title="Kapat (✕)"
         className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-brand-textSoft hover:text-white hover:bg-red-500/90 transition-all duration-150 active:scale-90"
       >
@@ -66,42 +95,14 @@ export function Header({
 }: HeaderProps) {
   return (
     <header
-      className="h-14 flex-shrink-0 flex items-center justify-between px-4 border-b border-brand-border bg-brand-panel animate-fade-in-down select-none"
+      className="h-12 flex-shrink-0 flex items-center justify-between px-3 border-b border-brand-border bg-brand-panel animate-fade-in-down select-none"
       style={{ WebkitAppRegion: 'drag' } as any}
-      onDoubleClick={() => (window as any).argus?.maximize?.()}
+      onDoubleClick={() => {
+        (window as any).argus?.maximize?.() ||
+        (window as any).argus?.windowControls?.maximize?.();
+      }}
     >
-      {/* Sol: Logo + isim + Canlı Statü */}
-      <div className="flex items-center gap-2.5 min-w-0" style={{ WebkitAppRegion: 'no-drag' } as any}>
-        <img
-          src={resolveAsset('logo.png')}
-          className="w-8 h-8 rounded-lg object-contain flex-shrink-0"
-          alt="Argus Logo"
-        />
-        <div className="min-w-0 hidden sm:block">
-          <div className="flex items-center gap-2">
-            <h1 className="text-sm font-semibold text-brand-text leading-tight tracking-tight">
-              Argus
-            </h1>
-            <div
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-semibold tracking-wide ${
-                wsConnected
-                  ? 'bg-emerald-500/10 text-emerald-400'
-                  : 'bg-rose-500/10 text-rose-400'
-              }`}
-              title={
-                wsConnected
-                  ? 'WebSocket bağlantısı aktif'
-                  : 'WebSocket bağlantısı kopuk'
-              }
-            >
-              <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-              <span>{wsConnected ? 'Canlı' : 'Kopuk'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sağ: Komut paleti + aksiyon grubu + ayarlar + pencere kontrolleri */}
+      {/* Sol: Komut paleti + Aksiyon grubu + Bağlantı Durumu */}
       <div className="flex items-center gap-2" style={{ WebkitAppRegion: 'no-drag' } as any}>
         {/* Komut paleti — özel kbd hint'li search-look */}
         {onOpenCommandPalette && (
@@ -126,14 +127,14 @@ export function Header({
           <button
             onClick={onCreateAgent}
             title="Yeni ajan oluştur"
-            className="h-8 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
+            className="h-7.5 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
           >
             <span>Yeni Ajan</span>
           </button>
           <button
             onClick={onReloadAgents}
             title="agents.yaml dosyasını yeniden yükle"
-            className="h-8 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
+            className="h-7.5 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
           >
             <span>Yenile</span>
           </button>
@@ -141,7 +142,7 @@ export function Header({
             <button
               onClick={onOpenWorkflows}
               title="Workflow'ları yönet ve çalıştır"
-              className="h-8 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
+              className="h-7.5 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
             >
               <span>Workflow</span>
             </button>
@@ -149,7 +150,7 @@ export function Header({
           <button
             onClick={onOpenSettings}
             title="Sistem ayarlarını aç"
-            className="h-8 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
+            className="h-7.5 px-3 inline-flex items-center text-xs font-semibold rounded-lg text-brand-textSoft hover:text-brand-text hover:bg-brand-panelAlt transition-all duration-200 active:scale-95"
           >
             <span>Ayarlar</span>
           </button>
@@ -189,7 +190,20 @@ export function Header({
           </button>
         </div>
 
-        {/* Window Controls (Electron) */}
+        {/* Bağlantı durumu — Sadece kopukken kırmızı uyarı */}
+        {!wsConnected && (
+          <div
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-brand-danger/10 text-brand-danger select-none animate-pulse"
+            title="WebSocket bağlantısı kopuk — Sunucuya bağlanılamıyor"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-danger flex-shrink-0" />
+            <span className="text-[11px] font-semibold tracking-wide">Bağlantı Yok</span>
+          </div>
+        )}
+      </div>
+
+      {/* Sağ: Pencere Kontrolleri (Küçült, Büyüt/Geri Yükle, Kapat) */}
+      <div className="flex items-center" style={{ WebkitAppRegion: 'no-drag' } as any}>
         <WindowControls />
       </div>
     </header>

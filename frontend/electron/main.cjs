@@ -29,16 +29,12 @@ let backendProc = null;
 
 /**
  * Backend'i baslatir (hem dev hem prod modda).
- *
- * - Dev: workspace root'taki .venv\Scripts\python.exe ile uvicorn app.main:app
- * - Prod: PyInstaller ile paketlenmis argus-backend.exe (varsa)
- *         yoksa sistem python'una fallback (ARGUS_PYTHON env override)
  */
 async function startBackend() {
   if (
     process.env.ARGUS_NO_BACKEND === '1' ||
-    process.env.UMTALAGENT_NO_BACKEND === '1' || // geriye donuk uyum
-    process.env.OPENCLAW_NO_BACKEND === '1' // geriye donuk uyum
+    process.env.UMTALAGENT_NO_BACKEND === '1' ||
+    process.env.OPENCLAW_NO_BACKEND === '1'
   ) {
     console.log('[electron] NO_BACKEND=1 -> backend baslatilmadi');
     return;
@@ -57,18 +53,17 @@ async function startBackend() {
         : path.join(projectRoot, '.venv', 'bin', 'python');
     args = ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'];
   } else {
-    // Production: extraResources/backend altinda
     backendDir = path.join(process.resourcesPath, 'backend');
-
-    // Sprint C.2: Once PyInstaller binary'sini ara
     const candidates =
       process.platform === 'win32'
         ? [
             path.join(backendDir, 'argus-backend', 'argus-backend.exe'),
-            path.join(backendDir, 'argus-backend.exe')]
+            path.join(backendDir, 'argus-backend.exe'),
+          ]
         : [
             path.join(backendDir, 'argus-backend', 'argus-backend'),
-            path.join(backendDir, 'argus-backend')];
+            path.join(backendDir, 'argus-backend'),
+          ];
 
     let pyinstallerExe = undefined;
     for (const p of candidates) {
@@ -81,11 +76,10 @@ async function startBackend() {
 
     if (pyinstallerExe) {
       exe = pyinstallerExe;
-      args = []; // PyInstaller binary kendi entry'sini calistirir
+      args = [];
       backendDir = path.dirname(pyinstallerExe);
       console.log('[electron] PyInstaller binary kullanilacak:', pyinstallerExe);
     } else {
-      // Fallback: sistem Python
       exe =
         process.env.ARGUS_PYTHON ||
         process.env.UMTALAGENT_PYTHON ||
@@ -106,7 +100,6 @@ async function startBackend() {
 
   console.log('[electron] backend baslatiliyor:', exe, args.join(' '), '@', backendDir);
 
-  // Production: log dosyasina yaz
   let stdio = 'inherit';
   if (!isDev) {
     try {
@@ -144,17 +137,11 @@ function createMainWindow() {
     height: 900,
     minWidth: 1100,
     minHeight: 700,
-<<<<<<< HEAD
-    backgroundColor: '#0f172a',
-    title: 'Argus - Çoklu Ajan Sistemi',
-    frame: false,
-    autoHideMenuBar: true,
-=======
     backgroundColor: '#0b1120',
     title: 'Argus - Çoklu Ajan Sistemi',
     frame: false,
+    autoHideMenuBar: true,
     hasShadow: true,
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
@@ -165,28 +152,30 @@ function createMainWindow() {
     },
   });
 
-  const { ipcMain } = require('electron');
-  ipcMain.on('window-minimize', () => mainWindow?.minimize());
-  ipcMain.on('window-maximize', () => {
+  const handleMinimize = () => mainWindow?.minimize();
+  const handleMaximize = () => {
     if (mainWindow?.isMaximized()) {
       mainWindow.unmaximize();
     } else {
       mainWindow?.maximize();
     }
-  });
-  ipcMain.on('window-close', () => mainWindow?.close());
+  };
+  const handleClose = () => mainWindow?.close();
+
+  ipcMain.on('window-minimize', handleMinimize);
+  ipcMain.on('window:minimize', handleMinimize);
+  ipcMain.on('window-maximize', handleMaximize);
+  ipcMain.on('window:maximize', handleMaximize);
+  ipcMain.on('window-close', handleClose);
+  ipcMain.on('window:close', handleClose);
 
   if (isDev) {
     mainWindow.loadURL(DEV_URL).catch(() => {
       mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
     });
-<<<<<<< HEAD
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
-=======
     if (process.env.ARGUS_DEVTOOLS === '1') {
       mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
->>>>>>> 31b48af (perf(core): optimize GPU rasterization, eliminate CSS blur lag, optimize RAF scroll and SQLite memory I/O)
   } else {
     mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   }
@@ -240,7 +229,6 @@ function buildMenu() {
 }
 
 function registerGlobalHotkey() {
-  // FAZ 8.3: Global hotkey - Ctrl+Shift+Space ile pencereyi öne getir
   const accelerator = process.env.ARGUS_HOTKEY || process.env.UMTALAGENT_HOTKEY || 'CommandOrControl+Shift+Space';
   try {
     const ok = globalShortcut.register(accelerator, () => {
@@ -262,14 +250,10 @@ function registerGlobalHotkey() {
   }
 }
 
-/**
- * Sprint C.7: Otomatik guncelleme.
- * Production'da GitHub Releases'a bakar; yeni surum varsa kullaniciya sorar.
- */
 function setupAutoUpdater() {
   if (!autoUpdater || isDev) return;
 
-  autoUpdater.autoDownload = false; // kullanici onaylasin
+  autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = true;
 
   autoUpdater.on('update-available', async (info) => {
@@ -282,7 +266,8 @@ function setupAutoUpdater() {
       detail: 'Indirip yuklemek ister misin? Indirme arka planda devam eder.',
       buttons: ['Indir', 'Daha sonra'],
       defaultId: 0,
-      cancelId: 1});
+      cancelId: 1,
+    });
     if (response === 0) {
       autoUpdater.downloadUpdate().catch((err) => {
         console.error('[updater] indirme hatasi:', err);
@@ -298,7 +283,8 @@ function setupAutoUpdater() {
       message: 'Yeni surum indirildi. Simdi yeniden baslatilsin mi?',
       buttons: ['Yeniden Baslat', 'Sonra'],
       defaultId: 0,
-      cancelId: 1});
+      cancelId: 1,
+    });
     if (response === 0) autoUpdater.quitAndInstall();
   });
 
@@ -306,7 +292,6 @@ function setupAutoUpdater() {
     console.warn('[updater] hata:', err?.message || err);
   });
 
-  // Baslangictan 5 saniye sonra kontrol et
   setTimeout(() => {
     autoUpdater.checkForUpdates().catch((err) => {
       console.warn('[updater] checkForUpdates hata:', err?.message || err);
@@ -320,11 +305,11 @@ app.whenReady().then(async () => {
   createMainWindow();
   registerGlobalHotkey();
   setupAutoUpdater();
-  
+
   ipcMain.handle('dialog:openFile', async (event, options) => {
     const result = await dialog.showOpenDialog(mainWindow, options || {
       properties: ['openFile'],
-      filters: [{ name: 'All Files', extensions: ['*'] }]
+      filters: [{ name: 'All Files', extensions: ['*'] }],
     });
     return result.canceled ? null : result.filePaths;
   });
@@ -337,13 +322,6 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:getVersion', () => {
     return app.getVersion();
   });
-
-  ipcMain.on('window:minimize', () => mainWindow?.minimize());
-  ipcMain.on('window:maximize', () => {
-    if (mainWindow?.isMaximized()) mainWindow.unmaximize();
-    else mainWindow?.maximize();
-  });
-  ipcMain.on('window:close', () => mainWindow?.close());
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
