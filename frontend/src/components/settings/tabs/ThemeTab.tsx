@@ -124,7 +124,7 @@ export function ThemeTab({
                       className={`h-1 rounded-full transition-all duration-300 ${
                         cardVariant === 'dark'
                           ? 'bg-brand-accent'
-                          : 'bg-white/10 group-hover/btn:bg-white/20'
+                          : 'bg-brand-borderStrong/40 group-hover/btn:bg-brand-borderStrong'
                       }`}
                     />
                   </button>
@@ -147,7 +147,7 @@ export function ThemeTab({
                       className={`h-1 rounded-full transition-all duration-300 ${
                         cardVariant === 'light'
                           ? 'bg-brand-accent'
-                          : 'bg-white/10 group-hover/btn:bg-white/20'
+                          : 'bg-brand-borderStrong/40 group-hover/btn:bg-brand-borderStrong'
                       }`}
                     />
                   </button>
@@ -293,10 +293,10 @@ const PALETTES: Record<ThemeVariant, Record<BaseThemeId, string[]>> = {
     forest: ['#0a1410', '#14261f', '#34d399', '#a3c4b3'],
   },
   light: {
-    mono: ['#ffffff', '#f1f5f9', '#0f172a', '#64748b'],
-    midnight: ['#f4f8fd', '#eaf2fb', '#2563eb', '#64748b'],
-    sunset: ['#fff9f5', '#fef1e8', '#ea580c', '#8c6a58'],
-    forest: ['#f4fbf7', '#e6f6ee', '#059669', '#4e6b5d'],
+    mono: ['#f8fafc', '#e2e8f0', '#0f172a', '#334155'],
+    midnight: ['#f1f5f9', '#e2e8f0', '#2563eb', '#334155'],
+    sunset: ['#fff7ed', '#ffedd5', '#ea580c', '#432a1b'],
+    forest: ['#f0fdf4', '#dcfce7', '#059669', '#1f4b36'],
   },
 };
 
@@ -314,8 +314,8 @@ export function ThemePreview({
   return (
     <div
       key={`${themeId}-${variant}`}
-      className={`flex gap-0 rounded-xl overflow-hidden h-9 transition-all duration-300 animate-palette-morph ${
-        active ? 'shadow-sm' : 'opacity-85'
+      className={`flex gap-0 rounded-xl overflow-hidden h-9 border border-brand-border/60 transition-all duration-300 animate-palette-morph ${
+        active ? 'shadow-sm ring-1 ring-brand-accent/30' : 'opacity-90'
       }`}
     >
       {colors.map((c, i) => (

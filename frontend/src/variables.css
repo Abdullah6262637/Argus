@@ -101,96 +101,96 @@
    BEYAZ / AYDINLIK TEMA VARYANTLARI (Light Mode Variants)
    ============================================================ */
 
-/* Mono Light: Saf Minimal Beyaz */
+/* Mono Light: Saf Minimal Beyaz (Yüksek Kontrastlı Keskin Yazılar) */
 [data-theme='mono-light'] {
-  --brand-bg: #ffffff;
-  --brand-panel: #f8fafc;
-  --brand-panel-alt: #f1f5f9;
-  --brand-border: #e2e8f0;
-  --brand-border-strong: #cbd5e1;
+  --brand-bg: #f8fafc;
+  --brand-panel: #ffffff;
+  --brand-panel-alt: #e2e8f0;
+  --brand-border: #cbd5e1;
+  --brand-border-strong: #94a3b8;
   --brand-accent: #0f172a;
-  --brand-accent-dim: #334155;
-  --brand-muted: #64748b;
-  --brand-muted-soft: #94a3b8;
-  --brand-text: #0f172a;
-  --brand-text-soft: #475569;
+  --brand-accent-dim: #1e293b;
+  --brand-muted: #334155;
+  --brand-muted-soft: #475569;
+  --brand-text: #090d16;
+  --brand-text-soft: #1e293b;
   --brand-user: #0f172a;
   --brand-user-text: #ffffff;
-  --brand-agent: #f8fafc;
-  --brand-agent-text: #0f172a;
-  --brand-danger: #ef4444;
+  --brand-agent: #ffffff;
+  --brand-agent-text: #090d16;
+  --brand-danger: #dc2626;
   --brand-success: #16a34a;
-  --brand-scrollbar: #e2e8f0;
-  --brand-scrollbar-hover: #cbd5e1;
+  --brand-scrollbar: #cbd5e1;
+  --brand-scrollbar-hover: #94a3b8;
 }
 
-/* Midnight Light: Ferah Gökyüzü & Okyanus Mavisi */
+/* Midnight Light: Ferah Gökyüzü & Okyanus Mavisi (Yüksek Kontrastlı Keskin Yazılar) */
 [data-theme='midnight-light'] {
-  --brand-bg: #f4f8fd;
+  --brand-bg: #f1f5f9;
   --brand-panel: #ffffff;
-  --brand-panel-alt: #eaf2fb;
-  --brand-border: #d5e5f7;
-  --brand-border-strong: #b8d5f3;
+  --brand-panel-alt: #e2e8f0;
+  --brand-border: #cbd5e1;
+  --brand-border-strong: #94a3b8;
   --brand-accent: #2563eb;
-  --brand-accent-dim: #3b82f6;
-  --brand-muted: #64748b;
-  --brand-muted-soft: #94a3b8;
-  --brand-text: #0f172a;
-  --brand-text-soft: #334155;
+  --brand-accent-dim: #1d4ed8;
+  --brand-muted: #334155;
+  --brand-muted-soft: #475569;
+  --brand-text: #0a1120;
+  --brand-text-soft: #1e293b;
   --brand-user: #2563eb;
   --brand-user-text: #ffffff;
   --brand-agent: #ffffff;
-  --brand-agent-text: #0f172a;
-  --brand-danger: #ef4444;
+  --brand-agent-text: #0a1120;
+  --brand-danger: #dc2626;
   --brand-success: #10b981;
-  --brand-scrollbar: #d5e5f7;
-  --brand-scrollbar-hover: #b8d5f3;
+  --brand-scrollbar: #cbd5e1;
+  --brand-scrollbar-hover: #94a3b8;
 }
 
-/* Sunset Light: Sıcak Krem & Şeftali Rose */
+/* Sunset Light: Sıcak Krem & Şeftali Rose (Yüksek Kontrastlı Keskin Yazılar) */
 [data-theme='sunset-light'] {
-  --brand-bg: #fff9f5;
+  --brand-bg: #fff7ed;
   --brand-panel: #ffffff;
-  --brand-panel-alt: #fef1e8;
-  --brand-border: #fcd9c3;
-  --brand-border-strong: #f9bc9b;
+  --brand-panel-alt: #ffedd5;
+  --brand-border: #fed7aa;
+  --brand-border-strong: #fdba74;
   --brand-accent: #ea580c;
-  --brand-accent-dim: #f97316;
-  --brand-muted: #8c6a58;
-  --brand-muted-soft: #bfa395;
-  --brand-text: #2c1a11;
-  --brand-text-soft: #5c3f30;
+  --brand-accent-dim: #c2410c;
+  --brand-muted: #432a1b;
+  --brand-muted-soft: #5c3d2a;
+  --brand-text: #1c1109;
+  --brand-text-soft: #2c1b10;
   --brand-user: #ea580c;
   --brand-user-text: #ffffff;
   --brand-agent: #ffffff;
-  --brand-agent-text: #2c1a11;
-  --brand-danger: #ef4444;
+  --brand-agent-text: #1c1109;
+  --brand-danger: #dc2626;
   --brand-success: #65a30d;
-  --brand-scrollbar: #fcd9c3;
-  --brand-scrollbar-hover: #f9bc9b;
+  --brand-scrollbar: #fed7aa;
+  --brand-scrollbar-hover: #fdba74;
 }
 
-/* Forest Light: Taze Nane & Bahar Yeşili */
+/* Forest Light: Taze Nane & Bahar Yeşili (Yüksek Kontrastlı Keskin Yazılar) */
 [data-theme='forest-light'] {
-  --brand-bg: #f4fbf7;
+  --brand-bg: #f0fdf4;
   --brand-panel: #ffffff;
-  --brand-panel-alt: #e6f6ee;
-  --brand-border: #c8ecda;
-  --brand-border-strong: #a4ddbf;
+  --brand-panel-alt: #dcfce7;
+  --brand-border: #bbf7d0;
+  --brand-border-strong: #86efac;
   --brand-accent: #059669;
-  --brand-accent-dim: #10b981;
-  --brand-muted: #4e6b5d;
-  --brand-muted-soft: #85a897;
-  --brand-text: #11261c;
-  --brand-text-soft: #2e4d3d;
+  --brand-accent-dim: #047857;
+  --brand-muted: #1f4b36;
+  --brand-muted-soft: #2d6248;
+  --brand-text: #061a12;
+  --brand-text-soft: #143525;
   --brand-user: #059669;
   --brand-user-text: #ffffff;
   --brand-agent: #ffffff;
-  --brand-agent-text: #11261c;
-  --brand-danger: #ef4444;
+  --brand-agent-text: #061a12;
+  --brand-danger: #dc2626;
   --brand-success: #16a34a;
-  --brand-scrollbar: #c8ecda;
-  --brand-scrollbar-hover: #a4ddbf;
+  --brand-scrollbar: #bbf7d0;
+  --brand-scrollbar-hover: #86efac;
 }
 
 /* Base Typographical Settings */
