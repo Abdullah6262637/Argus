@@ -101,13 +101,13 @@
    BEYAZ / AYDINLIK TEMA VARYANTLARI (Light Mode Variants)
    ============================================================ */
 
-/* Mono Light: Saf Minimal Beyaz (Yüksek Kontrastlı Keskin Yazılar) */
+/* Mono Light: Saf Beyaz Sohbet Alanı & Açık Arduvaz Üst Menü */
 [data-theme='mono-light'] {
-  --brand-bg: #f8fafc;
-  --brand-panel: #ffffff;
-  --brand-panel-alt: #e2e8f0;
-  --brand-border: #cbd5e1;
-  --brand-border-strong: #94a3b8;
+  --brand-bg: #ffffff;
+  --brand-panel: #f8fafc;
+  --brand-panel-alt: #f1f5f9;
+  --brand-border: #e2e8f0;
+  --brand-border-strong: #cbd5e1;
   --brand-accent: #0f172a;
   --brand-accent-dim: #1e293b;
   --brand-muted: #334155;
@@ -116,18 +116,18 @@
   --brand-text-soft: #1e293b;
   --brand-user: #0f172a;
   --brand-user-text: #ffffff;
-  --brand-agent: #ffffff;
+  --brand-agent: #f8fafc;
   --brand-agent-text: #090d16;
   --brand-danger: #dc2626;
   --brand-success: #16a34a;
-  --brand-scrollbar: #cbd5e1;
-  --brand-scrollbar-hover: #94a3b8;
+  --brand-scrollbar: #e2e8f0;
+  --brand-scrollbar-hover: #cbd5e1;
 }
 
-/* Midnight Light: Ferah Gökyüzü & Okyanus Mavisi (Yüksek Kontrastlı Keskin Yazılar) */
+/* Midnight Light: Saf Beyaz Sohbet Alanı & Ferah Mavi Üst Menü */
 [data-theme='midnight-light'] {
-  --brand-bg: #f1f5f9;
-  --brand-panel: #ffffff;
+  --brand-bg: #ffffff;
+  --brand-panel: #f1f5f9;
   --brand-panel-alt: #e2e8f0;
   --brand-border: #cbd5e1;
   --brand-border-strong: #94a3b8;
@@ -139,7 +139,7 @@
   --brand-text-soft: #1e293b;
   --brand-user: #2563eb;
   --brand-user-text: #ffffff;
-  --brand-agent: #ffffff;
+  --brand-agent: #f1f5f9;
   --brand-agent-text: #0a1120;
   --brand-danger: #dc2626;
   --brand-success: #10b981;
@@ -147,10 +147,10 @@
   --brand-scrollbar-hover: #94a3b8;
 }
 
-/* Sunset Light: Sıcak Krem & Şeftali Rose (Yüksek Kontrastlı Keskin Yazılar) */
+/* Sunset Light: Saf Beyaz Sohbet Alanı & Sıcak Şeftali Üst Menü */
 [data-theme='sunset-light'] {
-  --brand-bg: #fff7ed;
-  --brand-panel: #ffffff;
+  --brand-bg: #ffffff;
+  --brand-panel: #fff7ed;
   --brand-panel-alt: #ffedd5;
   --brand-border: #fed7aa;
   --brand-border-strong: #fdba74;
@@ -162,7 +162,7 @@
   --brand-text-soft: #2c1b10;
   --brand-user: #ea580c;
   --brand-user-text: #ffffff;
-  --brand-agent: #ffffff;
+  --brand-agent: #fff7ed;
   --brand-agent-text: #1c1109;
   --brand-danger: #dc2626;
   --brand-success: #65a30d;
@@ -170,10 +170,10 @@
   --brand-scrollbar-hover: #fdba74;
 }
 
-/* Forest Light: Taze Nane & Bahar Yeşili (Yüksek Kontrastlı Keskin Yazılar) */
+/* Forest Light: Saf Beyaz Sohbet Alanı & Taze Nane Üst Menü */
 [data-theme='forest-light'] {
-  --brand-bg: #f0fdf4;
-  --brand-panel: #ffffff;
+  --brand-bg: #ffffff;
+  --brand-panel: #f0fdf4;
   --brand-panel-alt: #dcfce7;
   --brand-border: #bbf7d0;
   --brand-border-strong: #86efac;
@@ -185,7 +185,7 @@
   --brand-text-soft: #143525;
   --brand-user: #059669;
   --brand-user-text: #ffffff;
-  --brand-agent: #ffffff;
+  --brand-agent: #f0fdf4;
   --brand-agent-text: #061a12;
   --brand-danger: #dc2626;
   --brand-success: #16a34a;
